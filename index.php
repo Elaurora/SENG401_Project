@@ -4,7 +4,6 @@
  */
 function import() {
 	include_once 'RequestServices/RequestTranslation/RequestBuilder/RequestBuilder.php';
-	include_once 'RequestServices/RequestTranslation/RequestBuilder/RequestGroup.php';
 	include_once 'RequestServices/RequestTranslation/RequestParser/RequestParser.php';
 	include_once 'RequestServices/RequestTranslation/Request.php';
 }

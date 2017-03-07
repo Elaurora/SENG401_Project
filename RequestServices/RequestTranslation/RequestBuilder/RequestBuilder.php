@@ -1,14 +1,22 @@
 <?php
+/**
+ * This class takes an incoming request and builds it into the required outgoing requests
+ * @author Patrick
+ *
+ */
 class RequestBuilder {
-	
+	/**
+	 * The URL root of the aurora website
+	 * @var string
+	 */
 	protected static $auroraUrlRoot = 'api.auroras.live';
 	
 	/**
 	 * Builds the URL for the REST request from a request object
 	 * 
 	 * @param Request $request
-	 * 
-	 * @return RequestGroup
+	 * 		The request that was sent to this server
+	 * @return Request[]
 	 * 		The set of requests that must be executed to satisfy $request
 	 */
 	public function buildRequestGroup(Request $request) {
@@ -21,12 +29,10 @@ class RequestBuilder {
 		
 		$requestVariables = $request->getRequestVariables();
 		
-		foreach($requestVariables as $key => $value) {
-			$returnRequest->addRequestVariable($key, $value);
-		}
-		
-		$returnGroup = new RequestGroup();
-		$returnGroup->addRequest($returnRequest);
+		$returnRequest->setReqestVariables($requestVariables);
+			
+		$returnGroup = array();
+		$returnGroup[] = $returnRequest;
 		
 		return $returnGroup;
 	}
