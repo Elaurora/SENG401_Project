@@ -29,7 +29,7 @@ class RequestBuilder {
 		
 		$requestVariables = $request->getRequestVariables();
 		
-		$returnRequest->setReqestVariables($requestVariables);
+		$returnRequest->setRequestVariables($requestVariables);
 			
 		$returnGroup = array();
 		$returnGroup[] = $returnRequest;

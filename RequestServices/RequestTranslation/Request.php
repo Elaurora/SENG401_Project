@@ -43,7 +43,7 @@ class Request {
 	 * Sets all of the request variables at once
 	 * @param string[] $requestVariables
 	 */
-	public function setReqestVariables($requestVariables) {
+	public function setRequestVariables($requestVariables) {
 		$this->requestVariables = $requestVariables;
 	}
 	
