@@ -31,8 +31,9 @@ class RequestExecutor {
 		$requestResultObject = array();
 		foreach ($requestGroup as $key=>$request){
 			
-			$noCaching = $request->getRequestVarialbes()['no-caching'];
-			if(empty($noCaching) || $noCaching == 'false'){
+			$variables = $request->getRequestVariables();
+			$noCaching = isset($variables['no-caching']) ? $variables['no-caching'] : false;
+			if(!$noCaching){
 				
 				// Hey cache, have you seen this request?
 				// Yes? Thanks!
@@ -54,7 +55,7 @@ class RequestExecutor {
 		}
 		
 		// That was fun. add our special fun tag to cap things off:
-		$requestResultObject[] = ['Attribution' => 'Powered by Auroras.live'];
+		//$requestResultObject[] = ['Attribution' => 'Powered by Auroras.live'];
 		
 		return json_encode($requestResultObject);
 	}

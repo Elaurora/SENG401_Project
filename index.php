@@ -5,6 +5,8 @@
 function import() {
 	include_once 'RequestServices/RequestTranslation/RequestBuilder/RequestBuilder.php';
 	include_once 'RequestServices/RequestTranslation/RequestParser/RequestParser.php';
+	include_once 'RequestServices/RequestExecutor/RequestExecutor.php';
+	include_once 'RetrievalServices/RESTDataRetriever.php';
 	include_once 'RequestServices/RequestTranslation/Request.php';
 }
 
@@ -17,7 +19,17 @@ define('__NODE_SERVER__', true);
  * Starting point for the node server
  */
 function node() {
+	/* scratch test to make sure this thing works a little. - Andy
+	 * feel free 2 erase
+	$parser = new RequestParser();
+	$builder = new RequestBuilder();
+	$executor = new RequestExecutor();
+	$myRequest = $parser->parseRequest($_SERVER['REQUEST_URI'], $_SERVER['SERVER_NAME'], $_GET);
+	$requestGroup = $builder->buildRequestGroup($myRequest);
 	
+	$result = $executor->executeRequest($requestGroup);
+	echo($result);
+	*/
 }
 
 /**
