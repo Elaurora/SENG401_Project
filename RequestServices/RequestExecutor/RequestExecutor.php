@@ -57,7 +57,9 @@ class RequestExecutor {
 		// That was fun. add our special fun tag to cap things off:
 		//$requestResultObject[] = ['Attribution' => 'Powered by Auroras.live'];
 		
-		return json_encode($requestResultObject);
+		// To handle receiving images, no longer encode results as json.
+		//return json_encode($requestResultObject);
+		return $requestResultObject;
 	}
 	
 }
