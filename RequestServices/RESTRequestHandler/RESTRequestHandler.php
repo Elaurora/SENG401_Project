@@ -38,7 +38,10 @@ class RESTRequestHandler
             //  assume the response is a JPEG and echo that.
 
             if (isset($json))
+            {
                 echo "<div style='font:13px Courier'>$json</div>";
+                $response = $json;
+            }
             else
                 echo '<img src="data:$response/jpeg;base64,' . base64_encode($response) . '">';
         }
@@ -49,10 +52,12 @@ class RESTRequestHandler
             echo "<div style='font:13px Comic Sans MS'>Yeah, <i>that</i> didn't work. </div>";
         }
 
-        echo "<div style=' font:13px Courier'> $this->attribute </div>";
-
         //  Pretending like I know how to do memory management.
 
-        unset($response, $requestController);
+        unset($requestController);
+
+        //  Return the thing.
+
+        return $response;
     }
 }
