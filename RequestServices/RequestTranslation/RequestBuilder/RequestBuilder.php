@@ -11,6 +11,10 @@ class RequestBuilder {
 	 */
 	protected static $auroraUrlRoot = 'api.auroras.live';
 	
+	protected static $googleUrlRoot = 'maps.googleapis.com';
+	
+	protected static $googleApi = 'maps/api/staticmap';
+	
 	/**
 	 * Builds the URL for the REST request from a request object
 	 * 
@@ -24,12 +28,48 @@ class RequestBuilder {
 		
 		$returnRequest = new Request();
 		$returnRequest->setProtocol('http://');
-		$returnRequest->setApiVersion($request->getApiVersion());
-		$returnRequest->setUrlRoot($this::$auroraUrlRoot);
 		
-		$requestVariables = $request->getRequestVariables();
+		//set the api version to like.... maybe not.
+		$requestVars = $request->getRequestVariables();
+		if(isset($requestVars['type'])){
+			$requestType = $requestVars['type'];
+		}
+		else {
+			throw new Exception("Invalid request: No type specified.");
+		}
 		
-		$returnRequest->setRequestVariables($requestVariables);
+		if ($requestType == 'map'){
+			//google stuff
+			$returnRequest->setApiVersion($this::$googleApi);
+			$returnRequest->setUrlRoot($this::$googleUrlRoot);
+			//type=map&id=yellowknife
+			if(isset($requestVars['id'])){
+				$locationID = $requestVars['id'];
+			}
+			else {
+				throw new Exception("Invalid request: No map location specified.");
+			}
+			
+			//assemble that request i guess? lol
+			
+			$googleRequestVars = array(
+				'center' => $locationID,
+				'size' => '600x300',
+				'markers' => 'color:red|' . $locationID
+			);
+		
+			$returnRequest->setRequestVariables($googleRequestVars);
+			
+		}
+		else {
+			//assume aurora stuff
+			$returnRequest->setApiVersion($request->getApiVersion());
+			$returnRequest->setUrlRoot($this::$auroraUrlRoot);
+			$requestVariables = $request->getRequestVariables();
+			$returnRequest->setRequestVariables($requestVariables);
+		}
+	
+		
 			
 		$returnGroup = array();
 		$returnGroup[] = $returnRequest;
