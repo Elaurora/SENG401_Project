@@ -21,16 +21,11 @@ define('__NODE_SERVER__', true);
  */
 function node() {
 	/* scratch test to make sure this thing works a little. - Andy
-	 * feel free 2 erase
-	$parser = new RequestParser();
-	$builder = new RequestBuilder();
-	$executor = new RequestExecutor();
-	$myRequest = $parser->parseRequest($_SERVER['REQUEST_URI'], $_SERVER['SERVER_NAME'], $_GET);
-	$requestGroup = $builder->buildRequestGroup($myRequest);
+	 * feel free 2 erase*/
+	$handler = new RESTRequestHandler();
+	$response = $handler -> handleRequest();
+	echo ($response);
 	
-	$result = $executor->executeRequest($requestGroup);
-	echo($result);
-	*/
 }
 
 /**
