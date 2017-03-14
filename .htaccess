@@ -1,3 +1,4 @@
 # Pass all requests not referring directly to files in the filesystem to
 # index.php.
+RewriteEngine on
 RewriteRule ^ index.php [L]
