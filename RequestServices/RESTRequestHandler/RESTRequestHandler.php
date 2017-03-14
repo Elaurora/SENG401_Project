@@ -9,10 +9,7 @@
  *  @version    1.0
  */
 
-class RESTRequestHandler
-{
-    protected $attribute = "Powered by Auroras.live";
-    
+class RESTRequestHandler { 
     protected $imgStyle = 
     	"-webkit-user-select: none;
     	background-position: 
@@ -25,10 +22,9 @@ class RESTRequestHandler
     protected $preStyle = "word-wrap: break-word; white-space: pre-wrap;";
 
     /**
-     *  Forwards REST requests and displays the results,
-     *  appending an attribute "Powered by Auroras.live".
+     * Executes the request and returns html to print
+     * @return string
      */
-
     public function handleRequest()
     {
         //  Ask the RequestController to get requested data.
@@ -43,32 +39,41 @@ class RESTRequestHandler
             //  Assume that the response is a JSON object and
             //  attempt to encode...
 
-            $json = json_encode($response, JSON_UNESCAPED_UNICODE);
+            $jsonString = json_encode($response, JSON_UNESCAPED_UNICODE);
 
             //  If the response could be encoded, echo. Otherwise,
             //  assume the response is a JPEG and echo that.
 
-            if ($json !== false)
-            {
-                $response = '<body><pre style="' . $this->preStyle . '">' . $json . '</pre></body>';
-            }
-            else {
-            	$response = '<body style="margin:0px"><img src="data:$response/jpeg;base64,' . base64_encode($response) . '" style="' . $this->imgStyle . '"></body>';
+            if ($jsonString === false) {
+            	//if the json string is false, the date was an image
+            	$responseBody = '<body style="margin:0px"><img src="data:$response/jpeg;base64,' . base64_encode($response) . '" style="' . $this->imgStyle . '"></body>';
+            } else {
+            	//if the json object was not false the date was valid json
+            	$responseBody = '<body><pre style="' . $this->preStyle . '">' . $jsonString . '</pre></body>';
+            	
             }
                 
         }
         else
         {
             //  Sassy failing remark using infuriating font for maximum rage.
-
-            echo "<div style='font:13px Comic Sans MS'>Yeah, <i>that</i> didn't work. </div>";
+            return "<div style='font:13px Comic Sans MS'>Yeah, <i>that</i> didn't work. </div>";
         }
 
         
-        $prefix = '<html><head></head>';
-        $suffix = '</html>';
-        
-        //  Return the thing.
-        return $prefix . $response . $suffix;
+        return $this->packageResponse($responseBody);
+    }
+    
+    /**
+     * Adds the HTML wrapper to the response object
+     * @param string $responseBody
+     * 		An html body tag, with any content
+     */
+    protected function packageResponse($responseBody) {
+    	$prefix = '<html><head></head>';
+    	$suffix = '</html>';
+    	
+    	//  Return the thing.
+    	return $prefix . $responseBody . $suffix;
     }
 }
