@@ -27,7 +27,7 @@ class RESTRequestHandler
 
         //  If a valid response was received, then...
 
-        if (isset($response) && !empty($response))
+        if (!empty($response))
         {
             //  Assume that the response is a JSON object and
             //  attempt to encode...
@@ -37,7 +37,7 @@ class RESTRequestHandler
             //  If the response could be encoded, echo. Otherwise,
             //  assume the response is a JPEG and echo that.
 
-            if (!empty($json))
+            if (isset($json))
                 echo "<div style='font:13px Courier'>$json</div>";
             else
                 echo '<img src="data:$response/jpeg;base64,' . base64_encode($response) . '">';

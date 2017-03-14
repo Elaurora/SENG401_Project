@@ -3,11 +3,12 @@
  * Autoloader for dependencies, put all the files you create in this list
  */
 function import() {
+    include_once 'RequestServices/RESTRequestHandler/RESTRequestHandler.php';
+    include_once 'RequestServices/RequestExecutor/RequestExecutor.php';
 	include_once 'RequestServices/RequestTranslation/RequestBuilder/RequestBuilder.php';
 	include_once 'RequestServices/RequestTranslation/RequestParser/RequestParser.php';
-	include_once 'RequestServices/RequestExecutor/RequestExecutor.php';
-	include_once 'RetrievalServices/RESTDataRetriever.php';
 	include_once 'RequestServices/RequestTranslation/Request.php';
+    include_once 'RetrievalServices/RESTDataRetriever.php';
 }
 
 define('__LOAD_BALANCER__', false);
