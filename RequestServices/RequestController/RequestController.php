@@ -10,21 +10,44 @@
  */
 class RequestController {
 
+	
+	protected $parser = null;
+	protected $builder = null;
+	protected $executor = null;
+	
+	
+	public function __construct() {
+		$this->parser = new RequestParser();
+		$this->builder = new RequestBuilder();
+		$this->executor = new RequestExecutor();
+	}
+	
 	/**
 	 * 
 	 * @param man what should the parameters even be. maybe none?
 	 * @return
 	 */
-	public function controlThatRequest($url) {
-		$parser = new RequestParser();
-		$builder = new RequestBuilder();
-		$executor = new RequestExecutor();
+	public function controlThatRequest() {
 		
-		$myRequest = $parser->parseRequest($_SERVER['REQUEST_URI'], $_SERVER['SERVER_NAME'], $_GET);
-		$requestGroup = $builder->buildRequestGroup($myRequest);
-		$result = $executor->executeRequest($requestGroup);
+		$myRequest = $this->parser->parseRequest($_SERVER['REQUEST_URI'], $_SERVER['SERVER_NAME'], $_GET);
+		$requestGroup = $this->builder->buildRequestGroup($myRequest);
+		$result = $this->executor->executeRequest($requestGroup);
 		
-		return $result;
+		$resultJson = array();
+		foreach($result as $specificResult) {
+			$testJson = json_encode($specificResult);
+			
+			if($testJson !== false) {
+				foreach($testJson as $index => $subJson) {
+					$resultJson[$index] = $subJson;
+				}
+				
+			} else {
+				return $specificResult;
+			}
+		}
+		
+		return $resultJson;
 	}
 	
 	

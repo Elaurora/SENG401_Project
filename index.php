@@ -3,6 +3,7 @@
  * Autoloader for dependencies, put all the files you create in this list
  */
 function import() {
+	include_once 'RequestServices/RequestController/RequestController.php';
     include_once 'RequestServices/RESTRequestHandler/RESTRequestHandler.php';
     include_once 'RequestServices/RequestExecutor/RequestExecutor.php';
 	include_once 'RequestServices/RequestTranslation/RequestBuilder/RequestBuilder.php';
