@@ -11,6 +11,8 @@
 
 class RESTRequestHandler
 {
+    protected $attribute = "Powered by Auroras.live";
+
     /**
      *  Forwards REST requests and displays the results,
      *  appending an attribute "Powered by Auroras.live".
@@ -21,7 +23,7 @@ class RESTRequestHandler
         //  Ask the RequestController to get requested data.
 
         $requestController = new RequestControllerSTUB();
-        $response = $requestController -> getRequest();
+        $response = $requestController->getRequest();
 
         //  If a valid response was received, then...
 
@@ -36,9 +38,9 @@ class RESTRequestHandler
             //  assume the response is a JPEG and echo that.
 
             if (!empty($json))
-                echo "<div style='font:13px Courier'> $json</div>";
+                echo "<div style='font:13px Courier'>$json</div>";
             else
-                echo '<img src="data:$response/jpeg;base64,' . base64_encode(file_get_contents($response)) . '">';
+                echo '<img src="data:$response/jpeg;base64,' . base64_encode($response) . '">';
         }
         else
         {
@@ -46,6 +48,8 @@ class RESTRequestHandler
 
             echo "<div style='font:13px Comic Sans MS'>Yeah, <i>that</i> didn't work. </div>";
         }
+
+        echo "<div style=' font:13px Courier'> $this->attribute </div>";
 
         //  Pretending like I know how to do memory management.
 
