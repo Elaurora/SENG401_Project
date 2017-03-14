@@ -12,6 +12,17 @@
 class RESTRequestHandler
 {
     protected $attribute = "Powered by Auroras.live";
+    
+    protected $imgStyle = 
+    	"-webkit-user-select: none;
+    	background-position: 
+    	0px 0px, 10px 10px;
+    	background-size: 20px 20px;
+    	background-color: white;
+    	background-image:linear-gradient(45deg, #eee 25%, transparent 25%, transparent 75%, #eee 75%, #eee 100%),linear-gradient(45deg, #eee 25%, transparent 25%, transparent 75%, #eee 75%, #eee 100%);
+    	cursor: zoom-out;";
+    
+    protected $preStyle = "word-wrap: break-word; white-space: pre-wrap;";
 
     /**
      *  Forwards REST requests and displays the results,
@@ -39,10 +50,10 @@ class RESTRequestHandler
 
             if ($json !== false)
             {
-                $response = '<pre>' . $json . '</pre>';
+                $response = '<body><pre style="' . $this->preStyle . '">' . $json . '</pre></body>';
             }
             else {
-            	$response = '<img src="data:$response/jpeg;base64,' . base64_encode($response) . '" style="-webkit-user-select: none;background-position: 0px 0px, 10px 10px;background-size: 20px 20px;background-color: white;background-image:linear-gradient(45deg, #eee 25%, transparent 25%, transparent 75%, #eee 75%, #eee 100%),linear-gradient(45deg, #eee 25%, transparent 25%, transparent 75%, #eee 75%, #eee 100%);cursor: zoom-out;">';
+            	$response = '<body style="margin:0px"><img src="data:$response/jpeg;base64,' . base64_encode($response) . '" style="' . $this->imgStyle . '"></body>';
             }
                 
         }
@@ -54,8 +65,8 @@ class RESTRequestHandler
         }
 
         
-        $prefix = '<html><head></head><body style="margin:0px">';
-        $suffix = '</body></html>';
+        $prefix = '<html><head></head>';
+        $suffix = '</html>';
         
         //  Return the thing.
         return $prefix . $response . $suffix;

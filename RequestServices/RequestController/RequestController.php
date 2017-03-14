@@ -23,8 +23,7 @@ class RequestController {
 	}
 	
 	/**
-	 * 
-	 * @param man what should the parameters even be. maybe none?
+	 * Parses, builds and executes the requests, returns a json object or a image stream
 	 * @return
 	 */
 	public function controlThatRequest() {
@@ -38,14 +37,23 @@ class RequestController {
 			$testJson = json_encode($specificResult);
 			
 			if($testJson !== false) {
-				foreach($testJson as $index => $subJson) {
-					$resultJson[$index] = $subJson;
+				
+				$json = json_decode($specificResult);
+				foreach($json as $index => $subJson) {
+					if(is_int($index)) {
+						$resultJson[] = $subJson;
+					} else {
+						$resultJson[$index] = $subJson;
+					}
+					
 				}
 				
 			} else {
 				return $specificResult;
 			}
 		}
+		
+		$resultJson['attribution'] = "Powered by Auroras.live";
 		
 		return $resultJson;
 	}
