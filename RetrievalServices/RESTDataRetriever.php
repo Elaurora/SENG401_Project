@@ -16,7 +16,9 @@ class RequestDataRetriever {
 	public function completeRequest($url) {
 		
 		$json = file_get_contents($url);
-		return json_decode($json);
+		return $json;
+		//to handle receiving images, no longer do json stuff with response
+		//return json_decode($json);
 		
 	}
 }
