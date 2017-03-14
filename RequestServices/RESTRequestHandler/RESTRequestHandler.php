@@ -22,7 +22,7 @@ class RESTRequestHandler
     {
         //  Ask the RequestController to get requested data.
 
-        $requestController = new RequestControllerSTUB();
+        $requestController = new RequestController();
         $response = $requestController->getRequest();
 
         //  If a valid response was received, then...
@@ -53,7 +53,6 @@ class RESTRequestHandler
 
         //  Pretending like I know how to do memory management.
 
-        unset($response);
-        unset($requestController);
+        unset($response, $requestController);
     }
 }
