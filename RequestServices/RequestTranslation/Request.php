@@ -111,7 +111,7 @@ class Request {
 		$url = trim($url, '/');
 		$apiVersion = trim($this->apiVersion, '/');
 		
-		$url .= '/' . $apiVersion . '/?';
+		$url .= '/' . $apiVersion . '?';
 		
 		$url .= http_build_query($this->requestVariables);
 		
