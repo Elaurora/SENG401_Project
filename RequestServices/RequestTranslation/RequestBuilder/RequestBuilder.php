@@ -27,7 +27,7 @@ class RequestBuilder {
 		//for now we are only interfacing with auroras.live
 		
 		$returnRequest = new Request();
-		$returnRequest->setProtocol('http://');
+		$returnRequest->setProtocol('https://');
 		
 		//set the api version to like.... maybe not.
 		$requestVars = $request->getRequestVariables();
@@ -63,7 +63,7 @@ class RequestBuilder {
 		}
 		else {
 			//assume aurora stuff
-			$returnRequest->setApiVersion($request->getApiVersion());
+			$returnRequest->setApiVersion($request->getApiVersion() . '/');
 			$returnRequest->setUrlRoot($this::$auroraUrlRoot);
 			$requestVariables = $request->getRequestVariables();
 			$returnRequest->setRequestVariables($requestVariables);

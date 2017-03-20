@@ -27,7 +27,6 @@ class RequestController {
 	 * @return
 	 */
 	public function controlThatRequest() {
-		
 		$myRequest = $this->parser->parseRequest($_SERVER['REQUEST_URI'], $_SERVER['SERVER_NAME'], $_GET);
 		$requestGroup = $this->builder->buildRequestGroup($myRequest);
 		$result = $this->executor->executeRequest($requestGroup);
@@ -49,15 +48,26 @@ class RequestController {
 				}
 				
 			} else {
+				header('Content-Type: image/jpeg');
 				return $specificResult;
 			}
 		}
+		
+		header('Content-Type: application/json');
+		
 		$finalResult['result'] = $resultJson;
+		
+		//if the result had a status code, it is probably an arror and should probably be set for our response type
+		if(isset($finalResult['result']['statusCode'])) {
+			http_response_code($finalResult['result']['statusCode']);
+		}
+		
 		$finalResult['attribution'] = "Powered by Auroras.live";
 		
 		
-		return $finalResult;
+		return json_encode($finalResult, JSON_UNESCAPED_UNICODE);
 	}
+
 	
 	
 }

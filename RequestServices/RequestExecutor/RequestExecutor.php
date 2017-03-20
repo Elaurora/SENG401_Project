@@ -39,13 +39,13 @@ class RequestExecutor {
 				// Yes? Thanks!
 				// no? I'll ask my friend the data retriever
 				
-				$requestResult = $requestDataRetriever->completeRequest($request);
+				$requestResult = $requestDataRetriever->completeRequest($request->__toString());
 				// Pay the love forward by telling your cache about the hot new tip.
 				// $cacheFriend->storeNewEntryEnsemble($request->__toString(), $requestResult);
 			}
 			else{
 				//let's just keep this between u and me. no need to tell the cache ;)
-				$requestResult = $requestDataRetriever->completeRequest($request);
+				$requestResult = $requestDataRetriever->completeRequest($request->__toString());
 				
 			}
 			

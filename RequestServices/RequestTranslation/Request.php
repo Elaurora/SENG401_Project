@@ -109,9 +109,8 @@ class Request {
 		$url = $this->protocol . $this->urlRoot;
 		
 		$url = trim($url, '/');
-		$apiVersion = trim($this->apiVersion, '/');
 		
-		$url .= '/' . $apiVersion . '?';
+		$url .= '/' . $this->apiVersion . '?';
 		
 		$url .= http_build_query($this->requestVariables);
 		

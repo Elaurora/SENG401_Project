@@ -14,11 +14,22 @@ class RequestDataRetriever {
 	 * @return
 	 */
 	public function completeRequest($url) {
+		//thanks to: http://www.hashbangcode.com/blog/quickest-way-download-web-page-php
+		 // create curl resource 
+        $ch = curl_init(); 
+
+        // set url 
+        curl_setopt($ch, CURLOPT_URL, $url); 
+
+        //return the transfer as a string 
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
+
+        // $output contains the output string 
+        $output = curl_exec($ch); 
 		
-		$json = file_get_contents($url);
-		return $json;
-		//to handle receiving images, no longer do json stuff with response
-		//return json_decode($json);
-		
+        // close curl resource to free up system resources 
+        curl_close($ch); 
+        
+		return $output;
 	}
 }
