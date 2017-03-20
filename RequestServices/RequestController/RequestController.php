@@ -52,10 +52,11 @@ class RequestController {
 				return $specificResult;
 			}
 		}
+		$finalResult['result'] = $resultJson;
+		$finalResult['attribution'] = "Powered by Auroras.live";
 		
-		$resultJson['attribution'] = "Powered by Auroras.live";
 		
-		return $resultJson;
+		return $finalResult;
 	}
 	
 	
