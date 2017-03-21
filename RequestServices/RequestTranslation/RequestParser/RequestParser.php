@@ -26,7 +26,15 @@ class RequestParser {
 		
 		//part0 will be our app name ('SENG401') part 1 will the API version ('v1')
 		$appName = isset($requestParts[0]) ? $requestParts[0] : '';
-		$urlRoot = $serverName . '/' . $appName;	
+		
+		if($appName == "v1") {
+			$requestParts[1] = "v1";
+			$urlRoot = $serverName;
+		} else {
+			$urlRoot = $serverName . '/' . $appName;
+		}
+		
+		
 		$request->setUrlRoot($urlRoot);
 		
 		$apiVersion =  isset($requestParts[1]) ? $requestParts[1] : '';
