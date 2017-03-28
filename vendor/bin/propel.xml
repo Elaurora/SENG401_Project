@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<config>
+    <propel>
+        <database>
+            <connections>
+                <connection id="default">
+                    <adapter>mysql</adapter>
+                    <dsn>mysql:host=127.0.0.1;port=3306;dbname=seng401cachedb</dsn>
+                    <user>root</user>
+                    <password>abc123</password>
+                    <settings>
+                        <charset>utf8</charset>
+                    </settings>
+                </connection>
+            </connections>
+        </database>
+    </propel>
+</config>
