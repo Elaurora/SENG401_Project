@@ -1,9 +1,5 @@
-/Base/*
+/Base/
 /propel.xml
-/Map/CacheMatchVariablesTableMap.php
-/Map/CacheRulesTableMap.php
-/Map/CachedRequestsTableMap.php
-/Map/GetVariablesTableMap.php
-/generated-conf/config.php
+Map/*
 propel.xml.dist
 /generated-classes/

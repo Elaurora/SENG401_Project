@@ -1,5 +1,6 @@
 <?php
 use Base\CachedRequests;
+use Propel\Runtime\Connection\ConnectionFactory;
 
 /**
  * Autoloader for dependencies, put all the files you create in this list
@@ -75,10 +76,26 @@ function global_db() {
 	
 	
 	$request = new \CachedRequests();
+	
 	$request->setQueryResponse("Hello World!");
 	$request->save();
+	
 
 	$query = CachedRequestsQuery::create();
+	$query = $query->filterByQueryResponse("Hello World!");
+	$query = $query->findOne();
+	
+	print_r($query->toJSON());
+	
+	$query->delete();
+	
+	$request = new \GlobalCachedRequests();
+	
+	$request->setQueryResponse("Hello World!");
+	$request->save();
+	
+	
+	$query = GlobalCachedRequestsQuery::create();
 	$query = $query->filterByQueryResponse("Hello World!");
 	$query = $query->findOne();
 	
