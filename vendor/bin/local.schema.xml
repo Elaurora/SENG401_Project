@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <database name="default" defaultIdMethod="native" defaultPhpNamingMethod="underscore">
   <table name="cache_match_variables" idMethod="native" phpName="CacheMatchVariables">
-    <column name="rule_id" phpName="RuleId" type="INTEGER" primaryKey="true" required="true"/>
+    <column name="rule_id" phpName="RuleId" type="BIGINT" sqlType="bigint(20) unsigned" primaryKey="true" required="true"/>
     <column name="variable_name" phpName="VariableName" type="VARCHAR" size="100" primaryKey="true" required="true"/>
     <column name="variable_value" phpName="VariableValue" type="VARCHAR" size="200" primaryKey="true" required="true"/>
     <vendor type="mysql">
@@ -25,6 +25,7 @@
   <table name="cached_requests" idMethod="native" phpName="CachedRequests">
     <column name="query_id" phpName="QueryId" type="BIGINT" sqlType="bigint(20) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="query_response" phpName="QueryResponse" type="CLOB" required="true"/>
+	<column name="query_time" phpName="QueryTime" type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
     <unique name="query_id">
       <unique-column name="query_id"/>
     </unique>
@@ -33,7 +34,7 @@
     </vendor>
   </table>
   <table name="get_variables" idMethod="native" phpName="GetVariables">
-    <column name="query_id" phpName="QueryId" type="INTEGER" primaryKey="true" required="true"/>
+    <column name="query_id" phpName="QueryId" type="BIGINT" sqlType="bigint(20) unsigned" primaryKey="true" required="true"/>
     <column name="variable_name" phpName="VariableName" type="VARCHAR" size="100" primaryKey="true" required="true"/>
     <column name="variable_value" phpName="VariableValue" type="LONGVARCHAR" required="true"/>
     <vendor type="mysql">

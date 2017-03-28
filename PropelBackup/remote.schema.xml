@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<database name="default" defaultIdMethod="native" defaultPhpNamingMethod="underscore">
-  <table name="cache_match_variables" idMethod="native" phpName="CacheMatchVariables">
-    <column name="rule_id" phpName="RuleId" type="INTEGER" primaryKey="true" required="true"/>
+<database name="remote" defaultIdMethod="native" defaultPhpNamingMethod="underscore">
+  <table name="global_cache_match_variables" idMethod="native" phpName="GlobalCacheMatchVariables">
+    <column name="rule_id" phpName="RuleId" type="BIGINT" sqlType="bigint(20) unsigned" primaryKey="true" required="true"/>
     <column name="variable_name" phpName="VariableName" type="VARCHAR" size="100" primaryKey="true" required="true"/>
     <column name="variable_value" phpName="VariableValue" type="VARCHAR" size="200" primaryKey="true" required="true"/>
     <vendor type="mysql">
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
-	<foreign-key foreignTable="cache_rules">
+	<foreign-key foreignTable="global_cache_rules">
       <reference local="rule_id" foreign="rule_id"/>
     </foreign-key>
   </table>
-  <table name="cache_rules" idMethod="native" phpName="CacheRules">
+  <table name="global_cache_rules" idMethod="native" phpName="GlobalCacheRules">
     <column name="rule_id" phpName="RuleId" type="BIGINT" sqlType="bigint(20) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="local_ttl" phpName="LocalTtl" type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
     <column name="global_ttl" phpName="GlobalTtl" type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
@@ -22,9 +22,10 @@
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
   </table>
-  <table name="cached_requests" idMethod="native" phpName="CachedRequests">
+  <table name="global_cached_requests" idMethod="native" phpName="GlobalCachedRequests">
     <column name="query_id" phpName="QueryId" type="BIGINT" sqlType="bigint(20) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="query_response" phpName="QueryResponse" type="CLOB" required="true"/>
+	<column name="query_time" phpName="QueryTime" type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
     <unique name="query_id">
       <unique-column name="query_id"/>
     </unique>
@@ -32,14 +33,14 @@
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
   </table>
-  <table name="get_variables" idMethod="native" phpName="GetVariables">
-    <column name="query_id" phpName="QueryId" type="INTEGER" primaryKey="true" required="true"/>
+  <table name="global_get_variables" idMethod="native" phpName="GlobalGetVariables">
+    <column name="query_id" phpName="QueryId" type="BIGINT" sqlType="bigint(20) unsigned" primaryKey="true" required="true"/>
     <column name="variable_name" phpName="VariableName" type="VARCHAR" size="100" primaryKey="true" required="true"/>
     <column name="variable_value" phpName="VariableValue" type="LONGVARCHAR" required="true"/>
     <vendor type="mysql">
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
-	<foreign-key foreignTable="cached_requests">
+	<foreign-key foreignTable="global_cached_requests">
       <reference local="query_id" foreign="query_id"/>
     </foreign-key>
   </table>

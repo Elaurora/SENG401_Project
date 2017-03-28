@@ -11,10 +11,13 @@ DROP TABLE IF EXISTS `cache_match_variables`;
 
 CREATE TABLE `cache_match_variables`
 (
-    `rule_id` INTEGER NOT NULL,
+    `rule_id` bigint(20) unsigned NOT NULL,
     `variable_name` VARCHAR(100) NOT NULL,
     `variable_value` VARCHAR(200) NOT NULL,
-    PRIMARY KEY (`rule_id`,`variable_name`,`variable_value`)
+    PRIMARY KEY (`rule_id`,`variable_name`,`variable_value`),
+    CONSTRAINT `cache_match_variables_fk_857274`
+        FOREIGN KEY (`rule_id`)
+        REFERENCES `cache_rules` (`rule_id`)
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
@@ -42,6 +45,7 @@ CREATE TABLE `cached_requests`
 (
     `query_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
     `query_response` LONGTEXT NOT NULL,
+    `query_time` int(10) unsigned NOT NULL,
     PRIMARY KEY (`query_id`),
     UNIQUE INDEX `query_id` (`query_id`)
 ) ENGINE=InnoDB;
@@ -54,10 +58,13 @@ DROP TABLE IF EXISTS `get_variables`;
 
 CREATE TABLE `get_variables`
 (
-    `query_id` INTEGER NOT NULL,
+    `query_id` bigint(20) unsigned NOT NULL,
     `variable_name` VARCHAR(100) NOT NULL,
     `variable_value` TEXT NOT NULL,
-    PRIMARY KEY (`query_id`,`variable_name`)
+    PRIMARY KEY (`query_id`,`variable_name`),
+    CONSTRAINT `get_variables_fk_53fde7`
+        FOREIGN KEY (`query_id`)
+        REFERENCES `cached_requests` (`query_id`)
 ) ENGINE=InnoDB;
 
 # This restores the fkey checks, after having unset them earlier
