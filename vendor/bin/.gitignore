@@ -6,3 +6,4 @@
 /Map/GetVariablesTableMap.php
 /generated-conf/config.php
 propel.xml.dist
+/generated-classes/
