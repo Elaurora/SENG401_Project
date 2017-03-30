@@ -1,0 +1,101 @@
+Function: Create Rule
+This function inserts a rule to the database
+
+Parameters:
+
+type=create_rule	//defines the request type
+
+localttl=60			//the local time to live of the request, in seconds
+
+globalttl=120		//the global time to live of the requeset, in seconds
+
+match_variables={"type" : "locations", "fish" : "salmon"}	//the variables to match on, as a json object
+
+[optional]
+rule_id=7			//the id to insert the rule on, this should only be used by the database webserver
+
+
+Returns:
+{"status" : "success"}
+or
+{"status" : "fail"}
+
+
+Function: Get Rules
+This function returns a list of all rules that exist in the database
+
+Parameters:
+
+type=get_rules		//defines the request type
+
+Returns:
+
+[
+	{
+		"rule_id" : 7,
+		"localttl" : 60,
+		"globalttl" : 120,
+		"match_variables" : {
+			"type" : "locations",
+			"fish" : "salmon"
+		}
+	},
+	{
+		"rule_id" : 9,
+		"localttl" : 10,
+		"globalttl" : 130,
+		"match_variables" : {
+			"type" : "image",
+			"fish" : "trout"
+		}
+	}
+
+]
+
+
+Function: Delete Rule
+This function deletes an existing rule
+
+Parameters:
+
+type=delete_rule		//defines the request type
+
+rule_id=7				//the id of an existing rule
+
+Returns:
+{"status" : "success"}
+or
+{"status" : "fail"}
+
+
+Function: Subscribe
+This function registers a node server with the database server
+
+Parameters:
+type=subscribe		//defines the request type
+
+ip=11.25.1.2		//the ip of the subscriber
+
+
+Returns:
+{"status" : "success"}
+or
+{"status" : "fail"}
+
+
+Function: Unsubscribe
+This function registers a node server with the database server
+
+Parameters:
+type=unsubscribe		//defines the request type
+
+ip=11.25.1.2			//the ip of the unsubscriber
+
+
+Returns:
+{"status" : "success"}
+or
+{"status" : "fail"}
+
+
+
