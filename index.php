@@ -91,6 +91,8 @@ function global_db() {
 		$query = $query->findOne();
 				
 		$query->delete();
+		
+		
 	}
 }
 
