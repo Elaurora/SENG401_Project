@@ -44,9 +44,10 @@ DROP TABLE IF EXISTS `global_cached_requests`;
 CREATE TABLE `global_cached_requests`
 (
     `query_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+    `query_url_root` VARCHAR(100) NOT NULL,
     `query_response` LONGTEXT NOT NULL,
     `query_time` int(10) unsigned NOT NULL,
-    PRIMARY KEY (`query_id`),
+    PRIMARY KEY (`query_id`,`query_url_root`),
     UNIQUE INDEX `query_id` (`query_id`)
 ) ENGINE=InnoDB;
 
@@ -65,6 +66,19 @@ CREATE TABLE `global_get_variables`
     CONSTRAINT `global_get_variables_fk_c5c7f3`
         FOREIGN KEY (`query_id`)
         REFERENCES `global_cached_requests` (`query_id`)
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- global_subscriber_ips
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `global_subscriber_ips`;
+
+CREATE TABLE `global_subscriber_ips`
+(
+    `subscriber_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+    `subscriber_ip` VARCHAR(100) NOT NULL,
+    PRIMARY KEY (`subscriber_id`)
 ) ENGINE=InnoDB;
 
 # This restores the fkey checks, after having unset them earlier

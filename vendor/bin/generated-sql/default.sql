@@ -28,7 +28,7 @@ DROP TABLE IF EXISTS `cache_rules`;
 
 CREATE TABLE `cache_rules`
 (
-    `rule_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+    `rule_id` bigint(20) unsigned NOT NULL,
     `local_ttl` int(10) unsigned NOT NULL,
     `global_ttl` int(10) unsigned NOT NULL,
     PRIMARY KEY (`rule_id`),
@@ -44,9 +44,10 @@ DROP TABLE IF EXISTS `cached_requests`;
 CREATE TABLE `cached_requests`
 (
     `query_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+    `query_url_root` VARCHAR(100) NOT NULL,
     `query_response` LONGTEXT NOT NULL,
     `query_time` int(10) unsigned NOT NULL,
-    PRIMARY KEY (`query_id`),
+    PRIMARY KEY (`query_id`,`query_url_root`),
     UNIQUE INDEX `query_id` (`query_id`)
 ) ENGINE=InnoDB;
 

@@ -50,6 +50,7 @@ function global_db() {
 	 * 
 	 * TABLE: cached_requests
 	 * query_id : int
+	 * query_url : string
 	 * query_response : binary dump
 	 * PrimaryKey: {query_id}
 	 * 
@@ -75,33 +76,34 @@ function global_db() {
 	 */
 	
 	
-	$request = new \CachedRequests();
+		$request = new \CachedRequests();
+		
+		$request->setQueryResponse("Hello World!");
+		$request->setQueryTime(300);
+		$request->save();
+		
 	
-	$request->setQueryResponse("Hello World!");
-	$request->save();
+		$query = CachedRequestsQuery::create();
+		$query = $query->filterByQueryResponse("Hello World!");
+		$query = $query->findOne();
+		
+		//$query->delete();
+		
+		//$request = new \GlobalCachedRequests();
+		
+		//$request->setQueryResponse("Hello World!");
+		//$request->save();
+		
+		
+		//$query = GlobalCachedRequestsQuery::create();
+		//$query = $query->filterByQueryResponse("Hello World!");
+		//$query = $query->findOne();
+				
+		//$query->delete();
+	
 	
 
-	$query = CachedRequestsQuery::create();
-	$query = $query->filterByQueryResponse("Hello World!");
-	$query = $query->findOne();
 	
-	print_r($query->toJSON());
-	
-	$query->delete();
-	
-	$request = new \GlobalCachedRequests();
-	
-	$request->setQueryResponse("Hello World!");
-	$request->save();
-	
-	
-	$query = GlobalCachedRequestsQuery::create();
-	$query = $query->filterByQueryResponse("Hello World!");
-	$query = $query->findOne();
-	
-	print_r($query->toJSON());
-	
-	$query->delete();
 }
 
 import();
