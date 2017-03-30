@@ -74,8 +74,6 @@ This function registers a node server with the database server
 Parameters:
 type=subscribe		//defines the request type
 
-ip=11.25.1.2		//the ip of the subscriber
-
 
 Returns:
 {"status" : "success"}
@@ -88,8 +86,6 @@ This function registers a node server with the database server
 
 Parameters:
 type=unsubscribe		//defines the request type
-
-ip=11.25.1.2			//the ip of the unsubscriber
 
 
 Returns:

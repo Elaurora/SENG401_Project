@@ -30,7 +30,27 @@ class GlobalCacheController extends CacheController{
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
 	 */
 	private function createRule($variables){
+		$response = array();
 		
+		if(!isset($variables['localttl'])){
+			$response['status'] = 'failure';
+			$response['errmsg'] = 'Attempted to create a new rule without specifying a localttl';
+			return $response;
+		}
+		
+		if(!isset($variables['globalttl'])){
+			$response['status'] = 'failure';
+			$response['errmsg'] = 'Attempted to create a new rule without specifying a globalttl';
+			return $response;
+		}
+		
+		if(isset($variables['rule_id'])){
+			$response['status'] = 'failure';
+			$response['errmsh'] = "Attempted to create a rule in a GlobalCache by setting the rule_id, which is not allowed. GlobalCache has autoincrementing rule_id's";
+			return $response;
+		}
+		
+		//Not implemented 
 	}
 	
 	/**
@@ -48,25 +68,31 @@ class GlobalCacheController extends CacheController{
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
 	 */
 	private function deleteRule($variables){
+		$response = array();
 		
+		if(!isset($variables['rule_id'])){
+			$response['status'] = 'failure';
+			$response['errmsg'] = 'Attempted to delete a rule without specifying a rule_id';
+			return $response;
+		}
+		
+		//Not implemented
 	}
 	
 	/**
-	 * Adds the given ip to the list of subscibers to the GlobalCache
+	 * Adds the senders ip to the list of subscibers to the GlobalCache
 	 * Will also add all currently cached rules to the new subscriber
-	 * @param unknown $variables - an array containing an 'ip' index which contains the ip address of the cache subscribing to the GlobalCache
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
 	 */
-	private function subscribe($variables){
+	private function subscribe(){
 		
 	}
 	
 	/**
-	 * Removes the given ip from the list of subscibers to the GlobalCache
-	 * @param unknown $variables - an array containing an 'ip' index which contains the ip address of the cache unsubscribing from the GlobalCache
+	 * Removes the senders ip from the list of subscibers to the GlobalCache
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
 	 */
-	private function unsubscribe($variables){
+	private function unsubscribe(){
 		
 	}
 	
@@ -97,11 +123,11 @@ class GlobalCacheController extends CacheController{
 					break;
 					
 				case('subscribe'):
-					$response = $this->subscribe($variables);
+					$response = $this->subscribe();
 					break;
 					
 				case('unsubscribe'):
-					$response = $this->unsubscribe($variables);
+					$response = $this->unsubscribe();
 					break;
 					
 				default:

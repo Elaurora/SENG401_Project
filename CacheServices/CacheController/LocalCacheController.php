@@ -30,7 +30,27 @@ class LocalCacheController extends CacheController{
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
 	 */
 	private function createRule($variables){
+		$response = array();
 		
+		if(!isset($variables['localttl'])){
+			$response['status'] = 'failure';
+			$response['errmsg'] = 'Attempted to create a new rule without specifying a localttl';
+			return $response;
+		}
+		
+		if(!isset($variables['globalttl'])){
+			$response['status'] = 'failure';
+			$response['errmsg'] = 'Attempted to create a new rule without specifying a globalttl';
+			return $response;
+		}
+		
+		if(!isset($variables['rule_id'])){
+			$response['status'] = 'failure';
+			$response['errmsh'] = "Attempted to create a rule in a LocalCache without specifying the rule_id";
+			return $response;
+		}
+		
+		//Not implemented
 	}
 	
 	/**
@@ -48,7 +68,15 @@ class LocalCacheController extends CacheController{
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
 	 */
 	private function deleteRule($variables){
-	
+		$response = array();
+		
+		if(!isset($variables['rule_id'])){
+			$response['status'] = 'failure';
+			$response['errmsg'] = 'Attempted to delete a rule without specifying a rule_id';
+			return $response;
+		}
+		
+		//Not implemented
 	}
 	
 	/**

@@ -1,7 +1,6 @@
 <?php
 
 
-
 abstract class CacheController{
 	
 	/**
@@ -11,6 +10,7 @@ abstract class CacheController{
 	public static final $ruleTypes = array (
 			'create_rule', 'get_rules', 'delete_rule', 'subscribe', 'unsubscribe'
 	);
+	
 	
 	
 	/**
