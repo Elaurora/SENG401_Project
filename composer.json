@@ -3,6 +3,11 @@
         "propel/propel": "~2.0@dev"
     },
     "autoload": {
-    	"classmap": ["vendor/bin/"]
+    	"classmap": [
+    		"vendor/bin/",
+    		"CacheServices/",
+    		"RequestServices/",
+    		"RetrievalServices/"
+    	]
   	}
 }

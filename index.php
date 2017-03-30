@@ -1,21 +1,4 @@
 <?php
-use Base\CachedRequests;
-use Propel\Runtime\Connection\ConnectionFactory;
-
-/**
- * Autoloader for dependencies, put all the files you create in this list
- */
-function import() {
-	include_once 'vendor/autoload.php';
-	require_once 'vendor/bin/generated-conf/config.php';
-	include_once 'RequestServices/RequestController/RequestController.php';
-    include_once 'RequestServices/RESTRequestHandler/RESTRequestHandler.php';
-    include_once 'RequestServices/RequestExecutor/RequestExecutor.php';
-	include_once 'RequestServices/RequestTranslation/RequestBuilder/RequestBuilder.php';
-	include_once 'RequestServices/RequestTranslation/RequestParser/RequestParser.php';
-	include_once 'RequestServices/RequestTranslation/Request.php';
-    include_once 'RetrievalServices/RESTDataRetriever.php';
-}
 
 define('__GLOBAL_DATABASE__', true);
 define('__CONFIG_GUI__', false);
@@ -44,13 +27,11 @@ function config() {
 }
 
 /**
- * Starting point for the load balancer
+ * Starting point for the global database webserver
  */
 function global_db() {
 	
-	$handler = new RESTRequestHandler();
-	$response = $handler->handleRequest();
-	echo(response);
+	node();
 	
 	/*
 	 * DB Schema
@@ -110,13 +91,10 @@ function global_db() {
 		$query = $query->findOne();
 				
 		$query->delete();
-		}
-	
-
-	
+	}
 }
 
-import();
+
 if(__GLOBAL_DATABASE__) {
 	global_db();
 } else if(__CONFIG_GUI__) {
