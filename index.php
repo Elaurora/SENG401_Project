@@ -26,6 +26,8 @@ define('__NODE_SERVER__', false);
  * Starting point for the node server
  */
 function node() {
+	
+	
 	/* scratch test to make sure this thing works a little. - Andy
 	 * feel free 2 erase*/
 	$handler = new RESTRequestHandler();
@@ -45,6 +47,11 @@ function config() {
  * Starting point for the load balancer
  */
 function global_db() {
+	
+	$handler = new RESTRequestHandler();
+	$response = $handler->handleRequest();
+	echo(response);
+	
 	/*
 	 * DB Schema
 	 * 
@@ -76,6 +83,8 @@ function global_db() {
 	 * 
 	 */
 	
+	if(false){
+		$cacheType = 'global';
 	
 		$request = new \CachedRequests();
 		
@@ -88,20 +97,20 @@ function global_db() {
 		$query = $query->filterByQueryResponse("Hello World!");
 		$query = $query->findOne();
 		
-		//$query->delete();
+		$query->delete();
 		
-		//$request = new \GlobalCachedRequests();
+		$request = new \GlobalCachedRequests();
 		
-		//$request->setQueryResponse("Hello World!");
-		//$request->save();
+		$request->setQueryResponse("Hello World!");
+		$request->save();
 		
 		
-		//$query = GlobalCachedRequestsQuery::create();
-		//$query = $query->filterByQueryResponse("Hello World!");
-		//$query = $query->findOne();
+		$query = GlobalCachedRequestsQuery::create();
+		$query = $query->filterByQueryResponse("Hello World!");
+		$query = $query->findOne();
 				
-		//$query->delete();
-	
+		$query->delete();
+		}
 	
 
 	

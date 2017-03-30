@@ -35,9 +35,27 @@ class RequestExecutor {
 			$noCaching = isset($variables['no-caching']) ? $variables['no-caching'] : false;
 			if(!$noCaching){
 				
+				//If the request type is a rule manipulation type, or a subsribe/unsubscribe to the global cache
+				if(in_array($variables['type'], CacheController::$ruleTypes)){
+					
+					//If this is the global database
+					if(__GLOBAL_DATABASE__){
+						$cacheController = new GlobalCacheController();
+						$response = $cacheController->executeRule($variables);
+						
+					}
+					else if(__NODE_SERVER__){
+						$cacheController = new LocalCacheController();
+						$response = $cacheController->executeRule($variables);
+						
+					}
+					
+					
+					
+				}
 				
 				
-				// Hey cache, have you seen this request?
+				// Hey cache, have you seen this request? - yo andy/natalie, for this you can use the CacheController Functions getCachedRequest(Request $request)
 				// Yes? Thanks!
 				// no? I'll ask my friend the data retriever
 				

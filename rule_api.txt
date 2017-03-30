@@ -11,14 +11,14 @@ globalttl=120		//the global time to live of the requeset, in seconds
 
 match_variables={"type" : "locations", "fish" : "salmon"}	//the variables to match on, as a json object
 
-[optional]
+[local chache only]
 rule_id=7			//the id to insert the rule on, this should only be used by the database webserver
 
 
 Returns:
 {"status" : "success"}
 or
-{"status" : "fail"}
+{"status" : "fail", "errmsg" : "Relevant error message"}
 
 
 Function: Get Rules
@@ -65,7 +65,7 @@ rule_id=7				//the id of an existing rule
 Returns:
 {"status" : "success"}
 or
-{"status" : "fail"}
+{"status" : "fail", "errmsg" : "Relevant error message"}
 
 
 Function: Subscribe
@@ -80,7 +80,7 @@ ip=11.25.1.2		//the ip of the subscriber
 Returns:
 {"status" : "success"}
 or
-{"status" : "fail"}
+{"status" : "fail", "errmsg" : "Relevant error message"}
 
 
 Function: Unsubscribe
@@ -95,7 +95,7 @@ ip=11.25.1.2			//the ip of the unsubscriber
 Returns:
 {"status" : "success"}
 or
-{"status" : "fail"}
+{"status" : "fail", "errmsg" : "Relevant error message"}
 
 
 

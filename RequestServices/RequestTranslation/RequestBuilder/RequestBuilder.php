@@ -15,10 +15,6 @@ class RequestBuilder {
 	
 	protected static $googleApi = 'maps/api/staticmap';
 	
-	protected static $ruleTypes = array (
-			'create_rule', 'get_rules', 'delete_rule', 'subscribe', 'unsubscribe'
-	);
-	
 	/**
 	 * Builds the URL for the REST request from a request object
 	 * 
@@ -65,7 +61,7 @@ class RequestBuilder {
 			$returnRequest->setRequestVariables($googleRequestVars);
 			
 		}
-		else if(in_array($requestType, $this::$ruleTypes)){
+		else if(in_array($requestType, CacheController::$ruleTypes)){
 			$returnRequest = $request;
 		}
 		else {
