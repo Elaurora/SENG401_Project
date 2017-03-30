@@ -6,6 +6,8 @@ abstract class CacheController{
 	
 	
 	
+	
+	
 	/**
 	 * Figures out if the given request exists within the cache
 	 * @param Request $request - the request to check 

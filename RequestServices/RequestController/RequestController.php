@@ -14,12 +14,17 @@ class RequestController {
 	protected $parser = null;
 	protected $builder = null;
 	protected $executor = null;
+	protected $cacheController = null;
 	
 	
 	public function __construct() {
 		$this->parser = new RequestParser();
 		$this->builder = new RequestBuilder();
 		$this->executor = new RequestExecutor();
+		if(__USING_CACHING__){
+			$cacheController = new CacheController();
+		}
+		
 	}
 	
 	/**
@@ -67,7 +72,6 @@ class RequestController {
 		
 		return json_encode($finalResult, JSON_UNESCAPED_UNICODE);
 	}
-
 	
 	
 }

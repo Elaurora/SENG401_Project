@@ -15,6 +15,10 @@ class RequestBuilder {
 	
 	protected static $googleApi = 'maps/api/staticmap';
 	
+	protected static $ruleTypes = array (
+			'create_rule', 'get_rules', 'delete_rule', 'subscribe', 'unsubscribe'
+	);
+	
 	/**
 	 * Builds the URL for the REST request from a request object
 	 * 
@@ -61,6 +65,9 @@ class RequestBuilder {
 			$returnRequest->setRequestVariables($googleRequestVars);
 			
 		}
+		else if(in_array($requestType, $this::$ruleTypes)){
+			$returnRequest = $request;
+		}
 		else {
 			//assume aurora stuff
 			$returnRequest->setApiVersion($request->getApiVersion() . '/');
@@ -68,6 +75,7 @@ class RequestBuilder {
 			$requestVariables = $request->getRequestVariables();
 			$returnRequest->setRequestVariables($requestVariables);
 		}
+		//Add option for rule changing requests, in which case simply make the return request the given request
 	
 		
 			

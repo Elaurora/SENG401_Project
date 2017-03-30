@@ -52,6 +52,7 @@ function global_db() {
 	 * query_id : int
 	 * query_url : string
 	 * query_response : binary dump
+	 * query_time (Unix Timestamp)
 	 * PrimaryKey: {query_id}
 	 * 
 	 * 

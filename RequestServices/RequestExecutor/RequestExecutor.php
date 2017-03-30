@@ -35,6 +35,8 @@ class RequestExecutor {
 			$noCaching = isset($variables['no-caching']) ? $variables['no-caching'] : false;
 			if(!$noCaching){
 				
+				
+				
 				// Hey cache, have you seen this request?
 				// Yes? Thanks!
 				// no? I'll ask my friend the data retriever
