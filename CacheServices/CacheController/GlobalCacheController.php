@@ -16,12 +16,41 @@ class GlobalCacheController extends CacheController{
 	}
 	
 	/**
+	 * Adds the given request to the cache.
+	 * @param unknown $request the request to add to the cache
+	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
+	 */
+	public function cacheRequest(Request $request){
+		
+	}
+	
+	/**
 	 * Creats a new rule in the cache using the given variables
-	 * @param unknown $variables - an array containing the relevant information needed
+	 * @param unknown $variables - an array containing the indicies: 'localttl' , 'globalttl' , 'match_variables'
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
 	 */
 	private function createRule($variables){
+		$response = array();
 		
+		if(!isset($variables['localttl'])){
+			$response['status'] = 'failure';
+			$response['errmsg'] = 'Attempted to create a new rule without specifying a localttl';
+			return $response;
+		}
+		
+		if(!isset($variables['globalttl'])){
+			$response['status'] = 'failure';
+			$response['errmsg'] = 'Attempted to create a new rule without specifying a globalttl';
+			return $response;
+		}
+		
+		if(isset($variables['rule_id'])){
+			$response['status'] = 'failure';
+			$response['errmsh'] = "Attempted to create a rule in a GlobalCache by setting the rule_id, which is not allowed. GlobalCache has autoincrementing rule_id's";
+			return $response;
+		}
+		
+		//Not implemented 
 	}
 	
 	/**
@@ -35,29 +64,35 @@ class GlobalCacheController extends CacheController{
 	
 	/**
 	 * Deletes the rule with the given rule_id from the cache. It will also delete the rule from all subscribed caches
-	 * @param $rule_id_to_delete the rule_id of the rule that is to be deleted
+	 * @param $variables an array containing the index 'rule_id' which indicates which rule is to be deleted
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
 	 */
-	private function deleteRule($rule_id_to_delete){
+	private function deleteRule($variables){
+		$response = array();
 		
+		if(!isset($variables['rule_id'])){
+			$response['status'] = 'failure';
+			$response['errmsg'] = 'Attempted to delete a rule without specifying a rule_id';
+			return $response;
+		}
+		
+		//Not implemented
 	}
 	
 	/**
-	 * Adds the given ip to the list of subscibers to the GlobalCache
+	 * Adds the senders ip to the list of subscibers to the GlobalCache
 	 * Will also add all currently cached rules to the new subscriber
-	 * @param unknown $subscriber_ip - the ip address of the new subscriber
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
 	 */
-	private function subscribe($subscriber_ip){
+	private function subscribe(){
 		
 	}
 	
 	/**
-	 * Removes the given ip from the list of subscibers to the GlobalCache
-	 * @param unknown $subscriber_ip - the ip address to be removed
+	 * Removes the senders ip from the list of subscibers to the GlobalCache
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
 	 */
-	private function unsubscribe($unsubscriber_ip){
+	private function unsubscribe(){
 		
 	}
 	
@@ -76,20 +111,25 @@ class GlobalCacheController extends CacheController{
 		}else{
 			switch($variables['type']){
 				case('create_rule'):
-			
+					$response = $this->createRule($variables);
 					break;
+					
 				case('get_rules'):
-			
+					$response = $this->getAllRules();
 					break;
+					
 				case('delete_rule'):
-			
+					$response = $this->deleteRule($variables);
 					break;
+					
 				case('subscribe'):
-			
+					$response = $this->subscribe();
 					break;
+					
 				case('unsubscribe'):
-			
+					$response = $this->unsubscribe();
 					break;
+					
 				default:
 					$response['status'] = 'failure';
 					$response['errmsg'] = 'Attempted to execute a non supported rule type on the GlobalCache';

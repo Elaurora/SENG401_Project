@@ -16,12 +16,41 @@ class LocalCacheController extends CacheController{
 	}
 	
 	/**
+	 * Adds the given request to the cache.
+	 * @param unknown $request the request to add to the cache
+	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
+	 */
+	public function cacheRequest(Request $request){
+		
+	}
+	
+	/**
 	 * Creats a new rule in the cache using the given variables
-	 * @param unknown $variables - an array containing the relevant information needed
+	 * @param unknown $variables - an array containing the indicies: 'localttl' , 'globalttl' , 'match_variables' and 'rule_id'
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
 	 */
 	private function createRule($variables){
+		$response = array();
 		
+		if(!isset($variables['localttl'])){
+			$response['status'] = 'failure';
+			$response['errmsg'] = 'Attempted to create a new rule without specifying a localttl';
+			return $response;
+		}
+		
+		if(!isset($variables['globalttl'])){
+			$response['status'] = 'failure';
+			$response['errmsg'] = 'Attempted to create a new rule without specifying a globalttl';
+			return $response;
+		}
+		
+		if(!isset($variables['rule_id'])){
+			$response['status'] = 'failure';
+			$response['errmsh'] = "Attempted to create a rule in a LocalCache without specifying the rule_id";
+			return $response;
+		}
+		
+		//Not implemented
 	}
 	
 	/**
@@ -35,11 +64,19 @@ class LocalCacheController extends CacheController{
 	
 	/**
 	 * Deletes the rule with the given rule_id from the cache.
-	 * @param $rule_id_to_delete the rule_id of the rule that is to be deleted
+	 * @param $variables an array containing the index 'rule_id' which indicates which rule is to be deleted
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
 	 */
-	private function deleteRule($rule_id_to_delete){
-	
+	private function deleteRule($variables){
+		$response = array();
+		
+		if(!isset($variables['rule_id'])){
+			$response['status'] = 'failure';
+			$response['errmsg'] = 'Attempted to delete a rule without specifying a rule_id';
+			return $response;
+		}
+		
+		//Not implemented
 	}
 	
 	/**
@@ -57,27 +94,29 @@ class LocalCacheController extends CacheController{
 		}else{
 			switch($variables['type']){
 				case('create_rule'):
+					$this->createRule($variables);
+					break;
 					
-					break;
 				case('get_rules'):
-						
+					$this->getAllRules();
 					break;
+					
 				case('delete_rule'):
-						
+					$this->deleteRule($variables);
 					break;
+					
 				case('subscribe'):
-						
-					break;
 				case('unsubscribe'):
-						
+					$response['status'] = 'failure';
+					$response['errmsg'] = 'You cannot subscribe to or unsubscribe from a local cache';
 					break;
+					
 				default:
 					$response['status'] = 'failure';
 					$response['errmsg'] = 'Attempted to execute a non supported rule type on the LocalCache';
 					break;
 			}
 		}
-		
 		
 		return $response;
 	}
