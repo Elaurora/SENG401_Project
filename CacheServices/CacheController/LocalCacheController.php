@@ -80,48 +80,6 @@ class LocalCacheController extends CacheController{
 	}
 	
 	/**
-	 * Executes the rule given in the 'type' index in the
-	 * @param unknown $variables An array containing the relevant variables for the rule
-	 * @return The result of the rule execution in an array
-	 * @return The array will also contain a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
-	 */
-	public function executeRule($variables){
-		$response = array();
-		
-		if(!isset($response['type'])){
-			$response['status'] = 'failure';
-			$response['errmsg'] = 'Attempted to execute a rule without specifying a type.';
-		}else{
-			switch($variables['type']){
-				case('create_rule'):
-					$this->createRule($variables);
-					break;
-					
-				case('get_rules'):
-					$this->getAllRules();
-					break;
-					
-				case('delete_rule'):
-					$this->deleteRule($variables);
-					break;
-					
-				case('subscribe'):
-				case('unsubscribe'):
-					$response['status'] = 'failure';
-					$response['errmsg'] = 'You cannot subscribe to or unsubscribe from a local cache';
-					break;
-					
-				default:
-					$response['status'] = 'failure';
-					$response['errmsg'] = 'Attempted to execute a non supported rule type on the LocalCache';
-					break;
-			}
-		}
-		
-		return $response;
-	}
-	
-	/**
 	 * Subscribes this cache to the global cache at the given ip address
 	 * @param unknown $globalCache_ip the ip address of the global cache this cache will be subscribing to
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information

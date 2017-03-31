@@ -46,9 +46,29 @@ class GlobalCacheController extends CacheController{
 		
 		if(isset($variables['rule_id'])){
 			$response['status'] = 'failure';
-			$response['errmsh'] = "Attempted to create a rule in a GlobalCache by setting the rule_id, which is not allowed. GlobalCache has autoincrementing rule_id's";
+			$response['errmsg'] = "Attempted to create a rule in a GlobalCache by setting the rule_id, which is not allowed. GlobalCache has autoincrementing rule_id's";
 			return $response;
 		}
+		
+		//This is a list of all the r
+		$MatchVarRuleIDs = array();
+		
+		//First see if there is already a rule associated with the given match_variables, so that i replace it if one exists
+		foreach($variables['match_variables'] as $name => $value){
+			$CMVQ = GlobalCacheMatchVariableQuery::create();
+			$CMVQ = $CMVQ->filterByVariableName($name);
+			$CMVQ = $CMVQ->filterByVariableValue($value);
+			
+			$MatchVarRuleIDs[] = $CMVQ;
+		}
+		
+		
+			
+		$newRule = new \GlobalCacheRule();
+		$newRule->setLocalTtl($variables['localttl']);
+		$newRule->setGlobalTtl($variables['globalttl']);
+	
+		
 		
 		//Not implemented 
 	}
@@ -85,7 +105,16 @@ class GlobalCacheController extends CacheController{
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
 	 */
 	private function subscribe(){
+		$subscriberIP = 0;
 		
+		//Initialize and save the new subscriber into the database
+		$subscriber = new \GlobalSubscriberIp();
+		$subscriber->setSubscriberIp($subscriberIP);
+		$subscriber->save();
+		
+		//Not implemented
+		
+		//need to send all current cache rules to the new subscriber
 	}
 	
 	/**
@@ -93,52 +122,21 @@ class GlobalCacheController extends CacheController{
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
 	 */
 	private function unsubscribe(){
-		
-	}
-	
-	/**
-	 * Executes the rule given in the 'type' index in the
-	 * @param unknown $variables An array containing the relevant variables for the rule
-	 * @return The result of the rule execution in an array
-	 * @return The array will also contain a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
-	 */
-	public function executeRule($variables){
 		$response = array();
 		
-		if(!isset($response['type'])){
-			$response['status'] = 'failure';
-			$response['errmsg'] = 'Attempted to execute a rule without specifying a type.';
-		}else{
-			switch($variables['type']){
-				case('create_rule'):
-					$response = $this->createRule($variables);
-					break;
-					
-				case('get_rules'):
-					$response = $this->getAllRules();
-					break;
-					
-				case('delete_rule'):
-					$response = $this->deleteRule($variables);
-					break;
-					
-				case('subscribe'):
-					$response = $this->subscribe();
-					break;
-					
-				case('unsubscribe'):
-					$response = $this->unsubscribe();
-					break;
-					
-				default:
-					$response['status'] = 'failure';
-					$response['errmsg'] = 'Attempted to execute a non supported rule type on the GlobalCache';
-	 				break;
-			}
-		}
+		$unsubscriberIP = 0;
 		
+		$SubQuery = GlobalSubscriberIpQuery::create();
+		$SubQuery = $SubQuery->filterBySubscriberIp($unsubscriberIP);
 		
-		return $response;
+		$ToBeDeleted = $SubQuery->findOne();
+		
+		$ToBeDeleted->delete();
+		
+		$response['status'] = 'success';
 	}
+	
+	
+	
 	
 }

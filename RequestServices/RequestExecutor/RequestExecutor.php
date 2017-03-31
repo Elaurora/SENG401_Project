@@ -42,16 +42,13 @@ class RequestExecutor {
 					if(__GLOBAL_DATABASE__){
 						$cacheController = new GlobalCacheController();
 						$response = $cacheController->executeRule($variables);
-						
+						return $response;
 					}
 					else if(__NODE_SERVER__){
 						$cacheController = new LocalCacheController();
 						$response = $cacheController->executeRule($variables);
-						
+						return $response;
 					}
-					
-					
-					
 				}
 				
 				

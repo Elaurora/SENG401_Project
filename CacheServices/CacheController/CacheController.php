@@ -57,7 +57,51 @@ abstract class CacheController{
 	 * @return The result of the rule execution in an array
 	 * @return The array will also contain a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
 	 */
-	public abstract function executeRule($variables);
+	public function executeRule($variables){
+		$response = array();
+		
+		if(!isset($response['type'])){
+			$response['status'] = 'failure';
+			$response['errmsg'] = 'Attempted to execute a rule without specifying a type.';
+		}else{
+			switch($variables['type']){
+				case('create_rule'):
+					$response = $this->createRule($variables);
+					break;
+					
+				case('get_rules'):
+					$response = $this->getAllRules();
+					break;
+					
+				case('delete_rule'):
+					$response = $this->deleteRule($variables);
+					break;
+					
+				case('subscribe'):
+					if(__GLOBAL_DATABASE__){
+						$response = $this->subscribe();
+						break;
+					}
+					
+				case('unsubscribe'):
+					if(__GLOBAL_DATABASE__){
+						$response = $this->unsubscribe();
+						break;
+					}
+					$response['status'] = 'failure';
+					$response['errmsg'] = 'You cannot subscribe to or unsubscribe from a local cache';
+					break;
+					
+				default:
+					$response['status'] = 'failure';
+					$response['errmsg'] = 'Attempted to execute a non supported rule type.';
+	 				break;
+			}
+		}
+		
+		
+		return $response;
+	}
 	
 	
 	
