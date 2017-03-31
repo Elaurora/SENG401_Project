@@ -5,9 +5,9 @@
     "autoload": {
     	"classmap": [
     		"vendor/bin/",
-    		"CacheServices/",
-    		"RequestServices/",
-    		"RetrievalServices/"
+    		"./CacheServices/",
+    		"./RequestServices/",
+    		"./RetrievalServices/"
     	]
   	}
 }

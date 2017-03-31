@@ -1,8 +1,10 @@
 <?php
 
-define('__GLOBAL_DATABASE__', true);
+require_once "vendor/autoload.php";
+
+define('__GLOBAL_DATABASE__', false);
 define('__CONFIG_GUI__', false);
-define('__NODE_SERVER__', false);
+define('__NODE_SERVER__', true);
 
 
 /**

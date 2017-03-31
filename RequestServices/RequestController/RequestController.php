@@ -21,10 +21,6 @@ class RequestController {
 		$this->parser = new RequestParser();
 		$this->builder = new RequestBuilder();
 		$this->executor = new RequestExecutor();
-		if(__USING_CACHING__){
-			$cacheController = new CacheController();
-		}
-		
 	}
 	
 	/**
