@@ -12,6 +12,30 @@
 class RequestExecutor {
 	
 	/**
+	 * The data retriever for executing remote queries
+	 * @var RequestDataRetriever $requestDataRetriever
+	 */
+	protected $requestDataRetriever;
+	
+	/**
+	 * The local cache controller
+	 * @var CacheController $localCacheController
+	 */
+	protected $localCacheController;
+	
+	/**
+	 * The global cache controller
+	 * @var CacheController $localCacheController
+	 */
+	protected $globalCacheController;
+	
+	public function __construct() {
+		$this->requestDataRetriever = new RequestDataRetriever();
+		$this->localCacheController = new LocalCacheController();
+		$this->globalCacheController = new GlobalCacheController();
+	}
+	
+	/**
 	 * To be implemented later, perhaps some instance of
 	 * a local cacheController to this RequestServices unit.
 	 * @var CacheController
@@ -21,64 +45,95 @@ class RequestExecutor {
 	/**
 	 * Executes the passed request and assembles a JSON
 	 * object to return.
-	 * @param Request[] $request
-	 * 		The array of request objects to be executed.
+	 * @param Request $request
+	 * 		The request object to be executed.
+	 * @return string
+	 * 		The output string for the service
 	 */
-	public function executeRequest(array $requestGroup) {
+	public function executeRequest($request) {
 		
-		$requestDataRetriever = new RequestDataRetriever();
 		
-		$requestResultObject = array();
-		foreach ($requestGroup as $key=>$request){
-			
-			$variables = $request->getRequestVariables();
-			$noCaching = isset($variables['no-caching']) ? $variables['no-caching'] : false;
-			if(!$noCaching){
-				
-				/*
-				This is commented out since it's treating every request
-				like it's meant to be handled as a cache configuration command??
-				//If the request type is a rule manipulation type, or a subsribe/unsubscribe to the global cache
-				if(in_array($variables['type'], CacheController::$ruleTypes)){
-					
-					//If this is the global database
-					if(__GLOBAL_DATABASE__){
-						$cacheController = new GlobalCacheController();
-						$response = $cacheController->executeRule($variables);
-						return $response;
-					}
-					else if(__NODE_SERVER__){
-						$cacheController = new LocalCacheController();
-						$response = $cacheController->executeRule($variables);
-						return $response;
-					}
-				}
-				*/
-				
-				// Hey cache, have you seen this request? - yo andy/natalie, for this you can use the CacheController Functions getCachedRequest(Request $request)
-				// Yes? Thanks!
-				// no? I'll ask my friend the data retriever
-				$requestResult = $requestDataRetriever->completeRequest($request->__toString());
-				// Pay the love forward by telling your cache about the hot new tip.
-				// $cacheFriend->storeNewEntryEnsemble($request->__toString(), $requestResult);
+
+		$variables = $request->getRequestVariables();
+		$noCaching = isset($variables['no-caching']) ? $variables['no-caching'] : false;
+		
+		
+		if(isset($variables['type']) && in_array($variables['type'], CacheController::$ruleTypes)) {
+			//If this is the global database
+			if(__GLOBAL_DATABASE__){			
+				$requestResultJson = $this->globalCacheController->executeRule($variables);		
+				$requestResult = json_encode($requestResultJson, JSON_UNESCAPED_UNICODE);
 			}
-			else{
-				//let's just keep this between u and me. no need to tell the cache ;)
-				$requestResult = $requestDataRetriever->completeRequest($request->__toString());
-				
+			else if(__NODE_SERVER__){			
+				$requestResultJson = $this->localCacheController->executeRule($variables);
+				$requestResult = json_encode($requestResultJson, JSON_UNESCAPED_UNICODE);
 			}
+		} else if(!$noCaching){
 			
+		
+			// Hey cache, have you seen this request? - yo andy/natalie, for this you can use the CacheController Functions getCachedRequest(Request $request)
+			// Yes? Thanks!
+			// no? I'll ask my friend the data retriever
+			$requestResult = $this->requestDataRetriever->completeRequest($request->__toString());
+			// Pay the love forward by telling your cache about the hot new tip.
+			// $cacheFriend->storeNewEntryEnsemble($request->__toString(), $requestResult);
+		}
+		else{
+			//let's just keep this between u and me. no need to tell the cache ;)
+			$requestResult = $this->requestDataRetriever->completeRequest($request->__toString());
 			
-			// Add that hot mess to the current object
-			$requestResultObject[$key] = $requestResult;
 		}
 		
-		// That was fun. add our special fun tag to cap things off:
-		//$requestResultObject[] = ['Attribution' => 'Powered by Auroras.live'];
 		
-		// To handle receiving images, no longer encode results as json.
-		//return json_encode($requestResultObject);
-		return $requestResultObject;
+		
+		
+		return $this->buildResult($requestResult, $request);
+	}
+	
+	/**
+	 * Processes the return executing the request into the thing that should be echo'd
+	 * @param unknown $rawResult
+	 * @param Request $triggeringRequest
+	 * 		The request that caused this result, may affect the retrn value
+	 */
+	protected function buildResult($rawResult, $triggeringRequest) {
+		
+		
+		$testJson = json_encode($rawResult);
+		
+		if($testJson === false) {
+			header('Content-Type: image/jpeg');
+			return $rawResult;
+		}
+		
+		$resultJson = json_decode($rawResult);
+		
+		header('Content-Type: application/json');
+	
+		if($triggeringRequest->getUrlRoot() == RequestBuilder::$auroraUrlRoot) {
+			
+		
+		
+			$finalResult['result'] = $resultJson;
+		
+			//if the result had a status code, it is probably an arror and should probably be set for our response type
+			if(is_array($finalResult['result']) && isset($finalResult['result']['statusCode'])) {
+				http_response_code($finalResult['result']['statusCode']);
+			}
+			
+			if(is_object($finalResult['result']) && isset($finalResult['result']->statusCode)) {
+				http_response_code($finalResult['result']->statusCode);
+			}
+		
+			$finalResult['attribution'] = "Powered by Auroras.live";
+	
+	
+		} else {
+			$finalResult = $resultJson;
+		}
+		
+		return json_encode($finalResult, JSON_UNESCAPED_UNICODE);
+		
 	}
 	
 }

@@ -35,7 +35,29 @@ abstract class CacheController{
 	 * @param unknown $variables - an array containing the indicies: 'localttl' , 'globalttl' , 'match_variables' and if it is a local cache, a 'rule_id' index.
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information 
 	 */
-	protected abstract function createRule($variables);
+	protected function createRule($variables) {
+		$response = array();
+		
+		if(!isset($variables['localttl'])){
+			$response['status'] = 'failure';
+			$response['errmsg'] = 'Attempted to create a new rule without specifying a localttl';
+			return $response;
+		}
+		
+		if(!isset($variables['globalttl'])){
+			$response['status'] = 'failure';
+			$response['errmsg'] = 'Attempted to create a new rule without specifying a globalttl';
+			return $response;
+		}
+		
+		if(!isset($variables['rule_id'])){
+			$response['status'] = 'failure';
+			$response['errmsh'] = "Attempted to create a rule in a LocalCache without specifying the rule_id";
+			return $response;
+		}
+		
+		return null;
+	}
 	
 	/**
 	 * Gets all rules currently in the cache and returns them
@@ -52,6 +74,19 @@ abstract class CacheController{
 	protected abstract function deleteRule($variables);
 	
 	/**
+	 * Adds the senders ip to the list of subscibers to the GlobalCache
+	 * Will also add all currently cached rules to the new subscriber
+	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
+	 */
+	protected abstract function subscribe();
+	
+	/**
+	 * Removes the senders ip from the list of subscibers to the GlobalCache
+	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
+	 */
+	protected abstract function unsubscribe();
+	
+	/**
 	 * Executes the rule given in the 'type' index in the 
 	 * @param unknown $variables An array containing the relevant variables for the rule
 	 * @return The result of the rule execution in an array
@@ -60,7 +95,7 @@ abstract class CacheController{
 	public function executeRule($variables){
 		$response = array();
 		
-		if(!isset($response['type'])){
+		if(!isset($variables['type'])){
 			$response['status'] = 'failure';
 			$response['errmsg'] = 'Attempted to execute a rule without specifying a type.';
 		}else{
@@ -78,19 +113,12 @@ abstract class CacheController{
 					break;
 					
 				case('subscribe'):
-					if(__GLOBAL_DATABASE__){
-						$response = $this->subscribe();
-						break;
-					}
-					
-				case('unsubscribe'):
-					if(__GLOBAL_DATABASE__){
-						$response = $this->unsubscribe();
-						break;
-					}
-					$response['status'] = 'failure';
-					$response['errmsg'] = 'You cannot subscribe to or unsubscribe from a local cache';
+					$response = $this->subscribe();
 					break;
+					
+				case('unsubscribe'):				
+					$response = $this->unsubscribe();
+					break;	
 					
 				default:
 					$response['status'] = 'failure';

@@ -29,24 +29,10 @@ class GlobalCacheController extends CacheController{
 	 * @param unknown $variables - an array containing the indicies: 'localttl' , 'globalttl' , 'match_variables'
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
 	 */
-	private function createRule($variables){
-		$response = array();
+	protected function createRule($variables){
+		$response = parent::createRule($variables);
 		
-		if(!isset($variables['localttl'])){
-			$response['status'] = 'failure';
-			$response['errmsg'] = 'Attempted to create a new rule without specifying a localttl';
-			return $response;
-		}
-		
-		if(!isset($variables['globalttl'])){
-			$response['status'] = 'failure';
-			$response['errmsg'] = 'Attempted to create a new rule without specifying a globalttl';
-			return $response;
-		}
-		
-		if(isset($variables['rule_id'])){
-			$response['status'] = 'failure';
-			$response['errmsg'] = "Attempted to create a rule in a GlobalCache by setting the rule_id, which is not allowed. GlobalCache has autoincrementing rule_id's";
+		if($response !== null) {
 			return $response;
 		}
 		
@@ -78,7 +64,7 @@ class GlobalCacheController extends CacheController{
 	 * @return An array containing the 'rule_id' , 'localttl' , 'globalttl' and 'match_variables' which is an array containing a variable_value for each 'variable_name'
 	 * @return The array that is returned will also contain a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
 	 */
-	private function getAllRules(){
+	protected function getAllRules(){
 		
 	}
 	
@@ -87,7 +73,7 @@ class GlobalCacheController extends CacheController{
 	 * @param $variables an array containing the index 'rule_id' which indicates which rule is to be deleted
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
 	 */
-	private function deleteRule($variables){
+	protected function deleteRule($variables){
 		$response = array();
 		
 		if(!isset($variables['rule_id'])){
@@ -104,7 +90,7 @@ class GlobalCacheController extends CacheController{
 	 * Will also add all currently cached rules to the new subscriber
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
 	 */
-	private function subscribe(){
+	protected function subscribe(){
 		$subscriberIP = 0;
 		
 		//Initialize and save the new subscriber into the database
@@ -121,7 +107,7 @@ class GlobalCacheController extends CacheController{
 	 * Removes the senders ip from the list of subscibers to the GlobalCache
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
 	 */
-	private function unsubscribe(){
+	protected function unsubscribe(){
 		$response = array();
 		
 		$unsubscriberIP = 0;

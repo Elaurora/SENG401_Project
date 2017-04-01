@@ -40,7 +40,7 @@ class RESTRequestHandler {
 	        
 	
         } catch (Exception $e) {
-        	$response = array("error" => "{$e->getMessage()}");
+        	$response = json_encode(array("error" => "{$e->getMessage()}"));
         }
         
         return $response;

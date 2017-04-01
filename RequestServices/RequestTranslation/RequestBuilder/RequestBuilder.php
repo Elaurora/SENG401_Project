@@ -9,9 +9,9 @@ class RequestBuilder {
 	 * The URL root of the aurora website
 	 * @var string
 	 */
-	protected static $auroraUrlRoot = 'api.auroras.live';
+	public static $auroraUrlRoot = 'api.auroras.live';
 	
-	protected static $googleUrlRoot = 'maps.googleapis.com';
+	public static $googleUrlRoot = 'maps.googleapis.com';
 	
 	protected static $googleApi = 'maps/api/staticmap';
 	
@@ -20,10 +20,10 @@ class RequestBuilder {
 	 * 
 	 * @param Request $request
 	 * 		The request that was sent to this server
-	 * @return Request[]
-	 * 		The set of requests that must be executed to satisfy $request
+	 * @return Request
+	 * 		The request to execute
 	 */
-	public function buildRequestGroup(Request $request) {
+	public function buildRequest(Request $request) {
 		//for now we are only interfacing with auroras.live
 		
 		$returnRequest = new Request();
@@ -75,9 +75,8 @@ class RequestBuilder {
 	
 		
 			
-		$returnGroup = array();
-		$returnGroup[] = $returnRequest;
 		
-		return $returnGroup;
+		
+		return $returnRequest;
 	}
 }
