@@ -35,6 +35,9 @@ class RequestExecutor {
 			$noCaching = isset($variables['no-caching']) ? $variables['no-caching'] : false;
 			if(!$noCaching){
 				
+				/*
+				This is commented out since it's treating every request
+				like it's meant to be handled as a cache configuration command??
 				//If the request type is a rule manipulation type, or a subsribe/unsubscribe to the global cache
 				if(in_array($variables['type'], CacheController::$ruleTypes)){
 					
@@ -50,12 +53,11 @@ class RequestExecutor {
 						return $response;
 					}
 				}
-				
+				*/
 				
 				// Hey cache, have you seen this request? - yo andy/natalie, for this you can use the CacheController Functions getCachedRequest(Request $request)
 				// Yes? Thanks!
 				// no? I'll ask my friend the data retriever
-				
 				$requestResult = $requestDataRetriever->completeRequest($request->__toString());
 				// Pay the love forward by telling your cache about the hot new tip.
 				// $cacheFriend->storeNewEntryEnsemble($request->__toString(), $requestResult);

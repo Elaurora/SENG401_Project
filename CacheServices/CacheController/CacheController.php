@@ -7,7 +7,7 @@ abstract class CacheController{
 	 * An array containing all the different rule types that can be executed on a cache
 	 * @var array
 	 */
-	public static final $ruleTypes = array (
+	public static $ruleTypes = array (
 			'create_rule', 'get_rules', 'delete_rule', 'subscribe', 'unsubscribe'
 	);
 	
@@ -35,21 +35,21 @@ abstract class CacheController{
 	 * @param unknown $variables - an array containing the indicies: 'localttl' , 'globalttl' , 'match_variables' and if it is a local cache, a 'rule_id' index.
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information 
 	 */
-	private abstract function createRule($variables);
+	protected abstract function createRule($variables);
 	
 	/**
 	 * Gets all rules currently in the cache and returns them
 	 * @return An array containing the 'rule_id' , 'localttl' , 'globalttl' and 'match_variables' which is an array containing a variable_value for each 'variable_name'
 	 * @return 
 	 */
-	private abstract function getAllRules();
+	protected abstract function getAllRules();
 	
 	/**
 	 * Deletes the rule with the given rule_id from the cache. If this is the global cache, it will also delete the rule from all subscribed caches
 	 * @param $variables an array containing the index 'rule_id' which indicates which rule is to be deleted
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
 	 */
-	private abstract function deleteRule($variables);
+	protected abstract function deleteRule($variables);
 	
 	/**
 	 * Executes the rule given in the 'type' index in the 
