@@ -6,25 +6,31 @@
 </head>
 <style>
     html {
-        background: #d696bb;
+        background: #dddddd;
     }
     h1 {
         text-align: center;
-        font-family: Garamond;
+        font-family: Arial;
         font-size: 40px;
         font-weight: normal;
+        font-style: italic;
         color: white;
+        text-shadow: #bbbbbb 3px 2px;
     }
     p {
         text-align: center;
         font-family: Arial;
-        color: #d696bb;
     }
-    button {
-        color: #d696bb;
+    table {
+        width: 50%;
+        font-family: Arial;
+        border-collapse: collapse;
+    }
+    th {
+        text-align: left;
     }
 </style>
-<body>
+<body onload="buildHtmlTable('#sampleTable')">
 <h1>Auroras.live | Manage Configuration</h1>
 <div style="background: white; width: 60%; margin-left: 20%; margin-right: 20%; align-content: center; border-radius: 10px">
     <br/>
@@ -33,13 +39,73 @@
         <!-- The absolute most important part of this entire operation!!!!11!!1!2! -->
 
         <img src="res/monkey.gif" title="What even are html forms, anyway?">
-        <p></p>
+        <p>
+            This page is going to have a table for the current rules!<br/>
+        </p>
+            <table id="sampleTable" border="1"></table>
+        <p>
+            Press <i>New Rule</i> to add a new set of <i>times to live</i> (ttl) to this table, press <i>Delete Rule</i>
+            to remove a rule, or press <i>Back</i> to go back to the main page.
+        </p>
+        <button id="newRuleButton">New Rule</button>
+        <button id="deleteRuleButton">Delete Rule</button>
         <button id="backButton">Back</button>
     </div>
     <br/>
 </div>
 </body>
 </html>
+
+<!-- This next part is shamelessly ripped from stackoverflow... -->
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+<script>
+    var exampleJSONList = [
+        { "rule_id": 0, "local_ttl" : 50, "global_ttl": 50 },
+        { "rule_id": 1, "local_ttl" : 50, "global_ttl": 50 },
+        { "rule_id": 2, "local_ttl" : 50, "global_ttl": 50 },
+        { "rule_id": 3, "local_ttl" : 50, "global_ttl": 50 },
+        { "rule_id": 4, "local_ttl" : 50, "global_ttl": 50 }
+    ];
+
+    // Builds the HTML Table out of myList.
+    function buildHtmlTable(selector) {
+        var columns = addAllColumnHeaders(exampleJSONList, selector);
+
+        for (var i = 0; i < exampleJSONList.length; i++) {
+            var row$ = $('<tr/>');
+            for (var colIndex = 0; colIndex < columns.length; colIndex++) {
+                var cellValue = exampleJSONList[i][columns[colIndex]];
+                if (cellValue == null) cellValue = "";
+                row$.append($('<td/>').html(cellValue));
+            }
+            $(selector).append(row$);
+        }
+    }
+
+    // Adds a header row to the table and returns the set of columns.
+    // Need to do union of keys from all records as some records may not contain
+    // all records.
+    function addAllColumnHeaders(myList, selector) {
+        var columnSet = [];
+        var headerTr$ = $('<tr/>');
+
+        for (var i = 0; i < myList.length; i++) {
+            var rowHash = myList[i];
+            for (var key in rowHash) {
+                if ($.inArray(key, columnSet) == -1) {
+                    columnSet.push(key);
+                    headerTr$.append($('<th/>').html(key));
+                }
+            }
+        }
+        $(selector).append(headerTr$);
+
+        return columnSet;
+    }
+</script>
+<!-- TODO: Add the onclicks for the rule buttons here... -->
+
 <script type="text/javascript">
     document.getElementById("backButton").onclick = function () {
         location.href = "CacheConfigurator.html";
