@@ -1,7 +1,5 @@
 <?php
 
-
-use Propel\Runtime\ActiveQuery\Criteria;
 class GlobalCacheController extends CacheController{
 	
 	/**
@@ -127,7 +125,7 @@ class GlobalCacheController extends CacheController{
 	 * Increments the number of misses for the global cache
 	 */
 	protected function incrementCacheMissCounter(){
-		/** Fatal error: Class 'GlobalCacheHitRecordQuery' not found
+		
 		// Query the one Row in this table. if it doesn't exist, create it.
 		$record = GlobalCacheHitRecordQuery::create();
 		$record = $record->filterByRecordId(CacheController::$recordKey);
@@ -146,14 +144,12 @@ class GlobalCacheController extends CacheController{
 		$missCount += 1;
 		$record->setMissCount($missCount);
 		$record->save();
-		*/
 	}
 	
 	/**
 	 * Increments the number of misses for the global cache
 	 */
 	protected function incrementCacheHitCounter(){
-		/** Fatal error: Class 'GlobalCacheHitRecordQuery' not found
 		// Query the one Row in this table. if it doesn't exist, create it.
 		$record = CacheHitRecordQuery::create();
 		$record = $record->filterByRecordId(CacheController::$recordKey);
@@ -172,7 +168,6 @@ class GlobalCacheController extends CacheController{
 		$hitCount += 1;
 		$record->setHitCount($hitCount);
 		$record->save();
-		*/
 	}
 	/**
 	 * Creats a new rule in the cache using the given variables
