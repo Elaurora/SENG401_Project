@@ -52,4 +52,13 @@
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
   </table>
+  <!-- Only record_id == 1 is used -->
+  <table name="global_cache_hit_record" idMethod="native" phpName="GlobalCacheHitRecord">
+    <column name="record_id" phpName="RecordId" type="BIGINT" sqlType="bigint(20) unsigned" primaryKey="true" required="true"/>
+    <column name="hit_count" phpName="HitCount" type="BIGINT" sqlType="bigint(20) unsigned" required="true"/>
+	<column name="miss_count" phpName="MissCount" type="BIGINT" sqlType="bigint(20) unsigned" required="true"/>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
 </database>
