@@ -1,11 +1,14 @@
 <?php
 
+use Propel\Runtime\ActiveQuery\Criteria;
 require_once "vendor/autoload.php";
 require_once "vendor/bin/generated-conf/config.php";
 
-define('__GLOBAL_DATABASE__', false);
+define('__GLOBAL_DATABASE__', true);
 define('__CONFIG_GUI__', false);
-define('__NODE_SERVER__', true);
+define('__NODE_SERVER__', false);
+
+define('__VERBOSE__', true);
 
 
 /**
@@ -13,6 +16,8 @@ define('__NODE_SERVER__', true);
  */
 function node() {
 	
+	if(__VERBOSE__)
+		echo('Running in local db mode<br>');
 	
 	/* scratch test to make sure this thing works a little. - Andy
 	 * feel free 2 erase*/
@@ -34,7 +39,8 @@ function config() {
  */
 function global_db() {
 	
-	node();
+	if(__VERBOSE__)
+		echo('Running in global db mode<br>');
 	
 	/*
 	 * DB Schema
@@ -67,34 +73,93 @@ function global_db() {
 	 * 
 	 */
 	
-	if(false){
-		$cacheType = 'global';
-	
-		$request = new \CachedRequests();
+	//This is just test code
+	if(true){
 		
-		$request->setQueryResponse("Hello World!");
-		$request->setQueryTime(300);
-		$request->save();
+		try{
+			
+			$cacheType = 'global';
 		
-	
-		$query = CachedRequestsQuery::create();
-		$query = $query->filterByQueryResponse("Hello World!");
-		$query = $query->findOne();
-		
-		$query->delete();
-		
-		$request = new \GlobalCachedRequests();
-		
-		$request->setQueryResponse("Hello World!");
-		$request->save();
-		
-		
-		$query = GlobalCachedRequestsQuery::create();
-		$query = $query->filterByQueryResponse("Hello World!");
-		$query = $query->findOne();
+			$request1 = new \CachedRequest();
+			
+			$request1->setQueryResponse("Hello World!");
+			$request1->setQueryTime(300);
+			
+			$request1->save();
+			
+			$request2 = new \CachedRequest();
+			
+			$request2->setQueryResponse("OH BOI");
+			$request2->setQueryTime(320);
+			
+			$request2->save();
+			
+			
+			
+			
+			if(__VERBOSE__)
+				echo('Success saving rows<br>');
+			
+			$query = CachedRequestQuery::create();
+			$findOneResult = $query->findOne();
+			
+			echo('FindOneResult='.$findOneResult.'<br>');
+			
+			$qid = $findOneResult->getQueryId();
+			
+			$query->filterByQueryId($qid, Criteria::EQUAL);
+			
+			$query->delete();
+			
+			$query = CachedRequestQuery::create();
+			$findOneResult = $query->findOne();
 				
-		$query->delete();
-		
+			echo('FindOneResult='.$findOneResult.'<br>');
+				
+			$qid = $findOneResult->getQueryId();
+				
+			$query->filterByQueryId($qid, Criteria::EQUAL);
+				
+			$query->delete();
+			
+			
+			$findOneResult = $query->findOne();
+			
+			//echo('FindOneResult='.$findOneResult.'<br>');
+			
+			//$qid = $findOneResult->getQueryId();
+			
+			//$findOneResult->delete();
+			
+			//$query->filterByQueryId($qid, Criteria::NOT_EQUAL);
+			
+			//$findOneResult = $query->findOne();
+			
+			
+			if($findOneResult === null)
+				echo('Thank FUCKING god its null<br>');
+			
+			if(__VERBOSE__)
+				echo('Made it to the end<br>');
+			
+			//$request = new \GlobalCachedRequests();
+			
+			//$request->setQueryResponse("Hello World!");
+			//$request->save();
+			
+			
+			//$query = GlobalCachedRequestsQuery::create();
+			//$query = $query->filterByQueryResponse("Hello World!");
+			//$query = $query->findOne();
+					
+			//$query->delete();
+			
+		}catch (Exception $e) {
+			if(__VERBOSE__)
+				echo('Exception Caught<br>');
+			echo($e->getLine().'<br>'.$e->getMessage().'<br>'.$e->getTrace().'<br>');
+        	$response = json_encode(array("error" => "{$e->getMessage()}"));
+        }
 		
 	}
 }

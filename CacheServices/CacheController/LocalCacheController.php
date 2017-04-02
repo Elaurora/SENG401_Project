@@ -40,32 +40,6 @@ class LocalCacheController extends CacheController{
 	}
 	
 	/**
-	 * Gets all rules currently in the cache and returns them
-	 * @return An array containing the 'rule_id' , 'localttl' , 'globalttl' and 'match_variables' which is an array containing a variable_value for each 'variable_name'
-	 * @return The array that is returned will also contain a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
-	 */
-	protected function getAllRules(){
-	
-	}
-	
-	/**
-	 * Deletes the rule with the given rule_id from the cache.
-	 * @param $variables an array containing the index 'rule_id' which indicates which rule is to be deleted
-	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
-	 */
-	protected function deleteRule($variables){
-		$response = array();
-		
-		if(!isset($variables['rule_id'])){
-			$response['status'] = 'failure';
-			$response['errmsg'] = 'Attempted to delete a rule without specifying a rule_id';
-			return $response;
-		}
-		
-		//Not implemented
-	}
-	
-	/**
 	 * Adds the senders ip to the list of subscibers to the GlobalCache
 	 * Will also add all currently cached rules to the new subscriber
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information

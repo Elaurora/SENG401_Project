@@ -64,14 +64,125 @@ abstract class CacheController{
 	 * @return An array containing the 'rule_id' , 'localttl' , 'globalttl' and 'match_variables' which is an array containing a variable_value for each 'variable_name'
 	 * @return 
 	 */
-	protected abstract function getAllRules();
+	protected abstract function getAllRules(){
+		$response = array();
+		
+		$response['rules'] = array();
+		
+		if(__NODE_SERVER__){
+			$ruleQuery = \CacheRuleQuery::create();
+		}else if(__GLOBAL_DATABASE__){
+			$ruleQuery = \GlobalCacheRuleQuery::create();
+		}
+		
+		$ruleQueryFindOneResult = $ruleQuery->findOne();
+		
+		while($ruleQueryFindOneResult !== null){
+		
+			$rule_id = $ruleQueryFindOneResult->getRuleId();
+		
+			$response['rules'][$rule_id] = array();
+		
+			$response['rules'][$rule_id]['local_ttl'] = $ruleQueryFindOneResult->getLocalTtl();
+			$response['rules'][$rule_id]['global_ttl'] = $ruleQueryFindOneResult->getGlobalTtl();
+		
+			//Now get all of the match variables associated with this rule
+			if(__NODE_SERVER__){
+				$matchVarsQuery = \CacheMatchVariableQuery::create();
+			} else if(__GLOBAL_DATABASE__){
+				$matchVarsQuery = \GlobalCacheMatchVariableQuery::create();
+			}
+			
+			$matchVarsQuery->filterByRuleId($rule_id, Criteria::EQUAL);
+		
+			$matchVarsQueryFindOneResult = $matchVarsQuery->findOne();
+		
+			if($matchVarsQueryFindOneResult !== null)
+				$response['rules'][$rule_id]['match_variables'] = array();
+					
+				while($matchVarsQueryFindOneResult !== null){
+		
+					$variableName = $matchVarsQueryFindOneResult->getVariableName();
+					$variableValue = $matchVarsQueryFindOneResult->getVariableValue();
+		
+					$newMatchVarsEntry = array();
+					$newMatchVarsEntry['variable_name'] = $variableName;
+					$newMatchVarsEntry['variable_value'] = $variableValue;
+		
+					$response['rules'][$rule_id]['match_variables'][] = $newMatchVarsEntry;
+		
+					$matchVarsQuery->filterByVariableName($variableName, Criteria::NOT_EQUAL);
+		
+					$matchVarsQueryFindOneResult = $matchVarsQuery->findOne();
+				}
+					
+				$ruleQuery->filterByRuleId($rule_id, Criteria::EQUAL);
+					
+				$ruleQueryFindOneResult = $ruleQuery->findOne();
+		}
+		
+		$response['status'] = 'success';
+		
+		return $response;
+		
+		//Implemented but not tested
+	}
 	
 	/**
 	 * Deletes the rule with the given rule_id from the cache. If this is the global cache, it will also delete the rule from all subscribed caches
 	 * @param $variables an array containing the index 'rule_id' which indicates which rule is to be deleted
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
 	 */
-	protected abstract function deleteRule($variables);
+	protected function deleteRule($variables){
+		$response = array();
+		
+		if(!isset($variables['rule_id'])){
+			$response['status'] = 'failure';
+			$response['errmsg'] = 'Attempted to delete a rule without specifying a rule_id';
+			return $response;
+		}
+		
+		if(__NODE_SERVER__){
+			$cacheRuleQuery = \CacheRuleQuery::create();
+		}else if(__GLOBAL_DATABASE__){
+			$cacheRuleQuery = \GlobalCacheRuleQuery::create();
+		}
+		
+		$cacheRuleQuery->filterByRuleId($variables['rule_id'], Criteria::EQUAL);
+		
+		$findOneResult = $cacheRuleQuery->findOne();
+		
+		if($findOneResult === null){
+			$response['status'] = 'failure';
+			$response['errmsg'] = 'Attempted to delete a rule that did not exist in the database';
+			return $response;
+		}
+		
+		$cacheRuleQuery->delete();
+		
+		//Now i need to delete all match variables with that rule id
+		if(__NODE_SERVER__){
+			$cacheMatchVarsQuery = \CacheMatchVariableQuery::create();
+		}else if(__GLOBAL_DATABASE__){
+			$cacheMatchVarsQuery = \GlobalCacheMatchVariableQuery::create();
+		}
+		
+		$cacheMatchVarsQuery->filterByRuleId($variables['rule_id'], Criteria::EQUAL);
+		
+		$findOneResult = $cacheMatchVarsQuery->findOne();
+		
+		while($findOneResult !== null){
+			$cacheMatchVarsQuery->delete();
+			$cacheMatchVarsQuery->filterByVariableName($findOneResult->getVariableName(), Criteria::NOT_EQUAL);
+			$findOneResult = $cacheMatchVarsQuery->findOne();
+		}
+		
+		$response['status'] = 'success';
+		
+		//Implemented but not tested
+		
+		return $response;
+	}
 	
 	/**
 	 * Adds the senders ip to the list of subscibers to the GlobalCache
