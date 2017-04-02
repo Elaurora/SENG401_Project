@@ -30,6 +30,8 @@ class RequestDataRetriever {
         // close curl resource to free up system resources 
         curl_close($ch); 
         
+        return file_get_contents($url);
+        
 		return $output;
 	}
 }

@@ -70,13 +70,23 @@ class RequestExecutor {
 			}
 		} else if(!$noCaching){
 			
-		
-			// Hey cache, have you seen this request? - yo andy/natalie, for this you can use the CacheController Functions getCachedRequest(Request $request)
-			// Yes? Thanks!
-			// no? I'll ask my friend the data retriever
-			$requestResult = $this->requestDataRetriever->completeRequest($request->__toString());
-			// Pay the love forward by telling your cache about the hot new tip.
-			// $cacheFriend->storeNewEntryEnsemble($request->__toString(), $requestResult);
+			$requestResult = $this->localCacheController->getCachedRequest($request);
+			
+			if ($requestResult == false){
+				// Not found in local cache, attempt retrieval from global cache
+				$requestResult = $this->globalCacheController->getCachedRequest($request);
+				
+				if ($requestResult != false){
+					// Request found in global cache. update local cache and return the request.
+					$this->localCacheController->cacheRequest($request, $requestResult);
+				}
+				else {
+					// Request not found in global cache. Execute new request and update both caches.
+					$requestResult = $this->requestDataRetriever->completeRequest($request->__toString());
+					$this->localCacheController->cacheRequest($request, $requestResult);
+					$this->globalCacheController->cacheRequest($request, $requestResult);
+				}
+			}
 		}
 		else{
 			//let's just keep this between u and me. no need to tell the cache ;)

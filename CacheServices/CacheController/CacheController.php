@@ -11,7 +11,11 @@ abstract class CacheController{
 			'create_rule', 'get_rules', 'delete_rule', 'subscribe', 'unsubscribe'
 	);
 	
-	
+	/**
+	 * Default key for the single row in the cache_hit_record table
+	 * @var integer
+	 */
+	protected static $recordKey = 1;
 	
 	/**
 	 * Figures out if the given request exists within the cache, and returns it if does exist and has not expired.
@@ -26,9 +30,20 @@ abstract class CacheController{
 	/**
 	 * Adds the given request to the cache.
 	 * @param unknown $request the request to add to the cache
+	 * @param string $response the response of the given request to be cached.
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
 	 */
-	public abstract function cacheRequest(Request $request);
+	public abstract function cacheRequest(Request $request, $response);
+	
+	/**
+	 * Increments the number of misses for the cache
+	 */
+	protected abstract function incrementCacheMissCounter();
+	
+	/**
+	 * Increments the number of misses for the cache
+	 */
+	protected abstract function incrementCacheHitCounter();
 	
 	/**
 	 * Creats a new rule in the cache using the given variables
@@ -64,7 +79,7 @@ abstract class CacheController{
 	 * @return An array containing the 'rule_id' , 'localttl' , 'globalttl' and 'match_variables' which is an array containing a variable_value for each 'variable_name'
 	 * @return 
 	 */
-	protected abstract function getAllRules(){
+	protected function getAllRules(){
 		$response = array();
 		
 		$response['rules'] = array();
