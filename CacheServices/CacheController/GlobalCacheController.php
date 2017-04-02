@@ -75,7 +75,7 @@ class GlobalCacheController extends CacheController{
 				if($ruleToDelete !== null){
 					$ruleToDelete = array();
 					$ruleToDelete['rule_id'] = $ruleID;
-					$this::deleteRule($ruleToDelete);
+					//TODO:EDIT THIS RULE INSTEAD OF DELETE
 					break;
 				}
 			}

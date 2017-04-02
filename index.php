@@ -137,7 +137,7 @@ function global_db() {
 			
 			
 			if($findOneResult === null)
-				echo('Thank FUCKING god its null<br>');
+				echo('Is null<br>');
 			
 			if(__VERBOSE__)
 				echo('Made it to the end<br>');

@@ -75,57 +75,40 @@ abstract class CacheController{
 			$ruleQuery = \GlobalCacheRuleQuery::create();
 		}
 		
-		$ruleQueryFindOneResult = $ruleQuery->findOne();
+		$allRules = $ruleQuery->find();
 		
-		while($ruleQueryFindOneResult !== null){
-		
-			$rule_id = $ruleQueryFindOneResult->getRuleId();
-		
-			$response['rules'][$rule_id] = array();
-		
-			$response['rules'][$rule_id]['local_ttl'] = $ruleQueryFindOneResult->getLocalTtl();
-			$response['rules'][$rule_id]['global_ttl'] = $ruleQueryFindOneResult->getGlobalTtl();
-		
-			//Now get all of the match variables associated with this rule
-			if(__NODE_SERVER__){
-				$matchVarsQuery = \CacheMatchVariableQuery::create();
-			} else if(__GLOBAL_DATABASE__){
-				$matchVarsQuery = \GlobalCacheMatchVariableQuery::create();
-			}
-			
-			$matchVarsQuery->filterByRuleId($rule_id, Criteria::EQUAL);
-		
-			$matchVarsQueryFindOneResult = $matchVarsQuery->findOne();
-		
-			if($matchVarsQueryFindOneResult !== null)
-				$response['rules'][$rule_id]['match_variables'] = array();
-					
-				while($matchVarsQueryFindOneResult !== null){
-		
-					$variableName = $matchVarsQueryFindOneResult->getVariableName();
-					$variableValue = $matchVarsQueryFindOneResult->getVariableValue();
-		
-					$newMatchVarsEntry = array();
-					$newMatchVarsEntry['variable_name'] = $variableName;
-					$newMatchVarsEntry['variable_value'] = $variableValue;
-		
-					$response['rules'][$rule_id]['match_variables'][] = $newMatchVarsEntry;
-		
-					$matchVarsQuery->filterByVariableName($variableName, Criteria::NOT_EQUAL);
-		
-					$matchVarsQueryFindOneResult = $matchVarsQuery->findOne();
-				}
-					
-				$ruleQuery->filterByRuleId($rule_id, Criteria::EQUAL);
-					
-				$ruleQueryFindOneResult = $ruleQuery->findOne();
+		if(__NODE_SERVER__){
+			$matchVarsQuery = \CacheMatchVariableQuery::create();
+		} else if(__GLOBAL_DATABASE__){
+			$matchVarsQuery = \GlobalCacheMatchVariableQuery::create();
 		}
 		
+		$allMatchVars = $matchVarsQuery->find();
+		
+		foreach($allRules as $rule){
+			$rule_id = $rule->getRuleId();
+			$response['rules'][$rule_id] = array();
+			
+			$response['rules'][$rule_id]['local_ttl'] = $rule->getLocalTtl();
+			$response['rules'][$rule_id]['global_ttl'] = $rule->getGlobalTtl();
+			
+			foreach($allMatchVars as $matchVar){
+				if($matchVar->getRuleId()){
+					if(!isset($response['rules'][$rule_id]['match_variables']))
+						$response['rules'][$rule_id]['match_variables'] = array();
+					
+					$valuesToAdd = array();
+					
+					$valuesToAdd['variable_name'] = $matchVar->getVariableName();
+					$valuesToAdd['variable_value'] = $matchVar->getVariableValue();
+					
+					$response['rules'][$rule_id]['match_variables'][] = $valuesToAdd;
+				}
+			}
+		}
 		$response['status'] = 'success';
 		
 		return $response;
-		
-		//Implemented but not tested
 	}
 	
 	/**
@@ -168,14 +151,7 @@ abstract class CacheController{
 		}
 		
 		$cacheMatchVarsQuery->filterByRuleId($variables['rule_id'], Criteria::EQUAL);
-		
-		$findOneResult = $cacheMatchVarsQuery->findOne();
-		
-		while($findOneResult !== null){
-			$cacheMatchVarsQuery->delete();
-			$cacheMatchVarsQuery->filterByVariableName($findOneResult->getVariableName(), Criteria::NOT_EQUAL);
-			$findOneResult = $cacheMatchVarsQuery->findOne();
-		}
+		$cacheMatchVarsQuery->deleteAll();
 		
 		$response['status'] = 'success';
 		
