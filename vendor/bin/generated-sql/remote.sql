@@ -81,5 +81,19 @@ CREATE TABLE `global_subscriber_ips`
     PRIMARY KEY (`subscriber_id`)
 ) ENGINE=InnoDB;
 
+-- ---------------------------------------------------------------------
+-- global_cache_hit_record
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `global_cache_hit_record`;
+
+CREATE TABLE `global_cache_hit_record`
+(
+    `record_id` bigint(20) unsigned NOT NULL,
+    `hit_count` bigint(20) unsigned NOT NULL,
+    `miss_count` bigint(20) unsigned NOT NULL,
+    PRIMARY KEY (`record_id`)
+) ENGINE=InnoDB;
+
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;

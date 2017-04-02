@@ -93,5 +93,15 @@ Returns:
 or
 {"status" : "fail", "errmsg" : "Relevant error message"}
 
+Function: Clear Cache
+This function empties all caches
+
+Parameters:
+type=clear_cache		//defines the request type
+
+Returns
+{"status" : "success"}
+or
+{"status" : "fail", "errmsg" : "Relevant error message"} 	
 
 
