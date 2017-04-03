@@ -7,7 +7,7 @@ class LocalCacheController extends CacheController{
 	 * Last resort default Ttl for caches. 60 seconds.
 	 * @var integer
 	 */
-	public static $defaultTtl = 60;
+	public static $defaultTtl = 4;
 	
 	/**
 	 * Figures out if the given request exists within the cache, and returns it if does exist and has not expired.
@@ -127,12 +127,12 @@ class LocalCacheController extends CacheController{
 	 * Increments the number of misses for the local cache
 	 */
 	protected function incrementCacheMissCounter() {
-		/** Fatal error: Class 'CacheHitRecordQuery' not found
 		// Query the one Row in this table. if it doesn't exist, create it.
 		$record = CacheHitRecordQuery::create();
 		$record = $record->filterByRecordId(CacheController::$recordKey);
 		$record = $record->findOne();
-		if(!isset($query)){
+		
+		if(!isset($record)){
 			// create dat new entry
 			$newRecord = new \CacheHitRecord();
 			$newRecord->setPrimaryKey(CacheController::$recordKey);
@@ -140,25 +140,24 @@ class LocalCacheController extends CacheController{
 			$newRecord->setHitCount(0);
 			$newRecord->save();
 		}
-		
-		// Otherwise, update the existing row.
-		$missCount = $record->getMissCount();
-		$missCount += 1;
-		$record->setMissCount($missCount);
-		$record->save();
-		*/
+		else{
+			// Otherwise, update the existing row.
+			$missCount = $record->getMissCount();
+			$missCount += 1;
+			$record->setMissCount($missCount);
+			$record->save();
+		}
 	}
 	
 	/**
 	 * Increments the number of misses for the local cache
 	 */
 	protected function incrementCacheHitCounter(){
-		/** Fatal error: Class 'CacheHitRecordQuery' not found
 		// Query the one Row in this table. if it doesn't exist, create it.
 		$record = CacheHitRecordQuery::create();
 		$record = $record->filterByRecordId(CacheController::$recordKey);
 		$record = $record->findOne();
-		if(!isset($query)){
+		if(!isset($record)){
 			// create dat new entry
 			$newRecord = new \CacheHitRecord();
 			$newRecord->setPrimaryKey(CacheController::$recordKey);
@@ -166,13 +165,13 @@ class LocalCacheController extends CacheController{
 			$newRecord->setHitCount(1);
 			$newRecord->save();
 		}
-		
-		// Otherwise, update the existing row.
-		$hitCount = $record->getHitCount();
-		$hitCount += 1;
-		$record->setHitCount($hitCount);
-		$record->save();
-		*/
+		else{
+			// Otherwise, update the existing row.
+			$hitCount = $record->getHitCount();
+			$hitCount += 1;
+			$record->setHitCount($hitCount);
+			$record->save();
+		}
 	}
 	
 	/**
