@@ -84,7 +84,7 @@ class GlobalCacheController extends CacheController{
 		if($query->getQueryTime() + $ttl > mktime()){
 			//if it is, return the query_response
 			$this->incrementCacheHitCounter();
-			return $query->getQueryResponse();
+			return hex2bin($query->getQueryResponse());
 		}
 		else{
 			//if it isn't, delete the cached request, return false
@@ -109,7 +109,7 @@ class GlobalCacheController extends CacheController{
 		$storedRequest = new \GlobalCachedRequest();
 		$storedRequest->setQueryUrlRoot($request->__toString());
 		$storedRequest->setQueryTime(mktime());
-		$storedRequest->setQueryResponse($response);
+		$storedRequest->setQueryResponse(bin2hex($response));
 		
 		foreach ($request->getRequestVariables() as $key => $value){
 			$getVars = new \GlobalGetVariable();
