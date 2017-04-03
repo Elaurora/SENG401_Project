@@ -18,7 +18,8 @@
         text-shadow: #bbbbbb 3px 2px;
     }
     p {
-        text-align: center;
+        width: 50%;
+        text-align: justify;
         font-family: Arial;
     }
     table {
@@ -30,7 +31,7 @@
         text-align: left;
     }
 </style>
-<body onload="buildHtmlTable('#sampleTable')">
+<body onload="buildRuleTable('#sampleLocalTable'); buildVarTable('#sampleMatchVarTable')">
 <h1>Auroras.live | Manage Configuration</h1>
 <div style="background: white; width: 60%; margin-left: 20%; margin-right: 20%; align-content: center; border-radius: 10px">
     <br/>
@@ -40,16 +41,132 @@
 
         <img src="res/monkey.gif" title="What even are html forms, anyway?">
         <p>
-            This page is going to have a table for the current rules!<br/>
         </p>
-            <table id="sampleTable" border="1"></table>
+        <div style="width: 50%; font-family: Arial; font-weight: bold">
+            Local Cache Rules
+        </div>
+        <table id="sampleLocalTable" border="1"></table>
+        <br/>
+        <button id="newCacheRuleButton">New Cache Rule</button>
+        <button id="deleteCacheRuleButton">Delete Cache Rule</button>
+        <br/>
+        <br/>
+        <div style="width: 50%; font-family: Arial; font-weight: bold">
+            Variable Rules
+        </div>
+        <table id="sampleMatchVarTable" border="1"></table>
+        <br/>
+        <button id="newVarRuleButton">New Variable Rule</button>
+        <button id="deleteVarRuleButton">Delete Variable Rule</button>
+        <br/>
         <p>
-            Press <i>New Rule</i> to add a new rule to this table,<br/>press <i>Delete Rule</i>
-            to remove a rule, or press <i>Back</i> to go back to the main page.
+            Above are all the current caching rules for this node server! Press <i>New ___ Rule</i>
+            to add a new rule to a table, press <i>Delete ___ Rule</i> to delete a rule, or press
+            <i>Back</i> to go back to the main page.
         </p>
-        <button id="newRuleButton">New Rule</button>
-        <button id="deleteRuleButton">Delete Rule</button>
         <button id="backButton">Back</button>
+
+        <!-- Form for "New Cache Rule" -->
+
+        <div id="newCacheRuleFormParent" style="display: none; position: fixed; width: 100%; height: 100%; top: 0; left: 0; background-color: rgba(0, 0, 0, 0.5)">
+            <div id="newCacheRuleForm" style="position: absolute; left: 40%; top: 17%; opacity: 1.0">
+                <form style="background: white; max-width: 300px; min-width: 250px; padding: 15px; border: 1px solid black; border-radius: 10px; opacity: 1">
+                    <p style="width: 100%; margin-left: 10%">
+                        <b>New Cache Rule</b>
+                        <br/>
+                        <br/>
+                        rule_id:<br/>
+                        <input id="ncrf_rule_id" name="rule_id" type="text">
+                        <br/>
+                        local_ttl:<br/>
+                        <input id="ncrf_local_ttl" name="local_ttl" type="text">
+                        <br/>
+                        global_ttl:<br/>
+                        <input id="ncrf_global_ttl" name="global_ttl" type="text">
+                        <br/>
+                        <br/>
+                        <br/>
+                        <button id="submitNewCacheRuleForm">Submit</button>
+                        <button id="cancelNewCacheRuleForm">Cancel</button>
+                    </p>
+                </form>
+            </div>
+        </div>
+
+        <!-- Form for "Delete Cache Rule" -->
+
+        <div id="deleteCacheRuleFormParent" style="display: none; position: fixed; width: 100%; height: 100%; top: 0; left: 0; background-color: rgba(0, 0, 0, 0.5)">
+            <div id="deleteCacheRuleForm" style="position: absolute; left: 40%; top: 17%; opacity: 1.0">
+                <form style="background: white; max-width: 300px; min-width: 250px; padding: 15px; border: 1px solid black; border-radius: 10px; opacity: 1">
+                    <p style="width: 100%; margin-left: 10%">
+                        <b>Delete Cache Rule</b>
+                        <br/>
+                        <br/>
+                        rule_id:<br/>
+                        <input id="dcrf_rule_id" name="rule_id" type="text">
+                        <br/>
+                        <br/>
+                        <br/>
+                        <button id="submitDeleteCacheRuleForm">Submit</button>
+                        <button id="cancelDeleteCacheRuleForm">Cancel</button>
+                    </p>
+                </form>
+            </div>
+        </div>
+
+        <!-- Form for "New Var Rule" -->
+
+        <div id="newVarRuleFormParent" style="display: none; position: fixed; width: 100%; height: 100%; top: 0; left: 0; background-color: rgba(0, 0, 0, 0.5)">
+            <div id="newVarRuleForm" style="position: absolute; left: 40%; top: 17%; opacity: 1.0">
+                <form style="background: white; max-width: 300px; min-width: 250px; padding: 15px; border: 1px solid black; border-radius: 10px; opacity: 1">
+                    <p style="width: 100%; margin-left: 10%">
+                        <b>New Variable Rule</b>
+                        <br/>
+                        <br/>
+                        rule_id:<br/>
+                        <input id="nvrf_rule_id" name="rule_id" type="text">
+                        <br/>
+                        var_type:<br/>
+                        <input id="nvrf_var_type" name="var_type" type="text">
+                        <br/>
+                        var_value:<br/>
+                        <input id="nvrf_var_value" name="var_value" type="text">
+                        <br/>
+                        <br/>
+                        <br/>
+                        <button id="submitNewVarRuleForm">Submit</button>
+                        <button id="cancelNewVarRuleForm">Cancel</button>
+                    </p>
+                </form>
+            </div>
+        </div>
+
+        <!-- Form for "Delete Var Rule" -->
+
+        <div id="deleteVarRuleFormParent" style="display: none; position: fixed; width: 100%; height: 100%; top: 0; left: 0; background-color: rgba(0, 0, 0, 0.5)">
+            <div id="deleteVarRuleForm" style="position: absolute; left: 40%; top: 17%; opacity: 1.0">
+                <form style="background: white; max-width: 300px; min-width: 250px; padding: 15px; border: 1px solid black; border-radius: 10px; opacity: 1">
+                    <p style="width: 100%; margin-left: 10%">
+                        <b>Delete Variable Rule</b>
+                        <br/>
+                        <br/>
+                        rule_id:<br/>
+                        <input id="dvrf_rule_id" name="rule_id" type="text">
+                        <br/>
+                        var_type:<br/>
+                        <input id="dvrf_var_type" name="var_type" type="text">
+                        <br/>
+                        var_value:<br/>
+                        <input id="dvrf_var_value" name="var_value" type="text">
+                        <br/>
+                        <br/>
+                        <br/>
+                        <button id="submitNewVarRuleForm">Submit</button>
+                        <button id="cancelNewVarRuleForm">Cancel</button>
+                    </p>
+                </form>
+            </div>
+        </div>
     </div>
     <br/>
 </div>
@@ -58,10 +175,9 @@
 
 <!-- This next part is shamelessly ripped from stackoverflow... -->
 <!-- This is ultimately only here to give a better idea of what this page should look like. -->
-
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
 <script>
-    var exampleJSONList = [
+    var cacheRulesList = [
         { "rule_id": 0, "local_ttl" : 50, "global_ttl": 50 },
         { "rule_id": 1, "local_ttl" : 50, "global_ttl": 50 },
         { "rule_id": 2, "local_ttl" : 50, "global_ttl": 50 },
@@ -69,14 +185,21 @@
         { "rule_id": 4, "local_ttl" : 50, "global_ttl": 50 }
     ];
 
-    // Builds the HTML Table out of myList.
-    function buildHtmlTable(selector) {
-        var columns = addAllColumnHeaders(exampleJSONList, selector);
+    var matchVarRulesList = [
+        { "rule_id": 0, "var_type" : "locations", "var_value": "yellowknife" },
+        { "rule_id": 1, "var_type" : "locations", "var_value": "yellowknife" },
+        { "rule_id": 2, "var_type" : "locations", "var_value": "yellowknife" },
+        { "rule_id": 3, "var_type" : "locations", "var_value": "yellowknife" },
+        { "rule_id": 4, "var_type" : "locations", "var_value": "yellowknife" }
+    ];
 
-        for (var i = 0; i < exampleJSONList.length; i++) {
+    function buildRuleTable(selector) {
+        var columns = addAllColumnHeaders(cacheRulesList, selector);
+
+        for (var i = 0; i < cacheRulesList.length; i++) {
             var row$ = $('<tr/>');
             for (var colIndex = 0; colIndex < columns.length; colIndex++) {
-                var cellValue = exampleJSONList[i][columns[colIndex]];
+                var cellValue = cacheRulesList[i][columns[colIndex]];
                 if (cellValue == null) cellValue = "";
                 row$.append($('<td/>').html(cellValue));
             }
@@ -84,9 +207,22 @@
         }
     }
 
-    // Adds a header row to the table and returns the set of columns.
-    // Need to do union of keys from all records as some records may not contain
-    // all records.
+    <!-- Code reuse? What the hell is that? -->
+
+    function buildVarTable(selector) {
+        var columns = addAllColumnHeaders(matchVarRulesList, selector);
+
+        for (var i = 0; i < matchVarRulesList.length; i++) {
+            var row$ = $('<tr/>');
+            for (var colIndex = 0; colIndex < columns.length; colIndex++) {
+                var cellValue = matchVarRulesList[i][columns[colIndex]];
+                if (cellValue == null) cellValue = "";
+                row$.append($('<td/>').html(cellValue));
+            }
+            $(selector).append(row$);
+        }
+    }
+
     function addAllColumnHeaders(myList, selector) {
         var columnSet = [];
         var headerTr$ = $('<tr/>');
@@ -104,10 +240,65 @@
 
         return columnSet;
     }
-</script>
-<!-- TODO: Add the onclicks for the rule buttons here... -->
 
-<script type="text/javascript">
+    <!-- For "New Cache Rule"... -->
+
+    document.getElementById("newCacheRuleButton").onclick = function () {
+        document.getElementById('newCacheRuleFormParent').style.display = "block";
+    };
+
+    document.getElementById("submitNewCacheRuleForm").onclick = function () {
+        document.getElementById('newCacheRuleFormParent').style.display = "none";
+    };
+
+    document.getElementById("cancelNewCacheRuleForm").onclick = function () {
+        document.getElementById('newCacheRuleFormParent').style.display = "none";
+    };
+
+    <!-- For "Delete Cache Rule"... -->
+
+    document.getElementById("deleteCacheRuleButton").onclick = function () {
+        document.getElementById('deleteCacheRuleFormParent').style.display = "block";
+    };
+
+    document.getElementById("submitDeleteCacheRuleForm").onclick = function () {
+        document.getElementById('deleteCacheRuleFormParent').style.display = "none";
+    };
+
+    document.getElementById("cancelDeleteCacheRuleForm").onclick = function () {
+        document.getElementById('deleteCacheRuleFormParent').style.display = "none";
+    };
+
+    <!-- For "New Var Rule"... -->
+
+    document.getElementById("newVarRuleButton").onclick = function () {
+        document.getElementById('newVarRuleFormParent').style.display = "block";
+    };
+
+    document.getElementById("submitNewVarRuleForm").onclick = function () {
+        document.getElementById('newVarRuleFormParent').style.display = "none";
+    };
+
+    document.getElementById("cancelNewVarRuleForm").onclick = function () {
+        document.getElementById('newVarRuleFormParent').style.display = "none";
+    };
+
+    <!-- For "Delete Var Rule"... -->
+
+    document.getElementById("deleteVarRuleButton").onclick = function () {
+        document.getElementById('deleteVarRuleFormParent').style.display = "block";
+    };
+
+    document.getElementById("submitDeleteVarRuleForm").onclick = function () {
+        document.getElementById('deleteVarRuleFormParent').style.display = "none";
+    };
+
+    document.getElementById("cancelDeleteVarRuleForm").onclick = function () {
+        document.getElementById('deleteVarRuleFormParent').style.display = "none";
+    };
+
+    <!-- For "Back"... -->
+
     document.getElementById("backButton").onclick = function () {
         location.href = "CacheConfigurator.html";
     };

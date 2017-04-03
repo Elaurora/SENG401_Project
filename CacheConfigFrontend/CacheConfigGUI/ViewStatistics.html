@@ -18,7 +18,8 @@
         text-shadow: #bbbbbb 3px 2px;
     }
     p {
-        text-align: center;
+        width: 50%;
+        text-align: justify;
         font-family: Arial;
     }
     table {
@@ -30,7 +31,7 @@
         text-align: left;
     }
 </style>
-<body onload="buildHtmlTable('#sampleTable')">
+<body onload="buildHtmlTable('#localTable'); buildHtmlTable('#globalTable')">
 <h1>Auroras.live | View Statistics</h1>
 <div style="background: white; width: 60%; margin-left: 20%; margin-right: 20%; align-content: center; border-radius: 10px">
     <br/>
@@ -40,12 +41,22 @@
 
         <img src="res/monkey.gif" title="Hit or miss? It's all the same to me.">
         <p>
-            This page is going to have a table of statistics from the local and global cache!
         </p>
-        <table id="sampleTable" border="1"></table>
+        <div style="width: 50%; font-family: Arial; font-weight: bold">
+            Local Cache Statistics
+        </div>
+        <table id="localTable" border="1" style="height: 50px"></table>
+        <br/>
+        <div style="width: 50%; font-family: Arial; font-weight: bold">
+            Global Cache Statistics
+        </div>
+        <table id="globalTable" border="1" style="height: 50px"></table>
         <p>
-            Press the <i>Back</i> button to go back to the main page.
+            Above are the cache hit and miss counts for this node server compared to the
+            global server! Press <i>Clear Cache</i> to clear the caching history and all
+            current rules, or press <i>Back</i> to go back to the main page.
         </p>
+        <button id="clearCacheButton">Clear Cache</button>
         <button id="backButton">Back</button>
     </div>
     <br/>
@@ -98,7 +109,7 @@
         return columnSet;
     }
 </script>
-<script type="text/javascript">
+<script>
     document.getElementById("backButton").onclick = function () {
         location.href = "CacheConfigurator.html";
     };

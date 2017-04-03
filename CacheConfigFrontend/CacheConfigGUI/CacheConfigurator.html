@@ -18,7 +18,8 @@
         text-shadow: #bbbbbb 3px 2px;
     }
     p {
-        text-align: center;
+        width: 50%;
+        text-align: justify;
         font-family: Arial;
     }
 </style>
@@ -33,7 +34,7 @@
         <img src="res/monkey.gif"; title="Who designed these ugly web pages?">
 
         <p>
-            Hello and welcome to the Auroras.live cache configurator!<br/>
+            <i>Hello and welcome to the Auroras.live cache configurator!</i><br/><br/>
             Please select one of the options below to manipulate or view caching properties.
         </p>
         <button id="manageConfigurationButton">Manage Configuration</button>
@@ -46,12 +47,10 @@
 
 <!-- I'm not exactly sure where scripts are supposed to go in practice o v o; -->
 
-<script type="text/javascript">
+<script>
     document.getElementById("manageConfigurationButton").onclick = function () {
         location.href = "ManageConfiguration.html";
     };
-</script>
-<script type="text/javascript">
     document.getElementById("viewStatisticsButton").onclick = function () {
         location.href = "ViewStatistics.html";
     };
