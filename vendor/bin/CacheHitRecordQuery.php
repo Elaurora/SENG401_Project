@@ -5,7 +5,7 @@ use Base\CacheHitRecordQuery as BaseCacheHitRecordQuery;
 /**
  * Skeleton subclass for performing query and update operations on the 'cache_hit_record' table.
  *
- *
+ * 
  *
  * You should add additional methods to this class to meet the
  * application requirements.  This class will only be generated as
