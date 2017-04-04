@@ -65,24 +65,24 @@
 
         <div id="newCacheRuleFormParent" style="display: none; position: fixed; width: 100%; height: 100%; top: 0; left: 0; background-color: rgba(0, 0, 0, 0.5)">
             <div id="newCacheRuleForm" style="position: absolute; left: 40%; top: 17%; opacity: 1.0">
-                <form action="/SENG401/config/submit/manageconfig" method="post" style="background: white; max-width: 300px; min-width: 250px; padding: 15px; border: 1px solid black; border-radius: 10px; opacity: 1">
+                <form action="/SENG401/config/submit/manageconfig/newcacherule" method="post" style="background: white; max-width: 300px; min-width: 250px; padding: 15px; border: 1px solid black; border-radius: 10px; opacity: 1">
                     <p style="width: 100%; margin-left: 10%">
                         <b>New Cache Rule</b>
                         <br/>
                         <br/>
                         rule_id:<br/>
-                        <input id="ncrf_rule_id" name="rule_id" type="text">
+                        <input name="rule_id" type="text">
                         <br/>
                         local_ttl:<br/>
-                        <input id="ncrf_local_ttl" name="local_ttl" type="text">
+                        <input name="local_ttl" type="text">
                         <br/>
                         global_ttl:<br/>
-                        <input id="ncrf_global_ttl" name="global_ttl" type="text">
+                        <input name="global_ttl" type="text">
                         <br/>
                         <br/>
                         <br/>
-                        <button id="submitNewCacheRuleForm">Submit</button>
-                        <button id="cancelNewCacheRuleForm">Cancel</button>
+                        <button id="submitNewCacheRuleForm" type="submit">Submit</button>
+                        <button id="cancelNewCacheRuleForm" type="reset">Cancel</button>
                     </p>
                 </form>
             </div>
@@ -92,18 +92,18 @@
 
         <div id="deleteCacheRuleFormParent" style="display: none; position: fixed; width: 100%; height: 100%; top: 0; left: 0; background-color: rgba(0, 0, 0, 0.5)">
             <div id="deleteCacheRuleForm" style="position: absolute; left: 40%; top: 17%; opacity: 1.0">
-                <form style="background: white; max-width: 300px; min-width: 250px; padding: 15px; border: 1px solid black; border-radius: 10px; opacity: 1">
+                <form action="/SENG401/config/submit/manageconfig/deletecacherule" method="post" style="background: white; max-width: 300px; min-width: 250px; padding: 15px; border: 1px solid black; border-radius: 10px; opacity: 1">
                     <p style="width: 100%; margin-left: 10%">
                         <b>Delete Cache Rule</b>
                         <br/>
                         <br/>
                         rule_id:<br/>
-                        <input id="dcrf_rule_id" name="rule_id" type="text">
+                        <input name="rule_id" type="text">
                         <br/>
                         <br/>
                         <br/>
-                        <button id="submitDeleteCacheRuleForm">Submit</button>
-                        <button id="cancelDeleteCacheRuleForm">Cancel</button>
+                        <button id="submitDeleteCacheRuleForm" type="submit">Submit</button>
+                        <button id="cancelDeleteCacheRuleForm" type="reset">Cancel</button>
                     </p>
                 </form>
             </div>
@@ -113,24 +113,24 @@
 
         <div id="newVarRuleFormParent" style="display: none; position: fixed; width: 100%; height: 100%; top: 0; left: 0; background-color: rgba(0, 0, 0, 0.5)">
             <div id="newVarRuleForm" style="position: absolute; left: 40%; top: 17%; opacity: 1.0">
-                <form style="background: white; max-width: 300px; min-width: 250px; padding: 15px; border: 1px solid black; border-radius: 10px; opacity: 1">
+                <form action="/SENG401/config/submit/manageconfig/newvariablerule" method="post" style="background: white; max-width: 300px; min-width: 250px; padding: 15px; border: 1px solid black; border-radius: 10px; opacity: 1">
                     <p style="width: 100%; margin-left: 10%">
                         <b>New Variable Rule</b>
                         <br/>
                         <br/>
                         rule_id:<br/>
-                        <input id="nvrf_rule_id" name="rule_id" type="text">
+                        <input name="rule_id" type="text">
                         <br/>
                         var_type:<br/>
-                        <input id="nvrf_var_type" name="var_type" type="text">
+                        <input name="var_type" type="text">
                         <br/>
                         var_value:<br/>
-                        <input id="nvrf_var_value" name="var_value" type="text">
+                        <input name="var_value" type="text">
                         <br/>
                         <br/>
                         <br/>
-                        <button id="submitNewVarRuleForm">Submit</button>
-                        <button id="cancelNewVarRuleForm">Cancel</button>
+                        <button id="submitNewVarRuleForm" type="submit">Submit</button>
+                        <button id="cancelNewVarRuleForm" type="reset">Cancel</button>
                     </p>
                 </form>
             </div>
@@ -140,24 +140,24 @@
 
         <div id="deleteVarRuleFormParent" style="display: none; position: fixed; width: 100%; height: 100%; top: 0; left: 0; background-color: rgba(0, 0, 0, 0.5)">
             <div id="deleteVarRuleForm" style="position: absolute; left: 40%; top: 17%; opacity: 1.0">
-                <form style="background: white; max-width: 300px; min-width: 250px; padding: 15px; border: 1px solid black; border-radius: 10px; opacity: 1">
+                <form action="/SENG401/config/submit/manageconfig/deletevariablerule" method="post" style="background: white; max-width: 300px; min-width: 250px; padding: 15px; border: 1px solid black; border-radius: 10px; opacity: 1">
                     <p style="width: 100%; margin-left: 10%">
                         <b>Delete Variable Rule</b>
                         <br/>
                         <br/>
                         rule_id:<br/>
-                        <input id="dvrf_rule_id" name="rule_id" type="text">
+                        <input name="rule_id" type="text">
                         <br/>
                         var_type:<br/>
-                        <input id="dvrf_var_type" name="var_type" type="text">
+                        <input name="var_type" type="text">
                         <br/>
                         var_value:<br/>
-                        <input id="dvrf_var_value" name="var_value" type="text">
+                        <input name="var_value" type="text">
                         <br/>
                         <br/>
                         <br/>
-                        <button id="submitDeleteVarRuleForm">Submit</button>
-                        <button id="cancelDeleteVarRuleForm">Cancel</button>
+                        <button id="submitDeleteVarRuleForm" type="submit">Submit</button>
+                        <button id="cancelDeleteVarRuleForm" type="reset">Cancel</button>
                     </p>
                 </form>
             </div>
@@ -295,6 +295,6 @@
     <!-- For "Back"... -->
 
     document.getElementById("backButton").onclick = function () {
-        location.href = "CacheConfigurator.html";
+        location.href = "/SENG401/CacheConfigFrontend/CacheConfigGUI/CacheConfigurator.html";
     };
 </script>
