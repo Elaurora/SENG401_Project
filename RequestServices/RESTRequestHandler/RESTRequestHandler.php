@@ -31,14 +31,11 @@ class RESTRequestHandler {
     	try {	
 	        $requestController = new RequestController();
 	        $response = $requestController->controlThatRequest();
-			
 	
 	        if (empty($response)) {
 	           	throw new InvalidArgumentException("Invalid input url, or the request server is down");     
 	        }
 	        
-	        
-	
         } catch (Exception $e) {
         	$response = json_encode(array("error" => "{$e->getMessage()}"));
         }

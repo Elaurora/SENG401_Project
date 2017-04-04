@@ -1,6 +1,7 @@
 <?php
 
 
+use Propel\Runtime\ActiveQuery\Criteria;
 abstract class CacheController{
 	
 	/**
@@ -16,6 +17,8 @@ abstract class CacheController{
 	 * @var integer
 	 */
 	protected static $recordKey = 1;
+	
+	
 	
 	/**
 	 * Figures out if the given request exists within the cache, and returns it if does exist and has not expired.
@@ -46,6 +49,22 @@ abstract class CacheController{
 	protected abstract function incrementCacheHitCounter();
 	
 	/**
+	 * Gets a cache rule query corresponding to the corresponding database type
+	 */
+	protected abstract function getCacheRuleQuery();
+	
+	/**
+	 * Gets a cache match variables query for the corresponding database type
+	 */
+	protected abstract function getCacheMatchVariablesQuery();
+	
+	/**
+	 * gets all CacheMatchVariables of the database Type with a foreign key matching the given rule
+	 * @param unknown $rule the rule to get all CacheMatchVariables for
+	 */
+	protected abstract function getCacheMatchVariables($rule);
+	
+	/**
 	 * Creats a new rule in the cache using the given variables
 	 * @param unknown $variables - an array containing the indicies: 'localttl' , 'globalttl' , 'match_variables' and if it is a local cache, a 'rule_id' index.
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information 
@@ -65,12 +84,6 @@ abstract class CacheController{
 			return $response;
 		}
 		
-		if(!isset($variables['rule_id'])){
-			$response['status'] = 'failure';
-			$response['errmsh'] = "Attempted to create a rule in a LocalCache without specifying the rule_id";
-			return $response;
-		}
-		
 		return null;
 	}
 	
@@ -84,21 +97,9 @@ abstract class CacheController{
 		
 		$response['rules'] = array();
 		
-		if(__NODE_SERVER__){
-			$ruleQuery = \CacheRuleQuery::create();
-		}else if(__GLOBAL_DATABASE__){
-			$ruleQuery = \GlobalCacheRuleQuery::create();
-		}
+		$ruleQuery = $this->getCacheRuleQuery();
 		
 		$allRules = $ruleQuery->find();
-		
-		if(__NODE_SERVER__){
-			$matchVarsQuery = \CacheMatchVariableQuery::create();
-		} else if(__GLOBAL_DATABASE__){
-			$matchVarsQuery = \GlobalCacheMatchVariableQuery::create();
-		}
-		
-		$allMatchVars = $matchVarsQuery->find();
 		
 		foreach($allRules as $rule){
 			$rule_id = $rule->getRuleId();
@@ -107,19 +108,20 @@ abstract class CacheController{
 			$response['rules'][$rule_id]['local_ttl'] = $rule->getLocalTtl();
 			$response['rules'][$rule_id]['global_ttl'] = $rule->getGlobalTtl();
 			
+			$allMatchVars = $this->getCacheMatchVariables($rule);
+			
 			foreach($allMatchVars as $matchVar){
-				if($matchVar->getRuleId()){
-					if(!isset($response['rules'][$rule_id]['match_variables']))
-						$response['rules'][$rule_id]['match_variables'] = array();
-					
-					$valuesToAdd = array();
-					
-					$valuesToAdd['variable_name'] = $matchVar->getVariableName();
-					$valuesToAdd['variable_value'] = $matchVar->getVariableValue();
-					
-					$response['rules'][$rule_id]['match_variables'][] = $valuesToAdd;
-				}
+				if(!isset($response['rules'][$rule_id]['match_variables']))
+					$response['rules'][$rule_id]['match_variables'] = array();
+				
+				$valuesToAdd = array();
+				
+				$valuesToAdd['variable_name'] = $matchVar->getVariableName();
+				$valuesToAdd['variable_value'] = $matchVar->getVariableValue();
+				
+				$response['rules'][$rule_id]['match_variables'][] = $valuesToAdd;
 			}
+			
 		}
 		$response['status'] = 'success';
 		
@@ -133,40 +135,34 @@ abstract class CacheController{
 	 */
 	protected function deleteRule($variables){
 		$response = array();
-		
 		if(!isset($variables['rule_id'])){
 			$response['status'] = 'failure';
 			$response['errmsg'] = 'Attempted to delete a rule without specifying a rule_id';
 			return $response;
 		}
+		echo('0');
 		
-		if(__NODE_SERVER__){
-			$cacheRuleQuery = \CacheRuleQuery::create();
-		}else if(__GLOBAL_DATABASE__){
-			$cacheRuleQuery = \GlobalCacheRuleQuery::create();
-		}
+		$cacheRuleQuery = $this->getCacheRuleQuery();
 		
-		$cacheRuleQuery->filterByRuleId($variables['rule_id'], Criteria::EQUAL);
-		
+		echo('1');
+		$cacheRuleQuery->filterByRuleId(intval($variables['rule_id']), Criteria::EQUAL);
+		echo('2');
 		$findOneResult = $cacheRuleQuery->findOne();
-		
+		echo('3');
 		if($findOneResult === null){
 			$response['status'] = 'failure';
 			$response['errmsg'] = 'Attempted to delete a rule that did not exist in the database';
 			return $response;
 		}
 		
-		$cacheRuleQuery->delete();
+		$cacheMatchVarsQuery = $this->getCacheMatchVariablesQuery();
 		
-		//Now i need to delete all match variables with that rule id
-		if(__NODE_SERVER__){
-			$cacheMatchVarsQuery = \CacheMatchVariableQuery::create();
-		}else if(__GLOBAL_DATABASE__){
-			$cacheMatchVarsQuery = \GlobalCacheMatchVariableQuery::create();
-		}
+		//First, delete all match variables with that rule id
 		
-		$cacheMatchVarsQuery->filterByRuleId($variables['rule_id'], Criteria::EQUAL);
+		$cacheMatchVarsQuery->filterByRuleId(intval($variables['rule_id']), Criteria::EQUAL);
 		$cacheMatchVarsQuery->deleteAll();
+		
+		$cacheRuleQuery->delete();
 		
 		$response['status'] = 'success';
 		
@@ -233,6 +229,16 @@ abstract class CacheController{
 		return $response;
 	}
 	
+	protected function getSenderIp(){
+		$returned = getenv('HTTP_CLIENT_IP')?:
+					getenv('HTTP_X_FORWARDED_FOR')?:
+					getenv('HTTP_X_FORWARDED')?:
+					getenv('HTTP_FORWARDED_FOR')?:
+					getenv('HTTP_FORWARDED')?:
+					getenv('REMOTE_ADDR')?:
+					null;
+		return $returned;
+	}
 	
 	
 	
