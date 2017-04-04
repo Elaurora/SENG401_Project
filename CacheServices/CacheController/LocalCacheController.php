@@ -175,6 +175,29 @@ class LocalCacheController extends CacheController{
 	}
 	
 	/**
+	 * Gets a cache rule query corresponding to a local database type
+	 */
+	protected function getCacheRuleQuery(){
+		return CacheRuleQuery::create();
+	}
+	
+	/**
+	 * Gets a cache match variables query for the corresponding database type
+	 */
+	protected function getCacheMatchVariablesQuery(){
+		return CacheMatchVariableQuery::create();
+	}
+	
+	/**
+	 * gets all CacheMatchVariables of the database Type with a foreign key matching the given rule
+	 * @param unknown $rule the rule to get all CacheMatchVariables for
+	 * @return 
+	 */
+	protected function getCacheMatchVariables($rule){
+		$rule->getCacheMatchVariables();
+	}
+	
+	/**
 	 * Creats a new rule in the cache using the given variables
 	 * @param unknown $variables - an array containing the indicies: 'localttl' , 'globalttl' , 'match_variables' and 'rule_id'
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
@@ -185,6 +208,14 @@ class LocalCacheController extends CacheController{
 		if($response !== null) {
 			return $response;
 		}
+		
+		if(!isset($variables['rule_id'])){
+			$response['status'] = 'failure';
+			$response['errmsh'] = "Attempted to create a rule in a LocalCache without specifying the rule_id";
+			return $response;
+		}
+		
+		
 		
 		//Not implemented
 	}
@@ -218,7 +249,7 @@ class LocalCacheController extends CacheController{
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
 	 */
 	public function subscribeToGlobalCache($globalCache_ip){
-		
+		//Not implemented
 	}
 	
 	/**
@@ -227,6 +258,6 @@ class LocalCacheController extends CacheController{
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
 	 */
 	public function unsubscribeFromGlobalCache($globalCache_ip){
-		
+		//Not implemented
 	}
 }
