@@ -105,6 +105,7 @@ class ComposerStaticInit0955228efefbf3524ad486e4a1dec14f
         'Base\\GlobalGetVariableQuery' => __DIR__ . '/..' . '/bin/Base/GlobalGetVariableQuery.php',
         'Base\\GlobalSubscriberIp' => __DIR__ . '/..' . '/bin/Base/GlobalSubscriberIp.php',
         'Base\\GlobalSubscriberIpQuery' => __DIR__ . '/..' . '/bin/Base/GlobalSubscriberIpQuery.php',
+        'CacheConfigController' => __DIR__ . '/../..' . '/CacheConfigFrontend/CacheConfigServer/CacheConfigController.php',
         'CacheController' => __DIR__ . '/../..' . '/CacheServices/CacheController/CacheController.php',
         'CacheHitRecord' => __DIR__ . '/..' . '/bin/CacheHitRecord.php',
         'CacheHitRecordQuery' => __DIR__ . '/..' . '/bin/CacheHitRecordQuery.php',
@@ -150,12 +151,15 @@ class ComposerStaticInit0955228efefbf3524ad486e4a1dec14f
         'Map\\GlobalGetVariablesTableMap' => __DIR__ . '/..' . '/bin/Map/GlobalGetVariablesTableMap.php',
         'Map\\GlobalSubscriberIpTableMap' => __DIR__ . '/..' . '/bin/Map/GlobalSubscriberIpTableMap.php',
         'RESTRequestHandler' => __DIR__ . '/../..' . '/RequestServices/RESTRequestHandler/RESTRequestHandler.php',
+        'RedirectEngine' => __DIR__ . '/../..' . '/CacheConfigFrontend/CacheConfigServer/RedirectEngine.php',
         'Request' => __DIR__ . '/../..' . '/RequestServices/RequestTranslation/Request.php',
         'RequestBuilder' => __DIR__ . '/../..' . '/RequestServices/RequestTranslation/RequestBuilder/RequestBuilder.php',
         'RequestController' => __DIR__ . '/../..' . '/RequestServices/RequestController/RequestController.php',
         'RequestDataRetriever' => __DIR__ . '/../..' . '/RetrievalServices/RESTDataRetriever.php',
         'RequestExecutor' => __DIR__ . '/../..' . '/RequestServices/RequestExecutor/RequestExecutor.php',
         'RequestParser' => __DIR__ . '/../..' . '/RequestServices/RequestTranslation/RequestParser/RequestParser.php',
+        'RequestPath' => __DIR__ . '/../..' . '/CacheConfigFrontend/CacheConfigServer/RequestPath.php',
+        'UrlParser' => __DIR__ . '/../..' . '/CacheConfigFrontend/CacheConfigServer/UrlParser.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
