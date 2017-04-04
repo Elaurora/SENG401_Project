@@ -43,6 +43,8 @@ function config() {
 		
 		print_r($_POST);
 		
+		header('Location: /SENG401/home');
+		
 	} else {
 		$contents = file_get_contents('CacheConfigFrontend/CacheConfigGUI/ManageConfiguration.html');
 		echo $contents;
