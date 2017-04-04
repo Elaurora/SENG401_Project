@@ -100,27 +100,6 @@ class GlobalCacheController extends CacheController{
 		}
 	}
 	
-	/**
-	 * Adds the given request to the cache.
-	 * @param unknown $request the request to add to the cache
-	 * @param string $response the response of the given request to be cached.
-	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
-	 */
-	public function cacheRequest(Request $request, $response){
-		$storedRequest = new \GlobalCachedRequest();
-		$storedRequest->setQueryUrlRoot($request->__toString());
-		$storedRequest->setQueryTime(mktime());
-		$storedRequest->setQueryResponse(bin2hex($response));
-		
-		foreach ($request->getRequestVariables() as $key => $value){
-			$getVars = new \GlobalGetVariable();
-			$getVars->setVariableName($key);
-			$getVars->setVariableValue($value);
-			$storedRequest->addGlobalGetVariable($getVars);
-		}
-		
-		$storedRequest->save();
-	}
 	
 	/**
 	 * Increments the number of misses for the global cache
@@ -171,6 +150,20 @@ class GlobalCacheController extends CacheController{
 			$record->setHitCount($hitCount);
 			$record->save();
 		}
+	}
+	
+	/**
+	 * Get a cache request object for the corresponding database type
+	 */
+	protected function createCachedRequest(){
+		return new \GlobalCachedRequest();
+	}
+	
+	/**
+	 * Create a GetVariable object for the corresponding database type
+	 */
+	protected function createGetVariable(){
+		return new \GlobalGetVariable();
 	}
 	
 	/**
@@ -385,6 +378,8 @@ class GlobalCacheController extends CacheController{
 			}
 		}
 		$response = array();
+		
+		//Implemented but not tested
 		
 		$response['status'] = 'success';
 		return $response;

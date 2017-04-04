@@ -36,7 +36,21 @@ abstract class CacheController{
 	 * @param string $response the response of the given request to be cached.
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
 	 */
-	public abstract function cacheRequest(Request $request, $response);
+	public function cacheRequest(Request $request, $response){
+		$storedRequest = $this->createCachedRequest();
+		$storedRequest->setQueryUrlRoot($request->__toString());
+		$storedRequest->setQueryTime(mktime());
+		$storedRequest->setQueryResponse(bin2hex($response));
+		
+		foreach ($request->getRequestVariables() as $key => $value){
+			$getVars = $this->createGetVariable();
+			$getVars->setVariableName($key);
+			$getVars->setVariableValue($value);
+			$storedRequest->addGlobalGetVariable($getVars);
+		}
+		
+		$storedRequest->save();
+	}
 	
 	/**
 	 * Increments the number of misses for the cache
@@ -47,6 +61,16 @@ abstract class CacheController{
 	 * Increments the number of misses for the cache
 	 */
 	protected abstract function incrementCacheHitCounter();
+	
+	/**
+	 * Create a cache request object for the corresponding database type
+	 */
+	protected abstract function createCachedRequest();
+	
+	/**
+	 * Create a GetVariable object for the corresponding database type
+	 */
+	protected abstract function createGetVariable();
 	
 	/**
 	 * Gets a cache rule query corresponding to the corresponding database type
@@ -140,15 +164,13 @@ abstract class CacheController{
 			$response['errmsg'] = 'Attempted to delete a rule without specifying a rule_id';
 			return $response;
 		}
-		echo('0');
-		
+			
 		$cacheRuleQuery = $this->getCacheRuleQuery();
-		
-		echo('1');
+	
 		$cacheRuleQuery->filterByRuleId(intval($variables['rule_id']), Criteria::EQUAL);
-		echo('2');
+		
 		$findOneResult = $cacheRuleQuery->findOne();
-		echo('3');
+		
 		if($findOneResult === null){
 			$response['status'] = 'failure';
 			$response['errmsg'] = 'Attempted to delete a rule that did not exist in the database';

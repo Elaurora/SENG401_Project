@@ -102,28 +102,6 @@ class LocalCacheController extends CacheController{
 	}
 	
 	/**
-	 * Adds the given request to the cache.
-	 * @param unknown $request the request to add to the cache
-	 * @param string $response the response of the given request to be cached.
-	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
-	 */
-	public function cacheRequest(Request $request, $response){
-		$storedRequest = new \CachedRequest();
-		$storedRequest->setQueryUrlRoot($request->__toString());
-		$storedRequest->setQueryTime(mktime());
-		$storedRequest->setQueryResponse(bin2hex($response));
-		
-		foreach ($request->getRequestVariables() as $key => $value){	
-			$getVars = new \GetVariable();
-			$getVars->setVariableName($key);
-			$getVars->setVariableValue($value);
-			$storedRequest->addGetVariable($getVars);
-		}
-		
-		$storedRequest->save();
-	}
-	
-	/**
 	 * Increments the number of misses for the local cache
 	 */
 	protected function incrementCacheMissCounter() {
@@ -172,6 +150,20 @@ class LocalCacheController extends CacheController{
 			$record->setHitCount($hitCount);
 			$record->save();
 		}
+	}
+	
+	/**
+	 * Get a cache request object for the corresponding database type
+	 */
+	protected function createCachedRequest(){
+		return new \CachedRequest();
+	}
+	
+	/**
+	 * Create a GetVariable object for the corresponding database type
+	 */
+	protected function createGetVariable(){
+		return new \GetVariable();
 	}
 	
 	/**
