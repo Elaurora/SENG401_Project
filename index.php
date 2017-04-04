@@ -5,8 +5,8 @@ require_once "vendor/autoload.php";
 require_once "vendor/bin/generated-conf/config.php";
 
 define('__GLOBAL_DATABASE__', false);
-define('__CONFIG_GUI__', false);
-define('__NODE_SERVER__', true);
+define('__CONFIG_GUI__', true);
+define('__NODE_SERVER__', false);
 
 define('__VERBOSE__', false);
 
@@ -31,7 +31,22 @@ function node() {
  * Starting point for the config GUI
  */
 function config() {
+	$path = $_SERVER['REQUEST_URI'];
 	
+	$path = explode('?', $path)[0];
+	
+	
+	
+	$parts = explode('/', $path);
+	print_r($parts);
+	if($parts[2] == 'config' && $parts[3] == 'submit' && $parts[4] == 'manageconfig') {
+		
+		print_r($_POST);
+		
+	} else {
+		$contents = file_get_contents('CacheConfigFrontend/CacheConfigGUI/ManageConfiguration.html');
+		echo $contents;
+	}
 }
 
 /**
@@ -74,7 +89,7 @@ function global_db() {
 	 */
 	
 	//This is just test code
-	if(true){
+	if(false){
 		
 		try{
 			
