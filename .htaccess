@@ -1,4 +1,6 @@
 # Pass all requests not referring directly to files in the filesystem to
 # index.php.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
 RewriteEngine on
 RewriteRule ^ index.php [L]
