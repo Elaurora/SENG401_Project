@@ -1,5 +1,6 @@
 <?php
 
+use Propel\Runtime\ActiveQuery\Criteria;
 class GlobalCacheController extends CacheController{
 	
 	/**
@@ -171,6 +172,29 @@ class GlobalCacheController extends CacheController{
 			$record->save();
 		}
 	}
+	
+	/**
+	 * Gets a cache rule query corresponding to the Global database
+	 */
+	protected function getCacheRuleQuery(){
+		return GlobalCacheRuleQuery::create();
+	}
+	
+	/**
+	 * Gets a cache match variables query for the corresponding database type
+	 */
+	protected function getCacheMatchVariablesQuery(){
+		return GlobalCacheMatchVariableQuery::create();
+	}
+	
+	/**
+	 * gets all GlobalCacheMatchVariables with a foreign key matching the given rule
+	 * @param unknown $rule the rule to get all CacheMatchVariables for
+	 */
+	protected function getCacheMatchVariables($rule){
+		return $rule->getGlobalCacheMatchVariables();
+	}
+	
 	/**
 	 * Creats a new rule in the cache using the given variables
 	 * @param unknown $variables - an array containing the indicies: 'localttl' , 'globalttl' , 'match_variables'
@@ -181,64 +205,136 @@ class GlobalCacheController extends CacheController{
 		if($response !== null) {
 			return $response;
 		}
+		
+		if(isset($variables['rule_id'])){
+			$response['status'] = 'failure';
+			$response['errmsh'] = 'Attempted to create a rule in a GlobalCache by specifying the rule_id. The global cache will auto-increment rule_ids';
+			return $response;
+		}
+		
 		//First see if there is already a rule associated with the given match_variables, so that i replace it if one exists
-		$allRules = $this::getAllRules();
-		$ruleToDelete = null;
+		$allRules = $this->getAllRules();
+		$ruleToEdit = null;
 		foreach($allRules['rules'] as $ruleID => $rule){
-			foreach($rule['match_variables'] as $matchVars){
-				$ruleToDelete = $ruleID;
-				foreach($variables['match_variables'] as $newMatchVars){
-					if($newMatchVars['variable_name'] == $matchVars['variable_name']
-							&& $newMatchVars['variable_value'] == $matchVars['variable_value']){
-						$ruleToDelete = null;
-						break;
-					}
-				}
-				if($ruleToDelete === null){
-					$ruleToDelete = $ruleID;
-				}else{
-					$ruleToDelete = null;
-					break;
-				}
-			}
-			if($ruleToDelete !== null){
-				foreach($variables['match_variables'] as $newMatchVars){
-					$ruleToDelete = $ruleID;
-					foreach($rule['match_variables'] as $matchVars){
+			if(isset($rule['match_variables']) && isset($variables['match_variables'])){
+				foreach($rule['match_variables'] as $matchVars){
+					$ruleToEdit = $ruleID;
+					foreach($variables['match_variables'] as $newMatchVars){
 						if($newMatchVars['variable_name'] == $matchVars['variable_name']
 								&& $newMatchVars['variable_value'] == $matchVars['variable_value']){
-									$ruleToDelete = null;
-									break;
+							$ruleToEdit = null;
+							break;
 						}
 					}
-					if($ruleToDelete === null){
-						$ruleToDelete = $ruleID;
+					if($ruleToEdit === null){
+						$ruleToEdit = $ruleID;
 					}else{
-						$ruleToDelete = null;
+						$ruleToEdit = null;
 						break;
 					}
 				}
-				if($ruleToDelete !== null){
-					$ruleToDelete = array();
-					$ruleToDelete['rule_id'] = $ruleID;
-					//TODO:EDIT THIS RULE INSTEAD OF DELETE
-					break;
+				if($ruleToEdit !== null){
+					foreach($variables['match_variables'] as $newMatchVars){
+						$ruleToEdit = $ruleID;
+						foreach($rule['match_variables'] as $matchVars){
+							if($newMatchVars['variable_name'] == $matchVars['variable_name']
+									&& $newMatchVars['variable_value'] == $matchVars['variable_value']){
+										$ruleToEdit = null;
+										break;
+							}
+						}
+						if($ruleToEdit === null){
+							$ruleToEdit = $ruleID;
+						}else{
+							$ruleToEdit = null;
+							break;
+						}
+					}
+					if($ruleToEdit !== null){
+						$ruleToEdit = $ruleID;
+						echo('found a match');
+						break;
+					}
 				}
+			}
+			else if(!isset($rule['match_variables']) && !isset($variables['match_variables'])){
+				$ruleToEdit = $ruleID;
+				echo('found a match');
+				break;
 			}
 		}
 		
-		//Now, if a rule with the same match_variables as the one being created already existed, it has been deleted.
-		
-		$newRule = new \GlobalCacheRule();
-		$newRule->setLocalTtl($variables['localttl']);
-		$newRule->setGlobalTtl($variables['globalttl']);
-		$newRule->save();
+		//If i did not find a matching rule, i will need to create a new one as well as new CacheMatchVariables
+		if($ruleToEdit === null){
+			$newRule = new \GlobalCacheRule();
+			$newRule->setLocalTtl($variables['localttl']);
+			$newRule->setGlobalTtl($variables['globalttl']);
+			
+			if(isset($variables['match_variables'])){
+				echo('Match vars set<br>');
+				foreach($variables['match_variables'] as $matchVar){
+					$newMatchVar = new \GlobalCacheMatchVariable();
+					$newMatchVar->setVariableName($matchVar['variable_name']);
+					$newMatchVar->setVariableValue($matchVar['variable_value']);
+					$newRule->addGlobalCacheMatchVariable($newMatchVar);
+					echo('Added match varname<'.$matchVar['variable_name'].'> match varvalue<'.$matchVar['variable_value'].'><br>');
+				}
+			}
+			
+			$newRule->save();
+			$newRuleID = $newRule->getRuleId();
+		}
+		else{// If i did find a matching rule, i only need to edit the old one
+			$ruleQuery = \GlobalCacheRuleQuery::create();
+			$ruleQuery->filterByRuleId($ruleToEdit, Criteria::EQUAL);
+			$editRule = $ruleQuery->findOne();
+			
+			$editRule->setLocalTtl($variables['localttl']);
+			$editRule->setGlobalTtl($variables['globalttl']);
+			
+			$editRule->save();
+			$newRuleID = $editRule->getRuleId();
+		}
 		
 		//The global cache now needs to inform all of its subscribers about the new rule
 		
+		$allSubs = \GlobalSubscriberIpQuery::create()->find();
 		
+		foreach($allSubs as $sub){
+			$request = new Request();
+			$request->setProtocol('http://');
+			$request->setUrlRoot($sub->getSubscriberIp().'/SENG401');
+			$request->setApiVersion('v1');
+			$request->addRequestVariable('type', 'create_rule');
+			$request->addRequestVariable('localttl', $variables['localttl']);
+			$request->addRequestVariable('globalttl', $variables['globalttl']);
+			
+			if(isset($variables['match_variables'])){
+				$matchVars = array();
+				foreach($variables['match_variables'] as $matchVar){
+					$matchVars[$matchVar['variable_name']] = $matchVar['variable_value'];
+				}
+				$request->addRequestVariable('match_variables', $matchVars);
+			}
+			
+			$request->addRequestVariable('rule_id', $newRuleID);
+			$url = $request->__toString();
+			echo($url);
+			$localCacheResponse = file_get_contents($url);
+			
+			if($localCacheResponse['status'] == 'failure'){
+				echo($localCacheResponse['errmsg']);
+			}
+			else if($localCacheResponse['status'] == 'success'){
+				
+			}else{
+				echo('not getting a response in the expected format');
+			}
+			
+		}
 		
-		//Not implemented 
+		$response['status'] = 'success';
+		return $response;
 	}
 	
 	/**
@@ -247,16 +343,51 @@ class GlobalCacheController extends CacheController{
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
 	 */
 	protected function subscribe(){
-		$subscriberIP = 0;
+		$subscriberIP = $this->getSenderIp();
 		
 		//Initialize and save the new subscriber into the database
 		$subscriber = new \GlobalSubscriberIp();
 		$subscriber->setSubscriberIp($subscriberIP);
 		$subscriber->save();
-		
-		//Not implemented
-		
+		$allRules = $this->getAllRules();
+
 		//need to send all current cache rules to the new subscriber
+		foreach($allRules['rule'] as $ruleID => $rule){
+			$request = new Request();
+			$request->setProtocol('http://');
+			$request->setUrlRoot($subscriberIP.'/SENG401');
+			$request->setApiVersion('v1');
+			$request->addRequestVariable('type', 'create_rule');
+			$request->addRequestVariable('localttl', $rule['localttl']);
+			$request->addRequestVariable('globalttl', $rule['globalttl']);
+			
+			if(isset($rule['match_variables'])){
+				$matches = array();
+				foreach($rule['match_variables'] as $matchVar){
+					$newAdd = array();
+					$newAdd['variable_name'] = $matchVar['variable_name'];
+					$newAdd['variable_value'] = $matchVar['variable_value'];
+					$matches[] = $newAdd;
+				}
+				$request->addRequestVariable('match_variables', $matches);
+			}
+			
+			$request->addRequestVariable('rule_id', $ruleID);
+			
+			$url = $request->__toString();
+			$localCacheResponse = file_get_contents($url);
+			if($localCacheResponse['status'] == 'success'){
+				
+			}else if($localCacheResponse['status'] == 'failure'){
+				echo($localCacheResponse['errmsg']);
+			}else{
+				echo('Local Cache response not in expected format');
+			}
+		}
+		$response = array();
+		
+		$response['status'] = 'success';
+		return $response;
 	}
 	
 	/**
@@ -266,7 +397,7 @@ class GlobalCacheController extends CacheController{
 	protected function unsubscribe(){
 		$response = array();
 		
-		$unsubscriberIP = 0;
+		$unsubscriberIP = $this->getSenderIp();
 		
 		$subQuery = GlobalSubscriberIpQuery::create()
 			->filterBySubscriberIp($unsubscriberIP);
