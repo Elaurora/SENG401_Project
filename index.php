@@ -30,6 +30,10 @@ function node() {
  * Starting point for the config GUI
  */
 function config() {
+	$config = new CacheConfigController();
+	$reponse = $config->handleRequest();
+	echo $response;
+	return;
 	$path = $_SERVER['REQUEST_URI'];
 	
 	$path = explode('?', $path)[0];
