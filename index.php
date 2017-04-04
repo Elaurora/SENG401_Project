@@ -30,7 +30,24 @@ function node() {
  * Starting point for the config GUI
  */
 function config() {
+	$path = $_SERVER['REQUEST_URI'];
 	
+	$path = explode('?', $path)[0];
+	
+	
+	
+	$parts = explode('/', $path);
+	print_r($parts);
+	if($parts[2] == 'config' && $parts[3] == 'submit' && $parts[4] == 'manageconfig') {
+		
+		print_r($_POST);
+		
+		header('Location: /SENG401/home');
+		
+	} else {
+		$contents = file_get_contents('CacheConfigFrontend/CacheConfigGUI/ManageConfiguration.html');
+		echo $contents;
+	}
 }
 
 /**
@@ -139,6 +156,96 @@ function global_db() {
 	 * PrimaryKey : {rule_id, variable_name, variable_value}
 	 * 
 	 */
+	
+	//This is just test code
+	if(false){
+		
+		try{
+			
+			$cacheType = 'global';
+		
+			$request1 = new \CachedRequest();
+			
+			$request1->setQueryResponse("Hello World!");
+			$request1->setQueryTime(300);
+			
+			$request1->save();
+			
+			$request2 = new \CachedRequest();
+			
+			$request2->setQueryResponse("OH BOI");
+			$request2->setQueryTime(320);
+			
+			$request2->save();
+			
+			
+			
+			
+			if(__VERBOSE__)
+				echo('Success saving rows<br>');
+			
+			$query = CachedRequestQuery::create();
+			$findOneResult = $query->findOne();
+			
+			echo('FindOneResult='.$findOneResult.'<br>');
+			
+			$qid = $findOneResult->getQueryId();
+			
+			$query->filterByQueryId($qid, Criteria::EQUAL);
+			
+			$query->delete();
+			
+			$query = CachedRequestQuery::create();
+			$findOneResult = $query->findOne();
+				
+			echo('FindOneResult='.$findOneResult.'<br>');
+				
+			$qid = $findOneResult->getQueryId();
+				
+			$query->filterByQueryId($qid, Criteria::EQUAL);
+				
+			$query->delete();
+			
+			
+			$findOneResult = $query->findOne();
+			
+			//echo('FindOneResult='.$findOneResult.'<br>');
+			
+			//$qid = $findOneResult->getQueryId();
+			
+			//$findOneResult->delete();
+			
+			//$query->filterByQueryId($qid, Criteria::NOT_EQUAL);
+			
+			//$findOneResult = $query->findOne();
+			
+			
+			if($findOneResult === null)
+				echo('Is null<br>');
+			
+			if(__VERBOSE__)
+				echo('Made it to the end<br>');
+			
+			//$request = new \GlobalCachedRequests();
+			
+			//$request->setQueryResponse("Hello World!");
+			//$request->save();
+			
+			
+			//$query = GlobalCachedRequestsQuery::create();
+			//$query = $query->filterByQueryResponse("Hello World!");
+			//$query = $query->findOne();
+					
+			//$query->delete();
+			
+		}catch (Exception $e) {
+			if(__VERBOSE__)
+				echo('Exception Caught<br>');
+			echo($e->getLine().'<br>'.$e->getMessage().'<br>'.$e->getTrace().'<br>');
+        	$response = json_encode(array("error" => "{$e->getMessage()}"));
+        }
+		
+	}
 }
 
 
