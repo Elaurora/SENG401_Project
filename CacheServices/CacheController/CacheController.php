@@ -9,7 +9,8 @@ abstract class CacheController{
 	 * @var array
 	 */
 	public static $ruleTypes = array (
-			'create_rule', 'get_rules', 'delete_rule', 'subscribe', 'unsubscribe'
+			'create_rule', 'get_rules', 'delete_rule', 'subscribe', 'unsubscribe',
+			'clear_locals', 'clear_global', 'clear_all'
 	);
 	
 	/**
@@ -46,11 +47,21 @@ abstract class CacheController{
 			$getVars = $this->createGetVariable();
 			$getVars->setVariableName($key);
 			$getVars->setVariableValue($value);
-			$storedRequest->addGlobalGetVariable($getVars);
+			$this->addGetVariablesForCache($storedRequest, $getVars);
+			//$storedRequest->addGlobalGetVariable($getVars);
 		}
 		
 		$storedRequest->save();
 	}
+	
+	/**
+	 * fixes the problem of calling add[global]GetVariables
+	 * in cacheRequest. This feels somewhat sloppy perhaps.
+	 * @param unknown $storedRequest the new entry in cached_requests
+	 * @param unknown $variable the GetVariable object to be stored for the cached request
+	 * 
+	 */
+	protected abstract function addGetVariablesForCache($storedRequest, $variable);
 	
 	/**
 	 * Increments the number of misses for the cache
@@ -73,6 +84,20 @@ abstract class CacheController{
 	protected abstract function createGetVariable();
 	
 	/**
+	 * Create a CacheHitRecord object for the corresponding database
+	 */
+	protected abstract function createCacheHitRecord();
+	
+	/**
+	 * Gets a cached requests query corresponding to the corresponding database
+	 */
+	protected abstract function getCachedRequestsQuery();
+	
+	/**
+	 * Gets a cached requests query corresponding to the corresponding database
+	 */
+	protected abstract function getCacheHitRecordQuery();
+	/**
 	 * Gets a cache rule query corresponding to the corresponding database type
 	 */
 	protected abstract function getCacheRuleQuery();
@@ -81,6 +106,11 @@ abstract class CacheController{
 	 * Gets a cache match variables query for the corresponding database type
 	 */
 	protected abstract function getCacheMatchVariablesQuery();
+	
+	/**
+	 * Gets a get variables query for the corresponding database type
+	 */
+	protected abstract function getVariablesQuery();
 	
 	/**
 	 * gets all CacheMatchVariables of the database Type with a foreign key matching the given rule
@@ -194,6 +224,41 @@ abstract class CacheController{
 	}
 	
 	/**
+	 * Decides which caches should be cleared.
+	 * @param unknown $clearType clear_locals, clear_global, or clear_all.
+	 */
+	protected abstract function clearCache($clearType);
+	
+	/**
+	 * Sets the hit and miss counters of the cache to 0, and clears all saved requests.
+	 */
+	protected function clear(){
+		$response = array();
+		
+		// delete all the related variables
+		$cacheVariableQuery = $this->getVariablesQuery();
+		$cacheVariableQuery->deleteAll();
+		
+		// delete all the cached requests
+		$cacheRequestsQuery = $this->getCachedRequestsQuery();
+		$cacheRequestsQuery->deleteAll();
+		
+		// delete all the one rows in this table
+		$record = $this->getCacheHitRecordQuery();
+		$record = $record->deleteAll();
+		
+		// set hits and misses to 0 by just making a new entry
+		$newRecord = $this->createCacheHitRecord();
+		$newRecord->setPrimaryKey(CacheController::$recordKey);
+		$newRecord->setMissCount(0);
+		$newRecord->setHitCount(0);
+		$newRecord->save();
+		
+		$response['status'] = 'success';
+		return $response;
+	}
+	
+	/**
 	 * Adds the senders ip to the list of subscibers to the GlobalCache
 	 * Will also add all currently cached rules to the new subscriber
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
@@ -238,7 +303,13 @@ abstract class CacheController{
 					
 				case('unsubscribe'):				
 					$response = $this->unsubscribe();
-					break;	
+					break;
+					
+				case('clear_locals'):
+				case('clear_global'):
+				case('clear_all'):
+					$response = $this->clearCache($variables['type']);
+					break;
 					
 				default:
 					$response['status'] = 'failure';

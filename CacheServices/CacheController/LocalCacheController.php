@@ -102,6 +102,17 @@ class LocalCacheController extends CacheController{
 	}
 	
 	/**
+	 * fixes the problem of calling add[global]GetVariables
+	 * in cacheRequest. This feels somewhat sloppy perhaps.
+	 * @param unknown $storedRequest the new entry in cached_requests
+	 * @param unknown $variable the GetVariable object to be stored for the cached request
+	 *
+	 */
+	protected function addGetVariablesForCache($storedRequest, $variable){
+		$storedRequest->addGetVariable($variable);
+	}
+	
+	/**
 	 * Increments the number of misses for the local cache
 	 */
 	protected function incrementCacheMissCounter() {
@@ -167,6 +178,27 @@ class LocalCacheController extends CacheController{
 	}
 	
 	/**
+	 * Create a CacheHitRecord object for the local database
+	 */
+	protected function createCacheHitRecord(){
+		return new \CacheHitRecord();
+	}
+	
+	/**
+	 * Gets a cached requests query corresponding to the local database
+	 */
+	protected function getCachedRequestsQuery(){
+		return CachedRequestQuery::create();
+	}
+	
+	/**
+	 * Gets a cached requests query corresponding to the local database
+	 */
+	protected function getCacheHitRecordQuery(){
+		return CacheHitRecordQuery::create();
+	}
+	
+	/**
 	 * Gets a cache rule query corresponding to a local database type
 	 */
 	protected function getCacheRuleQuery(){
@@ -181,6 +213,13 @@ class LocalCacheController extends CacheController{
 	}
 	
 	/**
+	 * Gets a get variables query for the corresponding database type
+	 */
+	protected function getVariablesQuery(){
+		return GetVariableQuery::create();
+	}
+	
+	/**
 	 * gets all CacheMatchVariables of the database Type with a foreign key matching the given rule
 	 * @param unknown $rule the rule to get all CacheMatchVariables for
 	 * @return 
@@ -188,6 +227,8 @@ class LocalCacheController extends CacheController{
 	protected function getCacheMatchVariables($rule){
 		$rule->getCacheMatchVariables();
 	}
+	
+	
 	
 	/**
 	 * Creats a new rule in the cache using the given variables
@@ -210,6 +251,14 @@ class LocalCacheController extends CacheController{
 		
 		
 		//Not implemented
+	}
+	
+	/**
+	 * Sets the hit and miss counters of a cache to 0, and clears all saved requests.
+	 * @param unknown $clearType clear_locals, clear_global, or clear_all. is not used locally.
+	 */
+	protected function clearCache($clearType){
+		$this->clear();
 	}
 	
 	/**
