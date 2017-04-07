@@ -1,9 +1,9 @@
 <?php
 
  class FormServer {
-     const CACHE_CONFIG_FORM = "CacheConfigFrontend/CacheConfigGUI/CacheConfigurator.html";
-     const MANAGE_CONFIG_FORM = "CacheConfigFrontend/CacheConfigGUI/ManageConfiguration.html";
-     const VIEW_STATS_FORM = "CacheConfigFrontend/CacheConfigGUI/ViewStatistics.html";
+     private static $CACHE_CONFIG_FORM = "CacheConfigFrontend/CacheConfigGUI/CacheConfigurator.html";
+     private static $MANAGE_CONFIG_FORM = "CacheConfigFrontend/CacheConfigGUI/ManageConfiguration.html";
+     private static $VIEW_STATS_FORM = "CacheConfigFrontend/CacheConfigGUI/ViewStatistics.html";
 
      public function getForm(RequestPath $requestPath) {
          $targetForm = $requestPath->getTargetForm();
@@ -11,16 +11,16 @@
          switch ($targetForm)
          {
              case "home":
-                 return file_get_contents(FormServer::CACHE_CONFIG_FORM);
+                 return file_get_contents($this::$CACHE_CONFIG_FORM);
 
              case "manageconfig":
-                 return file_get_contents(FormServer::MANAGE_CONFIG_FORM);
+                 return file_get_contents($this::$MANAGE_CONFIG_FORM);
 
              case "viewstats":
-                 return file_get_contents(FormServer::VIEW_STATS_FORM);
+                 return file_get_contents($this::$VIEW_STATS_FORM);
 
              default:
-                 return file_get_contents(FormServer::CACHE_CONFIG_FORM);
+                 return file_get_contents($this::$CACHE_CONFIG_FORM);
          }
      }
  }

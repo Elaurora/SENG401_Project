@@ -19,7 +19,7 @@ class RESTApiExecutor {
      *  @param  RequestPath $requestPath
      */
     public function executeFormRequest(RequestPath $requestPath) {
-        file_get_contents($this->buildFormRequest($requestPath));
+        return file_get_contents($this->buildFormRequest($requestPath));
     }
 
     /**
@@ -49,7 +49,7 @@ class RESTApiExecutor {
 
                 $restAPIRequest .= $this::$NEW_CACHE_RULE;
 
-                if (count($_POST) < 3)
+                if (!isset($_POST["local_ttl"]) || !isset($_POST["global_ttl"]))
                     throw new Exception("Invalid request: missing parameters");
 
                 $restAPIRequest .= "&local_ttl="   . $_POST["local_ttl"];
@@ -63,7 +63,7 @@ class RESTApiExecutor {
 
                 $restAPIRequest .= $this::$DELETE_CACHE_RULE;
 
-                if (count($_POST) < 0)
+                if (!isset($_POST["rule_id"]))
                     throw new Exception("Invalid request: missing parameters");
 
                 $restAPIRequest .= "&rule_id="    . $_POST["rule_id"];

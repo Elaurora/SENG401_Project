@@ -37,29 +37,23 @@
     <br/>
     <div align="center" style="margin: 5%">
 
-        <div style="width: 50%; font-family: Arial; font-weight: bold">
+        <!-- The main content of this page... -->
+
+        <div style="font-family: Arial; font-weight: bold">
             Local Cache Rules
+            <br/>
+            <table style="width: 50%; font-weight: normal" id="sampleLocalTable" border="1"></table>
+            <br/>
+            <button id="newCacheRuleButton">New Cache Rule</button>
+            <button id="deleteCacheRuleButton">Delete Cache Rule</button>
+            <br/>
+            <p style="font-weight: normal">
+                Above are all the current caching rules for this node server! Press <i>New ___ Rule</i>
+                to add a new rule to a table, press <i>Delete ___ Rule</i> to delete a rule, or press
+                <i>Back</i> to go back to the main page.
+            </p>
+            <button id="backButton">Back</button>
         </div>
-        <table id="sampleLocalTable" border="1"></table>
-        <br/>
-        <button id="newCacheRuleButton">New Cache Rule</button>
-        <button id="deleteCacheRuleButton">Delete Cache Rule</button>
-        <br/>
-        <br/>
-        <div style="width: 50%; font-family: Arial; font-weight: bold">
-            Variable Rules
-        </div>
-        <table id="sampleMatchVarTable" border="1"></table>
-        <br/>
-        <button id="newVarRuleButton">New Variable Rule</button>
-        <button id="deleteVarRuleButton">Delete Variable Rule</button>
-        <br/>
-        <p>
-            Above are all the current caching rules for this node server! Press <i>New ___ Rule</i>
-            to add a new rule to a table, press <i>Delete ___ Rule</i> to delete a rule, or press
-            <i>Back</i> to go back to the main page.
-        </p>
-        <button id="backButton">Back</button>
 
         <!-- Form for "New Cache Rule" -->
 
@@ -70,14 +64,14 @@
                         <b>New Cache Rule</b>
                         <br/>
                         <br/>
-                        rule_id:<br/>
-                        <input name="rule_id" type="text">
-                        <br/>
                         local_ttl:<br/>
                         <input name="local_ttl" type="text">
                         <br/>
                         global_ttl:<br/>
                         <input name="global_ttl" type="text">
+                        <br/>
+                        match variables:<br/>
+                        <input name="match_vars" type="text" style="overflow: scroll">
                         <br/>
                         <br/>
                         <br/>
@@ -104,60 +98,6 @@
                         <br/>
                         <button id="submitDeleteCacheRuleForm" type="submit">Submit</button>
                         <button id="cancelDeleteCacheRuleForm" type="reset">Cancel</button>
-                    </p>
-                </form>
-            </div>
-        </div>
-
-        <!-- Form for "New Var Rule" -->
-
-        <div id="newVarRuleFormParent" style="display: none; position: fixed; width: 100%; height: 100%; top: 0; left: 0; background-color: rgba(0, 0, 0, 0.5)">
-            <div id="newVarRuleForm" style="position: absolute; left: 40%; top: 17%; opacity: 1.0">
-                <form action="/SENG401/manageconfig/submit/newvariablerule" method="post" style="background: white; max-width: 300px; min-width: 250px; padding: 15px; border: 1px solid black; border-radius: 10px; opacity: 1">
-                    <p style="width: 100%; margin-left: 10%">
-                        <b>New Variable Rule</b>
-                        <br/>
-                        <br/>
-                        rule_id:<br/>
-                        <input name="rule_id" type="text">
-                        <br/>
-                        var_type:<br/>
-                        <input name="var_type" type="text">
-                        <br/>
-                        var_value:<br/>
-                        <input name="var_value" type="text">
-                        <br/>
-                        <br/>
-                        <br/>
-                        <button id="submitNewVarRuleForm" type="submit">Submit</button>
-                        <button id="cancelNewVarRuleForm" type="reset">Cancel</button>
-                    </p>
-                </form>
-            </div>
-        </div>
-
-        <!-- Form for "Delete Var Rule" -->
-
-        <div id="deleteVarRuleFormParent" style="display: none; position: fixed; width: 100%; height: 100%; top: 0; left: 0; background-color: rgba(0, 0, 0, 0.5)">
-            <div id="deleteVarRuleForm" style="position: absolute; left: 40%; top: 17%; opacity: 1.0">
-                <form action="/SENG401/manageconfig/submit/deletevariablerule" method="post" style="background: white; max-width: 300px; min-width: 250px; padding: 15px; border: 1px solid black; border-radius: 10px; opacity: 1">
-                    <p style="width: 100%; margin-left: 10%">
-                        <b>Delete Variable Rule</b>
-                        <br/>
-                        <br/>
-                        rule_id:<br/>
-                        <input name="rule_id" type="text">
-                        <br/>
-                        var_type:<br/>
-                        <input name="var_type" type="text">
-                        <br/>
-                        var_value:<br/>
-                        <input name="var_value" type="text">
-                        <br/>
-                        <br/>
-                        <br/>
-                        <button id="submitDeleteVarRuleForm" type="submit">Submit</button>
-                        <button id="cancelDeleteVarRuleForm" type="reset">Cancel</button>
                     </p>
                 </form>
             </div>
@@ -262,34 +202,6 @@
 
     document.getElementById("cancelDeleteCacheRuleForm").onclick = function () {
         document.getElementById('deleteCacheRuleFormParent').style.display = "none";
-    };
-
-    <!-- For "New Var Rule"... -->
-
-    document.getElementById("newVarRuleButton").onclick = function () {
-        document.getElementById('newVarRuleFormParent').style.display = "block";
-    };
-
-    document.getElementById("submitNewVarRuleForm").onclick = function () {
-        document.getElementById('newVarRuleFormParent').style.display = "none";
-    };
-
-    document.getElementById("cancelNewVarRuleForm").onclick = function () {
-        document.getElementById('newVarRuleFormParent').style.display = "none";
-    };
-
-    <!-- For "Delete Var Rule"... -->
-
-    document.getElementById("deleteVarRuleButton").onclick = function () {
-        document.getElementById('deleteVarRuleFormParent').style.display = "block";
-    };
-
-    document.getElementById("submitDeleteVarRuleForm").onclick = function () {
-        document.getElementById('deleteVarRuleFormParent').style.display = "none";
-    };
-
-    document.getElementById("cancelDeleteVarRuleForm").onclick = function () {
-        document.getElementById('deleteVarRuleFormParent').style.display = "none";
     };
 
     <!-- For "Back"... -->
