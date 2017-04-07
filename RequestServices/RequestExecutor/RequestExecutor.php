@@ -55,7 +55,7 @@ class RequestExecutor {
 		
 
 		$variables = $request->getRequestVariables();
-		$noCaching = isset($variables['no-caching']) ? $variables['no-caching'] : false;
+		$noCaching = isset($variables['no-caching']) ? $variables['no-caching'] == 'true': false;
 		
 		
 		if(isset($variables['type']) && in_array($variables['type'], CacheController::$ruleTypes)) {
@@ -91,6 +91,8 @@ class RequestExecutor {
 		else{
 			//let's just keep this between u and me. no need to tell the cache ;)
 			$requestResult = $this->requestDataRetriever->completeRequest($request->__toString());
+			$this->localCacheController->handleNoCacheRequest($request, $requestResult);
+			$this->globalCacheController->handleNoCacheRequest($request, $requestResult);
 			
 		}
 		

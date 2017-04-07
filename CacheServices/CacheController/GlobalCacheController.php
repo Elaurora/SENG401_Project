@@ -7,7 +7,7 @@ class GlobalCacheController extends CacheController{
 	 * Last resort default Ttl for caches. 120 seconds.
 	 * @var integer
 	 */
-	public static $defaultTtl =60;
+	public static $defaultTtl = 600;
 	
 	/**
 	 * Figures out if the given request exists within the cache, and returns it if does exist and has not expired.
