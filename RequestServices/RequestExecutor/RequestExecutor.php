@@ -51,12 +51,9 @@ class RequestExecutor {
 	 * 		The output string for the service
 	 */
 	public function executeRequest($request) {
+		$noCaching = isset($_GET['no-caching']) ? $_GET['no-caching'] == 'true': false;
 		
-		
-
 		$variables = $request->getRequestVariables();
-		$noCaching = isset($variables['no-caching']) ? $variables['no-caching'] == 'true': false;
-		
 		
 		if(isset($variables['type']) && in_array($variables['type'], CacheController::$ruleTypes)) {
 			//If this is the global database

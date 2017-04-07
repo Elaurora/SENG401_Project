@@ -207,6 +207,14 @@ class LocalCacheController extends CacheController{
 	protected function getVariablesQuery(){
 		return GetVariableQuery::create();
 	}
+
+	/**
+	 * Gets all the 'GET' variabled for a cached request
+	 * @param ChildCachedRequest[]|ObjectCollection
+	 */
+	protected function getGetVariables($query) {
+		return $query->getGetVariables();
+	}
 	
 	/**
 	 * gets all CacheMatchVariables of the database Type with a foreign key matching the given rule
