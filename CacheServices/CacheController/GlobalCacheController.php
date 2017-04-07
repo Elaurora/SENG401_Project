@@ -101,25 +101,14 @@ class GlobalCacheController extends CacheController{
 	}
 	
 	/**
-	 * Adds the given request to the cache.
-	 * @param unknown $request the request to add to the cache
-	 * @param string $response the response of the given request to be cached.
-	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
+	 * fixes the problem of calling add[global]GetVariables
+	 * in cacheRequest. This feels somewhat sloppy perhaps.
+	 * @param unknown $storedRequest the new entry in cached_requests
+	 * @param unknown $variable the GetVariable object to be stored for the cached request
+	 *
 	 */
-	public function cacheRequest(Request $request, $response){
-		$storedRequest = new \GlobalCachedRequest();
-		$storedRequest->setQueryUrlRoot($request->__toString());
-		$storedRequest->setQueryTime(mktime());
-		$storedRequest->setQueryResponse(bin2hex($response));
-		
-		foreach ($request->getRequestVariables() as $key => $value){
-			$getVars = new \GlobalGetVariable();
-			$getVars->setVariableName($key);
-			$getVars->setVariableValue($value);
-			$storedRequest->addGlobalGetVariable($getVars);
-		}
-		
-		$storedRequest->save();
+	protected function addGetVariablesForCache($storedRequest, $variable){
+		$storedRequest->addGlobalGetVariable($variable);
 	}
 	
 	/**
@@ -174,17 +163,60 @@ class GlobalCacheController extends CacheController{
 	}
 	
 	/**
+	 * Get a cache request object for the corresponding database type
+	 */
+	protected function createCachedRequest(){
+		return new \GlobalCachedRequest();
+	}
+	
+	/**
+	 * Create a GetVariable object for the corresponding database type
+	 */
+	protected function createGetVariable(){
+		return new \GlobalGetVariable();
+	}
+	
+	/**
+	 * Create a CacheHitRecord object for the global database
+	 */
+	protected function createCacheHitRecord(){
+		return new \GlobalCacheHitRecord();
+	}
+	
+	/**
+	 * Gets a cached requests query corresponding to the global database
+	 */
+	protected function getCachedRequestsQuery(){
+		return GlobalCachedRequestQuery::create();
+	}
+	
+	/**
+	 * Gets a cached requests query corresponding to the global database
+	 */
+	protected function getCacheHitRecordQuery(){
+		return GlobalCacheHitRecordQuery::create();
+	}
+	
+	/**
 	 * Gets a cache rule query corresponding to the Global database
 	 */
 	protected function getCacheRuleQuery(){
 		return GlobalCacheRuleQuery::create();
 	}
 	
+	
 	/**
 	 * Gets a cache match variables query for the corresponding database type
 	 */
 	protected function getCacheMatchVariablesQuery(){
 		return GlobalCacheMatchVariableQuery::create();
+	}
+	
+	/**
+	 * Gets a get variables query for the corresponding database type
+	 */
+	protected function getVariablesQuery(){
+		return GlobalGetVariableQuery::create();
 	}
 	
 	/**
@@ -338,6 +370,51 @@ class GlobalCacheController extends CacheController{
 	}
 	
 	/**
+	 * Sets the hit and miss counters of a cache to 0, and clears all saved requests.
+	 * @param unknown $clearType clear_locals, clear_global, or clear_all.
+	 */
+	protected function clearCache($clearType){
+		
+		// Check the flavor of the Clearing request, and pass on instructions
+		// to subscribers to clear their caches as appropriate.
+		if ($clearType == 'clear_locals' || $clearType == 'clear_all'){
+			//Clear the local caches.
+			
+			// THIS IS NOT TESTED.
+			$allSubs = \GlobalSubscriberIpQuery::create()->find();
+			
+			foreach($allSubs as $sub){
+				$request = new Request();
+				$request->setProtocol('http://');
+				$request->setUrlRoot($sub->getSubscriberIp().'/SENG401');
+				$request->setApiVersion('v1');
+				$request->addRequestVariable('type', 'clear_locals');
+				
+				$url = $request->__toString();
+				echo($url);
+				$localCacheResponse = file_get_contents($url);
+				
+				if($localCacheResponse['status'] == 'failure'){
+					echo($localCacheResponse['errmsg']);
+				}
+				else if($localCacheResponse['status'] == 'success'){
+					
+				}else{
+					echo('Error clearing cache at ip: ' . $sub->getSubscriberIp());
+				}
+				
+			}
+			
+		}
+		
+		if ($clearType == 'clear_global' || $clearType == 'clear_all'){
+			//Clear this global Cache
+			$this->clear();
+		}
+	}
+	
+	
+	/**
 	 * Adds the senders ip to the list of subscibers to the GlobalCache
 	 * Will also add all currently cached rules to the new subscriber
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
@@ -385,6 +462,8 @@ class GlobalCacheController extends CacheController{
 			}
 		}
 		$response = array();
+		
+		//Implemented but not tested
 		
 		$response['status'] = 'success';
 		return $response;
