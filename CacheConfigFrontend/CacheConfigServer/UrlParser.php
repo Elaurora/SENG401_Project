@@ -48,6 +48,20 @@ class UrlParser {
 
 			if($first == 'submit') {
 				$return->setRequestType(RequestPath::SUBMIT_REQUEST);
+
+				//  Encore!! [applause emoji x 3]
+
+				array_shift($parts);
+
+				//  One last thing to see what kind of config command it is...
+
+				if (count($parts) > 0) {
+
+				    //  Not checking to see what it is haha yay.
+
+                    $return->setCommandType($parts[0]);
+                }
+
 			} else {
 				$return->setRequestType(RequestPath::FORM_REQUEST);
 			}

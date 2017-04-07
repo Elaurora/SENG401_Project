@@ -11,7 +11,7 @@ class SubmitHandler {
     }
 
     public function submit(RequestPath $requestPath) {
-        //$this->executor->executeFormRequest($requestPath);
+        $this->executor->executeFormRequest($requestPath);
         $this->redirect->redirectAfterSubmit($requestPath);
     }
 }

@@ -23,6 +23,14 @@ class RequestPath {
 	 * @var string
 	 */
 	protected $urlBase;
+
+    /**
+     * The kind of configuration command to send (newcacherule, for example)
+     * null by default, is this is a bad idea...?
+     *
+     * @var string
+     */
+	protected $commandType = null;
 	
 	/**
 	 * @return string
@@ -85,6 +93,24 @@ class RequestPath {
      */
 	public function getRequestType() {
 	    return $this->requestType;
+    }
+
+    /**
+     * Sets the command type.
+     *
+     * @param $commandType
+     */
+    public function setCommandType($commandType) {
+        $this->commandType = $commandType;
+    }
+
+    /**
+     * Gets the command type.
+     *
+     * @return string
+     */
+    public function getCommandType() {
+	    return $this->commandType;
     }
 	
 }
