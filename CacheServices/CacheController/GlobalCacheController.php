@@ -30,35 +30,27 @@ class GlobalCacheController extends CacheController{
 			
 		}
 		
-		$id = $query->getQueryId();
+		//load all the rules and their variables
+		$cacheRuleQuery = GlobalCacheRuleQuery::create()->find();
 		
-		// if something does match, get the variables of the matching request
-		// check which rule applies to the variables found
+		//the array for saving rules that match
+		$matchedRules = array();
 		
-		$ruleNumbers = array();
-		
-		foreach ($request->getRequestVariables() as $key => $value){
-			//go through each variable, see which rule number applies the most.
-			$cacheMatchVariableQuery = GlobalCacheMatchVariableQuery::create();
-			$cacheMatchVariableQuery = $cacheMatchVariableQuery->filterByVariableName($key);
-			$cacheMatchVariableQuery = $cacheMatchVariableQuery->filterByVariableValue($value);
-			$cacheMatchVariableQuery = $cacheMatchVariableQuery->findOne();
-			if(isset($cacheMatchVariableQuery)){
-				$ruleNum = $cacheMatchVariableQuery->getRuleId();
-				if (isset($ruleNum)){
-					$ruleNumbers[] = $ruleNum;
-				}
-			}
+		//iterate over each rule and see how much it matches
+		foreach($cacheRuleQuery as $ruleID => $cacheRule) {
+			$overlap = $this->computeVariableSetOverlap($query->getGlobalGetVariables(), $cacheRule->getGlobalCacheMatchVariables());
 			
+			if($overlap >= 0) {
+				$matchedRules[$cacheRule->getRuleId()] = $overlap;
+			}
 		}
 		
 		//we found at least one relevant rule #
-		if(count($ruleNumbers) > 0){
-			$c = array_count_values($ruleNumbers);
-			$rule = array_search(max($c), $c);
+		if(count($matchedRules) > 0){
+			$ruleID = array_search(max($matchedRules), $matchedRules);
 			
 			$cacheRuleQuery = GlobalCacheRuleQuery::create();
-			$cacheRuleQuery = $cacheRuleQuery->filterByRuleId($rule);
+			$cacheRuleQuery = $cacheRuleQuery->filterByRuleId($ruleID);
 			$cacheRuleQuery = $cacheRuleQuery->findOne();
 			$ttl = $cacheRuleQuery->getLocalTtl();
 		}
@@ -78,10 +70,7 @@ class GlobalCacheController extends CacheController{
 		}
 		
 		
-		//check that the query_time+local_ttl is greater than the current time
-		//echo($query->getQueryTime() + $ttl);
-		//echo("       " + mktime());
-		
+		//check that the query_time+local_ttl is greater than the current time		
 		if($query->getQueryTime() + $ttl > mktime()){
 			//if it is, return the query_response
 			$this->incrementCacheHitCounter();
@@ -90,10 +79,7 @@ class GlobalCacheController extends CacheController{
 		else{
 			//if it isn't, delete the cached request, return false
 			//First delete all the related variables in get_variables
-			$getVars = new \GlobalGetVariable();
-			$getVars->setQueryId($id);
-			$query->getGlobalGetVariables()->delete();
-			
+			$query->getGlobalGetVariables()->delete();		
 			$query->delete();
 			$this->incrementCacheMissCounter();
 			return false;
@@ -284,14 +270,12 @@ class GlobalCacheController extends CacheController{
 					}
 					if($ruleToEdit !== null){
 						$ruleToEdit = $ruleID;
-						echo('found a match');
 						break;
 					}
 				}
 			}
 			else if(!isset($rule['match_variables']) && !isset($variables['match_variables'])){
 				$ruleToEdit = $ruleID;
-				echo('found a match');
 				break;
 			}
 		}
@@ -303,13 +287,11 @@ class GlobalCacheController extends CacheController{
 			$newRule->setGlobalTtl($variables['globalttl']);
 			
 			if(isset($variables['match_variables'])){
-				echo('Match vars set<br>');
 				foreach($variables['match_variables'] as $matchVar){
 					$newMatchVar = new \GlobalCacheMatchVariable();
 					$newMatchVar->setVariableName($matchVar['variable_name']);
 					$newMatchVar->setVariableValue($matchVar['variable_value']);
 					$newRule->addGlobalCacheMatchVariable($newMatchVar);
-					echo('Added match varname<'.$matchVar['variable_name'].'> match varvalue<'.$matchVar['variable_value'].'><br>');
 				}
 			}
 			
@@ -351,16 +333,15 @@ class GlobalCacheController extends CacheController{
 			
 			$request->addRequestVariable('rule_id', $newRuleID);
 			$url = $request->__toString();
-			echo($url);
 			$localCacheResponse = file_get_contents($url);
 			
 			if($localCacheResponse['status'] == 'failure'){
-				echo($localCacheResponse['errmsg']);
+
 			}
 			else if($localCacheResponse['status'] == 'success'){
 				
 			}else{
-				echo('not getting a response in the expected format');
+
 			}
 			
 		}
@@ -391,16 +372,16 @@ class GlobalCacheController extends CacheController{
 				$request->addRequestVariable('type', 'clear_locals');
 				
 				$url = $request->__toString();
-				echo($url);
+
 				$localCacheResponse = file_get_contents($url);
 				
 				if($localCacheResponse['status'] == 'failure'){
-					echo($localCacheResponse['errmsg']);
+
 				}
 				else if($localCacheResponse['status'] == 'success'){
 					
 				}else{
-					echo('Error clearing cache at ip: ' . $sub->getSubscriberIp());
+
 				}
 				
 			}
@@ -456,9 +437,9 @@ class GlobalCacheController extends CacheController{
 			if($localCacheResponse['status'] == 'success'){
 				
 			}else if($localCacheResponse['status'] == 'failure'){
-				echo($localCacheResponse['errmsg']);
+				
 			}else{
-				echo('Local Cache response not in expected format');
+				
 			}
 		}
 		$response = array();
