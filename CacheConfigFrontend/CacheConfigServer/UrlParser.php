@@ -34,9 +34,9 @@ class UrlParser {
 		}
 
 		//get the form name
-		if(count($parts) > 1) {
+		if(count($parts) >= 1) {
 			$first = $parts[0];
-			
+
 			$return->setTargetForm($first);
 			array_shift($parts);
 		}

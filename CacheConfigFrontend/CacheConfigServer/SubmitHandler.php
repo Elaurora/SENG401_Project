@@ -10,7 +10,7 @@ class SubmitHandler {
         $this->redirect = new RedirectEngine();
     }
 
-    public function submit($requestPath) {
+    public function submit(RequestPath $requestPath) {
         //$this->executor->executeFormRequest($requestPath);
         $this->redirect->redirectAfterSubmit($requestPath);
     }

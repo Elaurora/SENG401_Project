@@ -5,7 +5,7 @@
      const MANAGE_CONFIG_FORM = "CacheConfigFrontend/CacheConfigGUI/ManageConfiguration.html";
      const VIEW_STATS_FORM = "CacheConfigFrontend/CacheConfigGUI/ViewStatistics.html";
 
-     public function getForm($requestPath) {
+     public function getForm(RequestPath $requestPath) {
          $targetForm = $requestPath->getTargetForm();
 
          switch ($targetForm)
