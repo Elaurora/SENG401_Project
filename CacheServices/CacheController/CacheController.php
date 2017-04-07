@@ -1,7 +1,4 @@
 <?php
-
-
-use Propel\Runtime\ActiveQuery\Criteria;
 abstract class CacheController{
 	
 	/**
@@ -30,6 +27,39 @@ abstract class CacheController{
 	 * @return The array will also contain a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
 	 */
 	public abstract function getCachedRequest(Request $request);
+	
+	/**
+	 * Accepts two sets of GET variable database rows, computes whether they overlap and by how much
+	 * 
+	 * @param GetVariable[] $requestSet
+	 * @param GetVariable[] $ruleSet
+	 * 
+	 * @return int
+	 * 		-1 for no overlap
+	 * 		otherwise, the number of overlapping variables
+	 */
+	protected function computeVariableSetOverlap($requestSet, $ruleSet) {
+		//if there is anything in the rule set that isn't in the request set, automatic failure, other than that we are just counting matches
+		$matchSum = 0;
+		foreach($ruleSet as $ruleVar) {
+			$foundMatchInRequestSet = false;
+			
+			foreach($requestSet as $requestVar) {
+				if($requestVar->getVariableName() == $ruleVar->getVariableName()) {
+					if($requestVar->getVariableValue() == $ruleVar->getVariableValue()) {
+						$foundMatchInRequestSet = true;
+						$matchSum++;
+					}
+				}
+			}
+			
+			if(!$foundMatchInRequestSet) {
+				return -1;
+			}
+		}
+		
+		return $matchSum;
+	}
 	
 	/**
 	 * Adds the given request to the cache.
@@ -140,6 +170,7 @@ abstract class CacheController{
 		
 		return null;
 	}
+	
 	
 	/**
 	 * Gets all rules currently in the cache and returns them
