@@ -14,7 +14,7 @@ class UrlParser {
 		$path = explode('?', $path)[0];
 		
 		//explode the parts of the query
-		$parts = explode('/');
+		$parts = explode('/', $path);
 		
 		//remove the first empty string from the parts
 		if(count($parts) > 1) {

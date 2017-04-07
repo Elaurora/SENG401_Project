@@ -31,25 +31,37 @@ class RequestPath {
 	 */
 	public function getFullPath() {
 		$base = $this->urlBase;
-		$base .= $targetForm;
+		$base .= $this->targetForm;
 		
-		if($requestType == $this::SUBMIT_REQUEST) {
+		if($this->requestType == $this::SUBMIT_REQUEST) {
 			$base .= '/submit';
 		}
 		
 		return $base;
 	}
 	
-	public function setUrlBase($urlBase);
+	public function setUrlBase($urlBase) {
+	    $this->urlBase = $urlBase;
+    }
+
+	public function getUrlBase() {
+	    return $this->urlBase;
+    }
+
+	public function setTargetForm($targetForm) {
+	    $this->targetForm;
+    }
 	
-	public function getUrlBase();
+	public function getTargetForm() {
+	    return $this->targetForm;
+    }
 	
-	public function setTargetForm($targetForm);
+	public function setRequestType($requestType) {
+	    $this->requestType;
+    }
 	
-	public function getTargetForm();
-	
-	public function setRequestType($requestType);
-	
-	public function getRequestType();
+	public function getRequestType() {
+	    return $this->requestType;
+    }
 	
 }

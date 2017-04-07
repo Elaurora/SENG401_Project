@@ -4,11 +4,11 @@ use Propel\Runtime\ActiveQuery\Criteria;
 require_once "vendor/autoload.php";
 require_once "vendor/bin/generated-conf/config.php";
 
-define('__GLOBAL_DATABASE__', true);
-define('__CONFIG_GUI__', false);
+define('__GLOBAL_DATABASE__', false);
+define('__CONFIG_GUI__', true);
 define('__NODE_SERVER__', false);
 
-define('__VERBOSE__', true);
+define('__VERBOSE__', false);
 
 
 /**
@@ -31,7 +31,7 @@ function node() {
  */
 function config() {
 	$config = new CacheConfigController();
-	$reponse = $config->handleRequest();
+	$response = $config->handleRequest();
 	echo $response;
 	return;
 	$path = $_SERVER['REQUEST_URI'];
