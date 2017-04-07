@@ -9,7 +9,7 @@ class LocalCacheController extends CacheController{
 	 * Last resort default Ttl for caches. 60 seconds.
 	 * @var integer
 	 */
-	public static $defaultTtl = 4;
+	public static $defaultTtl = 600;
 	
 	/**
 	 * Figures out if the given request exists within the cache, and returns it if does exist and has not expired.

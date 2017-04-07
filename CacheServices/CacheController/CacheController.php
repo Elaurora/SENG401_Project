@@ -69,6 +69,16 @@ abstract class CacheController{
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
 	 */
 	public function cacheRequest(Request $request, $response){
+		//delete any existing requests with the provided url
+		/**
+		 * @var CachedRequestQuery $query
+		 */
+		$query = $this->getCachedRequestsQuery();
+		$query->filterByQueryUrlRoot($request->__toString());
+		$toDeleteSet = $query->find();
+		$toDeleteSet->getGetVariables()->delete();
+		$toDeleteSet->delete();
+		
 		$storedRequest = $this->createCachedRequest();
 		$storedRequest->setQueryUrlRoot($request->__toString());
 		$storedRequest->setQueryTime(mktime());
@@ -79,10 +89,19 @@ abstract class CacheController{
 			$getVars->setVariableName($key);
 			$getVars->setVariableValue($value);
 			$this->addGetVariablesForCache($storedRequest, $getVars);
-			//$storedRequest->addGlobalGetVariable($getVars);
 		}
 		
 		$storedRequest->save();
+	}
+	
+	/**
+	 * Handles an incoming 'no-caching' request
+	 * @param Request $request the request to add to the cache
+	 * @param string $response the response of the given request to be cached.
+	 */
+	public function handleNoCacheRequest(Request $request, $reponse) {
+		$this->incrementCacheHitCounter();
+		$this->cacheRequest($request, $response);
 	}
 	
 	/**
