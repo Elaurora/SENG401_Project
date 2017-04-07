@@ -2,7 +2,7 @@
 
 class RESTApiExecutor {
 
-    public function executeFormRequest() {
-        $response = (new RESTRequestHandler())->handleRequest();
+    public function executeFormRequest($requestPath) {
+        print_r($_POST);
     }
 }

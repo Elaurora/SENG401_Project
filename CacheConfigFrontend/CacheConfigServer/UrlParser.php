@@ -15,13 +15,12 @@ class UrlParser {
 		
 		//explode the parts of the query
 		$parts = explode('/', $path);
-		
+
 		//remove the first empty string from the parts
 		if(count($parts) > 1) {
 			$parts = array_shift($parts);
 		}
-		
-		
+
 		//check if the first part is 'SENG401' and remove it if it is
 		if(count($parts) > 1) {
 			$first = $parts[0];
@@ -33,7 +32,7 @@ class UrlParser {
 				$return->setUrlBase('/');
 			}
 		}
-		
+
 		//get the form name
 		if(count($parts) > 1) {
 			$first = $parts[0];
@@ -41,11 +40,11 @@ class UrlParser {
 			$return->setTargetForm($first);
 			$parts = array_shift($parts);
 		}
-		
+
 		//check if its a submit request
 		if(count($parts) > 1) {
 			$first = $parts[0];
-			
+
 			if($first == 'submit') {
 				$return->setRequestType(RequestPath::SUBMIT_REQUEST);
 			} else {

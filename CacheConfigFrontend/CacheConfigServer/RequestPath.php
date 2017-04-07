@@ -9,7 +9,6 @@ class RequestPath {
 	 */
 	protected $requestType;
 	
-	
 	/**
 	 * A string that identifies the target page (i.e. 'manageconfig' or somesuch)
 	 * @var string

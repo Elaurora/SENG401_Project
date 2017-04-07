@@ -16,9 +16,9 @@ class CacheConfigController {
 		
 		if($requestPath->getRequestType() == RequestPath::FORM_REQUEST) {
 			$server = new FormServer();
-			
+
 			$form = $server->getForm($requestPath);
-			
+
 			return $form;
 		} else {
 			$submit = new SubmitHandler();
