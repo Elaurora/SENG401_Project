@@ -206,6 +206,14 @@ class GlobalCacheController extends CacheController{
 	}
 	
 	/**
+	 * Gets all the 'GET' variabled for a cached request
+	 * @param ChildCachedRequest[]|ObjectCollection
+	 */
+	protected function getGetVariables($query) {
+		return $query->getGlobalGetVariables();
+	}
+	
+	/**
 	 * gets all GlobalCacheMatchVariables with a foreign key matching the given rule
 	 * @param unknown $rule the rule to get all CacheMatchVariables for
 	 */

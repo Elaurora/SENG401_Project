@@ -24,7 +24,7 @@
   </table>
   <table name="cached_requests" idMethod="native" phpName="CachedRequest">
     <column name="query_id" phpName="QueryId" type="BIGINT" sqlType="bigint(20) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
-    <column name="query_url_root" phpName="QueryUrlRoot" type="VARCHAR" size="100" primaryKey="true" required="true"/>
+    <column name="query_url_root" phpName="QueryUrlRoot" type="VARCHAR" size="400" required="true"/>
 	<column name="query_response" phpName="QueryResponse" type="CLOB" required="true"/>
 	<column name="query_time" phpName="QueryTime" type="INTEGER" size="10" sqlType="int(10) unsigned" required="true"/>
     <unique name="query_id">

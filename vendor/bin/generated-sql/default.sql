@@ -44,10 +44,10 @@ DROP TABLE IF EXISTS `cached_requests`;
 CREATE TABLE `cached_requests`
 (
     `query_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-    `query_url_root` VARCHAR(100) NOT NULL,
+    `query_url_root` VARCHAR(400) NOT NULL,
     `query_response` LONGTEXT NOT NULL,
     `query_time` int(10) unsigned NOT NULL,
-    PRIMARY KEY (`query_id`,`query_url_root`),
+    PRIMARY KEY (`query_id`),
     UNIQUE INDEX `query_id` (`query_id`)
 ) ENGINE=InnoDB;
 

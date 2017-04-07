@@ -1,4 +1,6 @@
 <?php
+use Base\CachedRequestQuery;
+
 abstract class CacheController{
 	
 	/**
@@ -69,21 +71,23 @@ abstract class CacheController{
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
 	 */
 	public function cacheRequest(Request $request, $response){
-		//delete any existing requests with the provided url
+		
 		/**
+		 * 
 		 * @var CachedRequestQuery $query
 		 */
 		$query = $this->getCachedRequestsQuery();
 		$query->filterByQueryUrlRoot($request->__toString());
-		$toDeleteSet = $query->find();
-		$toDeleteSet->getGetVariables()->delete();
-		$toDeleteSet->delete();
+		$storedRequest = $query->findOne();
 		
-		$storedRequest = $this->createCachedRequest();
-		$storedRequest->setQueryUrlRoot($request->__toString());
+		if(empty($storedRequest)) {
+			$storedRequest = $this->createCachedRequest();
+			$storedRequest->setQueryUrlRoot($request->__toString());
+		}
+		
 		$storedRequest->setQueryTime(mktime());
 		$storedRequest->setQueryResponse(bin2hex($response));
-		
+		$this->getGetVariables($storedRequest)->delete();
 		foreach ($request->getRequestVariables() as $key => $value){
 			$getVars = $this->createGetVariable();
 			$getVars->setVariableName($key);
@@ -99,7 +103,7 @@ abstract class CacheController{
 	 * @param Request $request the request to add to the cache
 	 * @param string $response the response of the given request to be cached.
 	 */
-	public function handleNoCacheRequest(Request $request, $reponse) {
+	public function handleNoCacheRequest(Request $request, $response) {
 		$this->incrementCacheHitCounter();
 		$this->cacheRequest($request, $response);
 	}
@@ -167,6 +171,12 @@ abstract class CacheController{
 	 * @param unknown $rule the rule to get all CacheMatchVariables for
 	 */
 	protected abstract function getCacheMatchVariables($rule);
+	
+	/**
+	 * Gets all the 'GET' variabled for a cached request
+	 * @param ChildCachedRequest[]|ObjectCollection
+	 */
+	protected abstract function getGetVariables($query);
 	
 	/**
 	 * Creats a new rule in the cache using the given variables
