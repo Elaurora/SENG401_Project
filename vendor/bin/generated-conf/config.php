@@ -26,7 +26,7 @@ $manager->setName('default');
 $serviceContainer->setConnectionManager('default', $manager);
 $manager = new \Propel\Runtime\Connection\ConnectionManagerSingle();
 $manager->setConfiguration(array (
-	'dsn' => 'mysql:host=127.0.0.1;port=3306;dbname=seng401globalcachedb',
+	'dsn' => 'mysql:host=104.198.102.12;port=3306;dbname=seng401globalcachedb',
 	'user' => 'root',
 	'password' => 'abc123',
 	'settings' =>

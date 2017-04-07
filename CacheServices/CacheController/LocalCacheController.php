@@ -78,10 +78,7 @@ class LocalCacheController extends CacheController{
 		}
 		
 		
-		//check that the query_time+local_ttl is greater than the current time
-		//echo($query->getQueryTime() + $ttl);
-		//echo("       " + mktime());
-		
+		//check that the query_time+local_ttl is greater than the current time	
 		if($query->getQueryTime() + $ttl > mktime()){
 			//if it is, return the query_response
 			$this->incrementCacheHitCounter();

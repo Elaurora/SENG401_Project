@@ -78,10 +78,7 @@ class GlobalCacheController extends CacheController{
 		}
 		
 		
-		//check that the query_time+local_ttl is greater than the current time
-		//echo($query->getQueryTime() + $ttl);
-		//echo("       " + mktime());
-		
+		//check that the query_time+local_ttl is greater than the current time		
 		if($query->getQueryTime() + $ttl > mktime()){
 			//if it is, return the query_response
 			$this->incrementCacheHitCounter();
@@ -284,14 +281,12 @@ class GlobalCacheController extends CacheController{
 					}
 					if($ruleToEdit !== null){
 						$ruleToEdit = $ruleID;
-						echo('found a match');
 						break;
 					}
 				}
 			}
 			else if(!isset($rule['match_variables']) && !isset($variables['match_variables'])){
 				$ruleToEdit = $ruleID;
-				echo('found a match');
 				break;
 			}
 		}
@@ -303,13 +298,11 @@ class GlobalCacheController extends CacheController{
 			$newRule->setGlobalTtl($variables['globalttl']);
 			
 			if(isset($variables['match_variables'])){
-				echo('Match vars set<br>');
 				foreach($variables['match_variables'] as $matchVar){
 					$newMatchVar = new \GlobalCacheMatchVariable();
 					$newMatchVar->setVariableName($matchVar['variable_name']);
 					$newMatchVar->setVariableValue($matchVar['variable_value']);
 					$newRule->addGlobalCacheMatchVariable($newMatchVar);
-					echo('Added match varname<'.$matchVar['variable_name'].'> match varvalue<'.$matchVar['variable_value'].'><br>');
 				}
 			}
 			
@@ -351,16 +344,15 @@ class GlobalCacheController extends CacheController{
 			
 			$request->addRequestVariable('rule_id', $newRuleID);
 			$url = $request->__toString();
-			echo($url);
 			$localCacheResponse = file_get_contents($url);
 			
 			if($localCacheResponse['status'] == 'failure'){
-				echo($localCacheResponse['errmsg']);
+
 			}
 			else if($localCacheResponse['status'] == 'success'){
 				
 			}else{
-				echo('not getting a response in the expected format');
+
 			}
 			
 		}
@@ -391,16 +383,16 @@ class GlobalCacheController extends CacheController{
 				$request->addRequestVariable('type', 'clear_locals');
 				
 				$url = $request->__toString();
-				echo($url);
+
 				$localCacheResponse = file_get_contents($url);
 				
 				if($localCacheResponse['status'] == 'failure'){
-					echo($localCacheResponse['errmsg']);
+
 				}
 				else if($localCacheResponse['status'] == 'success'){
 					
 				}else{
-					echo('Error clearing cache at ip: ' . $sub->getSubscriberIp());
+
 				}
 				
 			}
@@ -456,9 +448,9 @@ class GlobalCacheController extends CacheController{
 			if($localCacheResponse['status'] == 'success'){
 				
 			}else if($localCacheResponse['status'] == 'failure'){
-				echo($localCacheResponse['errmsg']);
+				
 			}else{
-				echo('Local Cache response not in expected format');
+				
 			}
 		}
 		$response = array();
