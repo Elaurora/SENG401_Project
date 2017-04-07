@@ -115,6 +115,7 @@ class ComposerStaticInit0955228efefbf3524ad486e4a1dec14f
         'CacheRuleQuery' => __DIR__ . '/..' . '/bin/CacheRuleQuery.php',
         'CachedRequest' => __DIR__ . '/..' . '/bin/CachedRequest.php',
         'CachedRequestQuery' => __DIR__ . '/..' . '/bin/CachedRequestQuery.php',
+        'FormServer' => __DIR__ . '/../..' . '/CacheConfigFrontend/CacheConfigServer/FormServer.php',
         'GetVariable' => __DIR__ . '/..' . '/bin/GetVariable.php',
         'GetVariableQuery' => __DIR__ . '/..' . '/bin/GetVariableQuery.php',
         'GlobalCacheController' => __DIR__ . '/../..' . '/CacheServices/CacheController/GlobalCacheController.php',
@@ -150,6 +151,7 @@ class ComposerStaticInit0955228efefbf3524ad486e4a1dec14f
         'Map\\GlobalGetVariableTableMap' => __DIR__ . '/..' . '/bin/Map/GlobalGetVariableTableMap.php',
         'Map\\GlobalGetVariablesTableMap' => __DIR__ . '/..' . '/bin/Map/GlobalGetVariablesTableMap.php',
         'Map\\GlobalSubscriberIpTableMap' => __DIR__ . '/..' . '/bin/Map/GlobalSubscriberIpTableMap.php',
+        'RESTApiExecutor' => __DIR__ . '/../..' . '/CacheConfigFrontend/CacheConfigServer/RESTApiExecutor.php',
         'RESTRequestHandler' => __DIR__ . '/../..' . '/RequestServices/RESTRequestHandler/RESTRequestHandler.php',
         'RedirectEngine' => __DIR__ . '/../..' . '/CacheConfigFrontend/CacheConfigServer/RedirectEngine.php',
         'Request' => __DIR__ . '/../..' . '/RequestServices/RequestTranslation/Request.php',
@@ -159,6 +161,7 @@ class ComposerStaticInit0955228efefbf3524ad486e4a1dec14f
         'RequestExecutor' => __DIR__ . '/../..' . '/RequestServices/RequestExecutor/RequestExecutor.php',
         'RequestParser' => __DIR__ . '/../..' . '/RequestServices/RequestTranslation/RequestParser/RequestParser.php',
         'RequestPath' => __DIR__ . '/../..' . '/CacheConfigFrontend/CacheConfigServer/RequestPath.php',
+        'SubmitHandler' => __DIR__ . '/../..' . '/CacheConfigFrontend/CacheConfigServer/SubmitHandler.php',
         'UrlParser' => __DIR__ . '/../..' . '/CacheConfigFrontend/CacheConfigServer/UrlParser.php',
     );
 

@@ -18,7 +18,7 @@ class UrlParser {
 
 		//remove the first empty string from the parts
 		if(count($parts) > 1) {
-			$parts = array_shift($parts);
+			array_shift($parts);
 		}
 
 		//check if the first part is 'SENG401' and remove it if it is
@@ -26,7 +26,7 @@ class UrlParser {
 			$first = $parts[0];
 			
 			if($first == 'SENG401') {
-				$parts = array_shift($parts);
+				array_shift($parts);
 				$return->setUrlBase('/SENG401/');
 			} else {
 				$return->setUrlBase('/');
@@ -38,7 +38,7 @@ class UrlParser {
 			$first = $parts[0];
 			
 			$return->setTargetForm($first);
-			$parts = array_shift($parts);
+			array_shift($parts);
 		}
 
 		//check if its a submit request
@@ -50,6 +50,8 @@ class UrlParser {
 			} else {
 				$return->setRequestType(RequestPath::FORM_REQUEST);
 			}
+		} else {
+			$return->setRequestType(RequestPath::FORM_REQUEST);
 		}
 		
 		return $return;

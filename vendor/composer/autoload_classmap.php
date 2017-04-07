@@ -38,6 +38,7 @@ return array(
     'CacheRuleQuery' => $vendorDir . '/bin/CacheRuleQuery.php',
     'CachedRequest' => $vendorDir . '/bin/CachedRequest.php',
     'CachedRequestQuery' => $vendorDir . '/bin/CachedRequestQuery.php',
+    'FormServer' => $baseDir . '/CacheConfigFrontend/CacheConfigServer/FormServer.php',
     'GetVariable' => $vendorDir . '/bin/GetVariable.php',
     'GetVariableQuery' => $vendorDir . '/bin/GetVariableQuery.php',
     'GlobalCacheController' => $baseDir . '/CacheServices/CacheController/GlobalCacheController.php',
@@ -73,6 +74,7 @@ return array(
     'Map\\GlobalGetVariableTableMap' => $vendorDir . '/bin/Map/GlobalGetVariableTableMap.php',
     'Map\\GlobalGetVariablesTableMap' => $vendorDir . '/bin/Map/GlobalGetVariablesTableMap.php',
     'Map\\GlobalSubscriberIpTableMap' => $vendorDir . '/bin/Map/GlobalSubscriberIpTableMap.php',
+    'RESTApiExecutor' => $baseDir . '/CacheConfigFrontend/CacheConfigServer/RESTApiExecutor.php',
     'RESTRequestHandler' => $baseDir . '/RequestServices/RESTRequestHandler/RESTRequestHandler.php',
     'RedirectEngine' => $baseDir . '/CacheConfigFrontend/CacheConfigServer/RedirectEngine.php',
     'Request' => $baseDir . '/RequestServices/RequestTranslation/Request.php',
@@ -82,5 +84,6 @@ return array(
     'RequestExecutor' => $baseDir . '/RequestServices/RequestExecutor/RequestExecutor.php',
     'RequestParser' => $baseDir . '/RequestServices/RequestTranslation/RequestParser/RequestParser.php',
     'RequestPath' => $baseDir . '/CacheConfigFrontend/CacheConfigServer/RequestPath.php',
+    'SubmitHandler' => $baseDir . '/CacheConfigFrontend/CacheConfigServer/SubmitHandler.php',
     'UrlParser' => $baseDir . '/CacheConfigFrontend/CacheConfigServer/UrlParser.php',
 );

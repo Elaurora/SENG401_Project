@@ -39,26 +39,50 @@ class RequestPath {
 		return $base;
 	}
 	
+	/**
+	 * Sets the url base of the request, which is the part of the path before the 'website' starts (usually '/' or '/SENG401/')
+	 * @param string $urlBase
+	 */
 	public function setUrlBase($urlBase) {
 	    $this->urlBase = $urlBase;
     }
 
+    /**
+     * Gets the url base of the request, which is the part of the path before the 'website' starts (usually '/' or '/SENG401/')
+     * @return string
+     */
 	public function getUrlBase() {
 	    return $this->urlBase;
     }
 
+    /**
+     * Sets the target form of the request, which is the part of the url after the urlBase
+     * @param string $targetForm
+     */
 	public function setTargetForm($targetForm) {
-	    $this->targetForm;
+	    $this->targetForm = $targetForm;
     }
 	
+    /**
+     * Gets the target form of the request, which is the part of the url after the urlBase
+     * @return string
+     */
 	public function getTargetForm() {
 	    return $this->targetForm;
     }
 	
+    /**
+     * Sets the request type of the requestm either form or submit, defined above
+     * @param int $requestType
+     */
 	public function setRequestType($requestType) {
-	    $this->requestType;
+	    $this->requestType = $requestType;
     }
 	
+    /**
+     * Gets the request type of the requestm either form or submit, defined above
+     * @return int
+     */
 	public function getRequestType() {
 	    return $this->requestType;
     }
