@@ -54,7 +54,7 @@ class RESTApiExecutor {
 
                 $restAPIRequest .= "&local_ttl="        . $_POST["local_ttl"];
                 $restAPIRequest .= "&global_ttl="       . $_POST["global_ttl"];
-                $restAPIRequest .= "&match_variables="   . $this->parseMatchVars($_POST["match_vars"]);
+                $restAPIRequest .= "&match_variables="  . $this->parseMatchVars($_POST["match_vars"]);
                 break;
 
             case "deletecacherule":
@@ -66,7 +66,7 @@ class RESTApiExecutor {
                 if (!isset($_POST["rule_id"]))
                     throw new Exception("Invalid request: missing parameters");
 
-                $restAPIRequest .= "&rule_id="    . $_POST["rule_id"];
+                $restAPIRequest .= "&rule_id=" . $_POST["rule_id"];
                 break;
 
             case "getallrules":
@@ -95,6 +95,8 @@ class RESTApiExecutor {
     }
 
     /**
+     * Parses the match_vars input into a json.
+     *
      * @param $matchvars
      *      The string containing the match variables in the form
      *      [name] [value], ... , [name] [value]

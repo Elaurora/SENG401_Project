@@ -51,6 +51,7 @@
                 <br/>
                 <button id="newCacheRuleButton">New Cache Rule</button>
                 <button id="deleteCacheRuleButton">Delete Cache Rule</button>
+                <button id="clearCacheButton">Clear Cache</button>
                 <br/>
                 <p style="font-weight: normal">
                     Above are all the current caching rules for this node server! Press <i>New ___ Rule</i>
@@ -141,6 +142,19 @@
 
     document.getElementById("cancelDeleteCacheRuleForm").onclick = function () {
         document.getElementById('deleteCacheRuleFormParent').style.display = "none";
+    };
+
+    //  For "Clear Cache"...
+
+    document.getElementById("clearCacheButton").onclick = function () {
+        var postRequest = document.createElement("form");
+
+        postRequest.setAttribute("method", "post");
+        postRequest.setAttribute("action", "/SENG401/manageconfig/submit/clearcache");
+
+        document.body.appendChild(postRequest);
+
+        postRequest.submit();
     };
 
     //  For "Back"...
