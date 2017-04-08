@@ -2,7 +2,7 @@
 
 class RESTApiExecutor {
 
-    //  Tags for the command sets.
+    //  Command types.
 
     private static $NEW_CACHE_RULE    = "create_rule";
     private static $DELETE_CACHE_RULE = "delete_rule";
@@ -49,12 +49,12 @@ class RESTApiExecutor {
 
                 $restAPIRequest .= $this::$NEW_CACHE_RULE;
 
-                if (!isset($_POST["local_ttl"]) || !isset($_POST["global_ttl"]))
+                if (!isset($_POST["local_ttl"]) || !isset($_POST["global_ttl"]) || !isset($_POST["match_vars"]))
                     throw new Exception("Invalid request: missing parameters");
 
-                $restAPIRequest .= "&local_ttl="   . $_POST["local_ttl"];
-                $restAPIRequest .= "&global_ttl="  . $_POST["global_ttl"];
-
+                $restAPIRequest .= "&local_ttl="        . $_POST["local_ttl"];
+                $restAPIRequest .= "&global_ttl="       . $_POST["global_ttl"];
+                $restAPIRequest .= "&match_variables="   . $this->parseMatchVars($_POST["match_vars"]);
                 break;
 
             case "deletecacherule":
@@ -67,7 +67,6 @@ class RESTApiExecutor {
                     throw new Exception("Invalid request: missing parameters");
 
                 $restAPIRequest .= "&rule_id="    . $_POST["rule_id"];
-
                 break;
 
             case "getallrules":
@@ -93,5 +92,32 @@ class RESTApiExecutor {
         }
 
         return $restAPIRequest;
+    }
+
+    /**
+     * @param $matchvars
+     *      The string containing the match variables in the form
+     *      [name] [value], ... , [name] [value]
+     * @return string
+     *      The match variables as a JSON string
+     */
+    private function parseMatchVars($matchvars) {
+        $matchvars = explode(",", $matchvars);
+        $json = "{";
+
+        foreach ($matchvars as $index => $pair)
+        {
+            $json .= $index == 0 ? "" : ",";
+            $parts = explode(" ", trim($pair));
+
+            if (count($parts) != 2)
+                throw new Exception("Invalid match values: did you"
+                . " enter them in the form [name] [value], ... , [name] [value]?");
+
+            $json .= "\"" . $parts[0] . "\": " . "\"" . $parts[1] . "\"";
+        }
+
+        $json .= "}";
+        return $json;
     }
 }

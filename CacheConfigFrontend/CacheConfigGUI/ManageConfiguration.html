@@ -39,20 +39,26 @@
 
         <!-- The main content of this page... -->
 
-        <div style="font-family: Arial; font-weight: bold">
+        <div id="mainContentParent" style="font-family: Arial; font-weight: bold">
             Local Cache Rules
             <br/>
-           {ruleTable}
-            <br/>
-            <button id="newCacheRuleButton">New Cache Rule</button>
-            <button id="deleteCacheRuleButton">Delete Cache Rule</button>
-            <br/>
-            <p style="font-weight: normal">
-                Above are all the current caching rules for this node server! Press <i>New ___ Rule</i>
-                to add a new rule to a table, press <i>Delete ___ Rule</i> to delete a rule, or press
-                <i>Back</i> to go back to the main page.
-            </p>
-            <button id="backButton">Back</button>
+            <div id="mainContent" style="font-family: Arial; font-weight: normal">
+
+                <!-- The super special string to replace with the rule table request result... -->
+
+                {ruleTable}
+
+                <br/>
+                <button id="newCacheRuleButton">New Cache Rule</button>
+                <button id="deleteCacheRuleButton">Delete Cache Rule</button>
+                <br/>
+                <p style="font-weight: normal">
+                    Above are all the current caching rules for this node server! Press <i>New ___ Rule</i>
+                    to add a new rule to a table, press <i>Delete ___ Rule</i> to delete a rule, or press
+                    <i>Back</i> to go back to the main page.
+                </p>
+                <button id="backButton">Back</button>
+            </div>
         </div>
 
         <!-- Form for "New Cache Rule" -->
