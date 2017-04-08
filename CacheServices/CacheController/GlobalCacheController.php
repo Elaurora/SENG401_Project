@@ -359,6 +359,72 @@ class GlobalCacheController extends CacheController{
 	}
 	
 	/**
+	 * Deletes the rule with the given rule_id from the cache. If this is the global cache, it will also delete the rule from all subscribed caches
+	 * @param $variables an array containing the index 'rule_id' which indicates which rule is to be deleted
+	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
+	 */
+	protected function deleteRule($variables){
+		$response = array();
+		if(!isset($variables['rule_id'])){
+			$response['status'] = 'failure';
+			$response['errmsg'] = 'Attempted to delete a rule without specifying a rule_id';
+			return $response;
+		}
+		
+		$cacheRuleQuery = $this->getCacheRuleQuery();
+		
+		//got rid of Criteria::EQUAL
+		$cacheRuleQuery->filterByRuleId(intval($variables['rule_id']));
+		
+		$findOneResult = $cacheRuleQuery->findOne();
+		
+		if($findOneResult === null){
+			$response['status'] = 'failure';
+			$response['errmsg'] = 'Attempted to delete a rule that did not exist in the database';
+			return $response;
+		}
+		
+		$cacheMatchVarsQuery = $this->getCacheMatchVariablesQuery();
+		
+		//First, delete all match variables with that rule id
+		//got rid of Criteria::EQUAL
+		$cacheMatchVarsQuery->filterByRuleId(intval($variables['rule_id']));
+		$cacheMatchVarsQuery->delete();
+		
+		$cacheRuleQuery->delete();
+		
+		// now do the same for all the little kiddies
+		// THIS IS NOT TESTED.
+		$allSubs = \GlobalSubscriberIpQuery::create()->find();
+		
+		foreach($allSubs as $sub){
+			$request = new Request();
+			$request->setProtocol('http://');
+			$request->setUrlRoot($sub->getSubscriberIp().'/SENG401');
+			$request->setApiVersion('v1');
+			$request->addRequestVariable('type', 'delete_rule');
+			
+			$url = $request->__toString();
+			
+			$localCacheResponse = file_get_contents($url);
+			
+			if($localCacheResponse['status'] == 'failure'){
+				$response['status'] = 'failure';
+				$response['errmsg'] = $localCacheResponse['errmsg'];
+			}
+			else if($localCacheResponse['status'] == 'success'){	
+				$response['status'] = 'success';
+			}
+		}
+		
+		
+		//Implemented but not tested
+		
+		return $response;
+	}
+	
+	
+	/**
 	 * Sets the hit and miss counters of a cache to 0, and clears all saved requests.
 	 * @param unknown $clearType clear_locals, clear_global, or clear_all.
 	 */
