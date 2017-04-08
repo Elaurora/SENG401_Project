@@ -11,7 +11,7 @@ class RESTApiExecutor {
 
     // Super special hardcoded IP.
 
-    private static $REST_API_IP     = "104.198.102.12";
+    private static $REST_API_ROOT     = "http://104.198.102.12";
 
     /**
      *  Sends a cache config command via REST request.
@@ -37,15 +37,15 @@ class RESTApiExecutor {
      */
     private function buildFormRequest(RequestPath $requestPath) {
 
-        //  104.198.102.12/?type= ...
+        //  http://104.198.102.12/?type= ...
 
-        $restAPIRequest = $this::$REST_API_IP . "/?type=";
+        $restAPIRequest = $this::$REST_API_ROOT . "/?type=";
 
         switch ($requestPath->getCommandType())
         {
             case "newcacherule":
 
-                // ... 104.198.102.12/?type=create_rule&local_ttl=420&global_ttl=69
+                // ... http://104.198.102.12/?type=create_rule&local_ttl=420&global_ttl=69
 
                 $restAPIRequest .= $this::$NEW_CACHE_RULE;
 
@@ -59,7 +59,7 @@ class RESTApiExecutor {
 
             case "deletecacherule":
 
-                // ... 104.198.102.12/?type=create_rule&rule_id=420
+                // ... http://104.198.102.12/?type=create_rule&rule_id=420
 
                 $restAPIRequest .= $this::$DELETE_CACHE_RULE;
 
@@ -72,14 +72,14 @@ class RESTApiExecutor {
 
             case "getallrules":
 
-                // ... 104.198.102.12/?type=get_rules
+                // ... http://104.198.102.12/?type=get_rules
 
                 $restAPIRequest .= $this::$GET_ALL_RULES;
                 break;
 
             case "clearcache":
 
-                // ... 104.198.102.12/?type=clear_cache
+                // ... http://104.198.102.12/?type=clear_cache
 
                 $restAPIRequest .= $this::$CLEAR_CACHE;
                 break;

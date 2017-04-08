@@ -31,7 +31,7 @@
         text-align: left;
     }
 </style>
-<body onload="buildRuleTable('#sampleLocalTable'); buildVarTable('#sampleMatchVarTable')">
+<body>
 <h1>Auroras.live | Manage Configuration</h1>
 <div style="background: white; width: 60%; margin-left: 20%; margin-right: 20%; align-content: center; border-radius: 10px">
     <br/>
@@ -42,7 +42,7 @@
         <div style="font-family: Arial; font-weight: bold">
             Local Cache Rules
             <br/>
-            <table style="width: 50%; font-weight: normal" id="sampleLocalTable" border="1"></table>
+           {ruleTable}
             <br/>
             <button id="newCacheRuleButton">New Cache Rule</button>
             <button id="deleteCacheRuleButton">Delete Cache Rule</button>
@@ -120,14 +120,6 @@
         { "rule_id": 4, "local_ttl" : 50, "global_ttl": 50 }
     ];
 
-    var matchVarRulesList = [
-        { "rule_id": 0, "var_type" : "locations", "var_value": "yellowknife" },
-        { "rule_id": 1, "var_type" : "locations", "var_value": "yellowknife" },
-        { "rule_id": 2, "var_type" : "locations", "var_value": "yellowknife" },
-        { "rule_id": 3, "var_type" : "locations", "var_value": "yellowknife" },
-        { "rule_id": 4, "var_type" : "locations", "var_value": "yellowknife" }
-    ];
-
     function buildRuleTable(selector) {
         var columns = addAllColumnHeaders(cacheRulesList, selector);
 
@@ -135,22 +127,6 @@
             var row$ = $('<tr/>');
             for (var colIndex = 0; colIndex < columns.length; colIndex++) {
                 var cellValue = cacheRulesList[i][columns[colIndex]];
-                if (cellValue == null) cellValue = "";
-                row$.append($('<td/>').html(cellValue));
-            }
-            $(selector).append(row$);
-        }
-    }
-
-    <!-- Code reuse? What the hell is that? -->
-
-    function buildVarTable(selector) {
-        var columns = addAllColumnHeaders(matchVarRulesList, selector);
-
-        for (var i = 0; i < matchVarRulesList.length; i++) {
-            var row$ = $('<tr/>');
-            for (var colIndex = 0; colIndex < columns.length; colIndex++) {
-                var cellValue = matchVarRulesList[i][columns[colIndex]];
                 if (cellValue == null) cellValue = "";
                 row$.append($('<td/>').html(cellValue));
             }
@@ -207,6 +183,6 @@
     <!-- For "Back"... -->
 
     document.getElementById("backButton").onclick = function () {
-        location.href = "/SENG401/CacheConfigFrontend/CacheConfigGUI/CacheConfigurator.html";
+        location.href = "/SENG401/config";
     };
 </script>
