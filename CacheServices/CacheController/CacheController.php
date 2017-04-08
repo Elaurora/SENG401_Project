@@ -208,39 +208,26 @@ abstract class CacheController{
 	 * @return 
 	 */
 	protected function getAllRules(){
-		$response = array();
 		
-		$response['rules'] = array();
+		
+		$response = array();
 		
 		$ruleQuery = $this->getCacheRuleQuery();
 		
 		$allRules = $ruleQuery->find();
 		
-		foreach($allRules as $rule){
-			$rule_id = $rule->getRuleId();
-			$response['rules'][$rule_id] = array();
-			
-			$response['rules'][$rule_id]['local_ttl'] = $rule->getLocalTtl();
-			$response['rules'][$rule_id]['global_ttl'] = $rule->getGlobalTtl();
-			
-			$allMatchVars = $this->getCacheMatchVariables($rule);
-			
-			foreach($allMatchVars as $matchVar){
-				if(!isset($response['rules'][$rule_id]['match_variables']))
-					$response['rules'][$rule_id]['match_variables'] = array();
-				
-				$valuesToAdd = array();
-				
-				$valuesToAdd['variable_name'] = $matchVar->getVariableName();
-				$valuesToAdd['variable_value'] = $matchVar->getVariableValue();
-				
-				$response['rules'][$rule_id]['match_variables'][] = $valuesToAdd;
-			}
-			
-		}
+		$response['rules'] = $allRules->toArray();
+		
+		$variableQuery = $this->getCacheMatchVariablesQuery();
+		
+		$varRules = $variableQuery->find();
+		
+		$response['variables'] = $varRules->toArray();
+		
 		$response['status'] = 'success';
 		
 		return $response;
+		
 	}
 	
 	/**
@@ -257,8 +244,9 @@ abstract class CacheController{
 		}
 			
 		$cacheRuleQuery = $this->getCacheRuleQuery();
-	
-		$cacheRuleQuery->filterByRuleId(intval($variables['rule_id']), Criteria::EQUAL);
+		
+		//got rid of Criteria::EQUAL
+		$cacheRuleQuery->filterByRuleId(intval($variables['rule_id']));
 		
 		$findOneResult = $cacheRuleQuery->findOne();
 		
@@ -272,8 +260,9 @@ abstract class CacheController{
 		
 		//First, delete all match variables with that rule id
 		
-		$cacheMatchVarsQuery->filterByRuleId(intval($variables['rule_id']), Criteria::EQUAL);
-		$cacheMatchVarsQuery->deleteAll();
+		//got rid of Criteria::EQUAL
+		$cacheMatchVarsQuery->filterByRuleId(intval($variables['rule_id']));
+		$cacheMatchVarsQuery->delete();
 		
 		$cacheRuleQuery->delete();
 		
