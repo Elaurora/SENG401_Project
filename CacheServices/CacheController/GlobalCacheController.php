@@ -308,24 +308,24 @@ class GlobalCacheController extends CacheController{
 		
 		//If i did not find a matching rule, i will need to create a new one as well as new CacheMatchVariables
 		if($ruleToEdit === null){
-			$newRule = new \GlobalCacheRule();
+			$ruleToEdit = new \GlobalCacheRule();
 			
 			foreach($matchVariables as $name => $value){
 				$newMatchVar = new \GlobalCacheMatchVariable();
 				$newMatchVar->setVariableName($name);
 				$newMatchVar->setVariableValue($value);
-				$newRule->addGlobalCacheMatchVariable($newMatchVar);
+				$ruleToEdit->addGlobalCacheMatchVariable($newMatchVar);
 			}
 			
 		} else {// If i did find a matching rule, i only need to edit the old one
 			$ruleQuery->clear();
 			$ruleQuery->filterByRuleId($ruleToEdit, Criteria::EQUAL);
-			$editRule = $ruleQuery->findOne();
+			$ruleToEdit = $ruleQuery->findOne();
 		}
 		
-		$newRule->setLocalTtl($localttl);
-		$newRule->setGlobalTtl($globalttl);
-		$editRule->save();
+		$ruleToEdit->setLocalTtl($localttl);
+		$ruleToEdit->setGlobalTtl($globalttl);
+		$ruleToEdit->save();
 		
 		
 		//The global cache now needs to inform all of its subscribers about the new rule
