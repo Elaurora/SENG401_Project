@@ -1,9 +1,7 @@
 <?php
 
  class FormServer {
-     private static $CACHE_CONFIG_FORM = "CacheConfigFrontend/CacheConfigGUI/CacheConfigurator.html";
      private static $MANAGE_CONFIG_FORM = "CacheConfigFrontend/CacheConfigGUI/ManageConfiguration.html";
-     private static $VIEW_STATS_FORM = "CacheConfigFrontend/CacheConfigGUI/ViewStatistics.html";
 
      private $TEMP_JSON_RESULT = "{\"rules\":[{\"rule_id\":\"1337\",\"local_ttl\":69,\"global_ttl\":420},{\"rule_id\":\"7734\",\"local_ttl\":420,\"global_ttl\":69}],\"match_variables\":[{\"rule_id\":\"07734\",\"variable_name\":\"here come\",\"variable_value\":\"dat boi\"},{\"rule_id\":\"5318008\",\"variable_name\":\"o shit\",\"variable_value\":\"whaddup\"}],\"status\":\"success\"}";
 
