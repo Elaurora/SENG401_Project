@@ -9,7 +9,8 @@ define('__NODE_SERVER__', false);
 define('__VERBOSE__', false);
 
 /**
- * Global DB IP: 104.198.102.12
+ * Global DB IP:        104.198.102.12
+ * Cache Config IP:     35.185.206.201
  */
 
 
