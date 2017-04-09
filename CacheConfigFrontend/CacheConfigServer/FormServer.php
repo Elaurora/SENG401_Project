@@ -1,14 +1,44 @@
 <?php
 
+/**
+ * Receives requests for forms and finds their corresponding html.
+ *
+ * @authors Patrick and Natalie
+ */
  class FormServer {
+
+     /**
+      * Path to the Manage Cache Configuration form.
+      *
+      * @var string
+      */
      private static $MANAGE_CONFIG_FORM = "CacheConfigFrontend/CacheConfigGUI/ManageConfiguration.html";
+
+     /**
+      * A request for all rules. Will contain only the
+      * command type "getallrules".
+      *
+      * @var RequestPath
+      */
      private $rulesRequest;
 
+     /**
+      * FormServer constructor.
+      */
      public function __construct() {
          $this->rulesRequest = new RequestPath();
          $this->rulesRequest->setCommandType("getallrules");
      }
 
+     /**
+      * Navigates to the requested form and retrieves its html.
+      *
+      * @param RequestPath $requestPath
+      *     Path of the form to find.
+      * @return bool|mixed|string
+      *     The html of the requested form, if successful.
+      *     Navigates to a default form otherwise.
+      */
      public function getForm(RequestPath $requestPath) {
          $targetForm = $requestPath->getTargetForm();
 
@@ -28,24 +58,25 @@
                  $formHTML = str_replace("{rulesTable}", $htmlTables["rulesTable"], $formHTML);
                  $formHTML = str_replace("{varsTable}", $htmlTables["varsTable"], $formHTML);
 
-
                  return $formHTML;
              }
          }
      }
 
      /**
-      * Builds two html tables from a json encoded string, one for rules and
-      * the other for match variables. Assumes that the json encoded string is
+      * Builds two html tables from a JSON encoded string: one for rules and
+      * the other for match variables. Assumes that the JSON encoded string is
       * provided in the form:
       *
       *     {"rules": [{...}, ..., {...}], "variables": [{...}, ..., {...}], ...}
       *
       * @param $jstr
-      *     json encoded string containing the rules and variables tables.
+      *     JSON encoded string containing the rules and variables tables.
       * @return array
       *     Array with two items: the rules table html as "rulesTable" and
       *     the vars table html as "varsTable".
+      * @throws Exception
+      *     On failed request.
       */
      private function buildHTMLTable($jstr) {
 
@@ -56,11 +87,11 @@
          // Get the arrays for the rules table and variables table...
 
          $rules     = $json["rules"];
-         $matchvars = $json["variables"];
+         $vars      = $json["variables"];
          $status    = $json["status"];
 
          if ($status != "success")
-            throw new Exception($json["errmsg"]);
+            throw new Exception("Invalid database command: " . $json["errmsg"]);
 
          // Open the tables and create the headers...
 
@@ -69,25 +100,26 @@
 
          // Build the rules table...
 
-         foreach ($rules as $rule)
-         {
-            $rulesTable .= "<tr>";
-            $rulesTable .= "<td>" . $rule["RuleId"] . "</td>";
-            $rulesTable .= "<td>" . $rule["LocalTtl"] . "</td>";
-            $rulesTable .= "<td>" . $rule["GlobalTtl"] . "</td>";
-            $rulesTable .= "</tr>";
-         }
+         if (count($rules) > 0)
+             foreach ($rules as $rule)
+                 $rulesTable .= "<tr><td>".
+                     $rule["RuleId"] . "</td><td>".
+                     $rule["LocalTtl"] ."</td><td>".
+                     $rule["GlobalTtl"] ."</td></tr>";
+         else
+             $rulesTable .= "<tr><td>Looks like this table is empty! Did you try pressing <i>Create New Rule</i>?</td></tr>";
+
 
          // Build the variables table...
 
-         foreach ($matchvars as $var)
-         {
-             $varsTable .= "<tr>";
-             $varsTable .= "<td>" . $var["RuleId"] . "</td>";
-             $varsTable .= "<td>" . $var["VariableName"] . "</td>";
-             $varsTable .= "<td>" . $var["VariableValue"] . "</td>";
-             $varsTable .= "</tr>";
-         }
+         if (count($vars) > 0)
+             foreach ($vars as $var)
+                 $varsTable .= "<tr><td>".
+                     $var["RuleId"] . "</td><td>".
+                     $var["VariableName"] ."</td><td>".
+                     $var["VariableValue"] ."</td></tr>";
+         else
+             $varsTable .= "<tr><td>Looks like this table is empty! Did you try pressing <i>Create New Rule</i>?</td></tr>";
 
          // Close the tables...
 
@@ -104,7 +136,7 @@
       * returns the request result.
       *
       * @return bool|string
-      *     rules and variables tables as a json-encoded string,
+      *     Rules and variables tables as a JSON encoded string,
       *     if successful.
       */
      private function getTablesAsJSON() {
