@@ -317,14 +317,15 @@ class GlobalCacheController extends CacheController{
 				$ruleToEdit->addGlobalCacheMatchVariable($newMatchVar);
 			}
 			
-		} else {// If i did find a matching rule, i only need to edit the old one
-			$ruleQuery->clear();
-			$ruleQuery->filterByRuleId($ruleToEdit, Criteria::EQUAL);
-			$ruleToEdit = $ruleQuery->findOne();
-		}
+		} 
+		
+		
 		
 		$ruleToEdit->setLocalTtl($localttl);
 		$ruleToEdit->setGlobalTtl($globalttl);
+		
+		print_r($ruleToEdit->toJSON());
+		
 		$ruleToEdit->save();
 		
 		
