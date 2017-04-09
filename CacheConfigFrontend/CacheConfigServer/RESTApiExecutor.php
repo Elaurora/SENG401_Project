@@ -112,7 +112,7 @@ class RESTApiExecutor {
             $json .= $index == 0 ? "" : ",";
             $parts = explode(" ", trim($pair));
 
-            if (count($parts) != 2)
+            if (count($parts) != 2 && count($parts) != 1)
                 throw new Exception("Invalid match variables: did you"
                 . " enter them in the form [name] [value], ... , [name] [value]?");
 
