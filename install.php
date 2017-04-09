@@ -34,20 +34,20 @@ $rulesToSave = array();
 //iterate over each rule and prepare to save it
 foreach($rules as $rule) {
 	$toSave = new \CacheRule();
-	$toSave->setRuleId($rule['RuleId']);
-	$toSave->setGlobalTtl($rule['GlobalTtl']);
-	$toSave->setLocalTtl($rule['LocalTtl']);
-	$rulesToSave[$rule['RuleId']] = $toSave;
+	$toSave->setRuleId($rule->RuleId);
+	$toSave->setGlobalTtl($rule->GlobalTtl);
+	$toSave->setLocalTtl($rule->LocalTtl);
+	$rulesToSave[$rule->RuleId] = $toSave;
 }
 echo '<br>Rules Parsed...<br>';
 echo '<br>Parsing Variables...<br>';
 //iterate over each variable and add it to the rule
 foreach($variables as $variable) {
 	$toSave = new CacheMatchVariable();
-	$toSave->setVariableName($variable['VariableName']);
-	$toSave->setVariableValue($variable['VariableValue']);
+	$toSave->setVariableName($variable->VariableName);
+	$toSave->setVariableValue($variable->VariableValue);
 	
-	$rulesToSave[$variable['RuleId']]->addCacheMatchVariable($toSave);
+	$rulesToSave[$variable->RuleId]->addCacheMatchVariable($toSave);
 }
 echo '<br>Variables Parsed...<br>';
 echo '<br>Saving Rules...<br>';
