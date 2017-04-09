@@ -300,7 +300,7 @@ class GlobalCacheController extends CacheController{
 		}*/
 		
 		//parse out the variables we need
-		$matchVariables = json_decode($variables['match_variables']);
+		$matchVariables = json_decode($variables['match_variables'], true);
 		$localttl = $variables['localttl'];
 		$globalttl = $variables['globalttl'];
 		
