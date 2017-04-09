@@ -74,8 +74,7 @@ class RESTApiExecutor {
 
                 $restAPIRequest .= "&localttl="        . $_POST["local_ttl"];
                 $restAPIRequest .= "&globalttl="       . $_POST["global_ttl"];
-                $restAPIRequest .= "&match_variables="  . $this->parseMatchVars($_POST["match_vars"]); 
-                file_put_contents('creatruleRequest.txt', $restAPIRequest);
+                $restAPIRequest .= "&match_variables="  . $this->parseMatchVars($_POST["match_vars"]);
                 break;
 
             case "deletecacherule":

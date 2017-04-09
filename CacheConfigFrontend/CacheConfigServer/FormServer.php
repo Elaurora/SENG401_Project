@@ -40,9 +40,10 @@
       *     Navigates to a default form otherwise.
       */
      public function getForm(RequestPath $requestPath) {
-         $targetForm = $requestPath->getTargetForm();
 
          // Get the form string...
+
+         $targetForm = $requestPath->getTargetForm();
 
          switch ($targetForm)
          {
@@ -53,7 +54,7 @@
              {
                  $formHTML = file_get_contents($this::$MANAGE_CONFIG_FORM);
 
-                 $htmlTables = $this->buildHTMLTable($this->getTablesAsJSON());
+                 $htmlTables = $this->buildHTMLTables($this->getTablesAsJSON());
 
                  $formHTML = str_replace("{rulesTable}", $htmlTables["rulesTable"], $formHTML);
                  $formHTML = str_replace("{varsTable}", $htmlTables["varsTable"], $formHTML);
@@ -78,7 +79,7 @@
       * @throws Exception
       *     On failed request.
       */
-     private function buildHTMLTable($jstr) {
+     private function buildHTMLTables($jstr) {
 
          // Decode the string into an array...
 
