@@ -12,22 +12,14 @@ $subscribeResults = file_get_contents('http://' . $globalDBIP . '/?type=subscrib
 
 $subscribeResults = json_decode($subscribeResults);
 
-echo 'Got rule results: <br><pre>';
-echo print_r($subscribeResults);
-echo '</pre>';
+echo 'Got Rule Results...<br>';
+
 
 $rules = $subscribeResults->rules;
 $variables = $subscribeResults->variables;
 
-echo 'Got rules: <br><pre>';
-echo print_r($rules);
-echo '</pre>';
 
-echo 'Got variables: <br><pre>';
-echo print_r($variables);
-echo '</pre>';
-
-echo '<br>Parsing Rules...<br>';
+echo 'Parsing Rules...<br>';
 
 $rulesToSave = array();
 
@@ -39,8 +31,8 @@ foreach($rules as $rule) {
 	$toSave->setLocalTtl($rule->LocalTtl);
 	$rulesToSave[$rule->RuleId] = $toSave;
 }
-echo '<br>Rules Parsed...<br>';
-echo '<br>Parsing Variables...<br>';
+echo 'Rules Parsed...<br>';
+echo 'Parsing Variables...<br>';
 //iterate over each variable and add it to the rule
 foreach($variables as $variable) {
 	$toSave = new CacheMatchVariable();
@@ -49,10 +41,29 @@ foreach($variables as $variable) {
 	
 	$rulesToSave[$variable->RuleId]->addCacheMatchVariable($toSave);
 }
-echo '<br>Variables Parsed...<br>';
-echo '<br>Saving Rules...<br>';
+echo 'Variables Parsed...<br>';
+
+echo 'Deleting Old Rules...<br>';
+
+$variables = \CacheMatchVariableQuery::create()->find();
+$variables->delete();
+
+
+$rules = \CacheRuleQuery::create()->find();
+$rules->delete();
+
+echo 'Rules Deleted...<br>';
+
+
+
+echo 'Saving Rules...<br>';
 //iterate over each rule and save
 foreach($rulesToSave as $ruleToSave) {
-	$rulesToSave->save();
+	$ruleToSave->save();
 }
-echo '<br>Rules Saved...<br>';
+echo 'Rules Saved...<br>';
+
+
+
+
+
