@@ -2,11 +2,16 @@
 require_once "vendor/autoload.php";
 require_once "vendor/bin/generated-conf/config.php";
 
-define('__GLOBAL_DATABASE__', true);
-define('__CONFIG_GUI__', false);
+define('__GLOBAL_DATABASE__', false);
+define('__CONFIG_GUI__', true);
 define('__NODE_SERVER__', false);
 
 define('__VERBOSE__', false);
+
+/**
+ * Global DB IP:        104.198.102.12
+ * Cache Config IP:     35.185.206.201
+ */
 
 
 /**

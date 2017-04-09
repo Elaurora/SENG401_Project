@@ -1,10 +1,44 @@
 <?php
 
+/**
+ * Receives requests for forms and finds their corresponding html.
+ *
+ * @authors Patrick and Natalie
+ */
  class FormServer {
+
+     /**
+      * Path to the Manage Cache Configuration form.
+      *
+      * @var string
+      */
      private static $MANAGE_CONFIG_FORM = "CacheConfigFrontend/CacheConfigGUI/ManageConfiguration.html";
 
-     private $TEMP_JSON_RESULT = "{\"rules\":[{\"rule_id\":\"1337\",\"local_ttl\":69,\"global_ttl\":420},{\"rule_id\":\"7734\",\"local_ttl\":420,\"global_ttl\":69}],\"match_variables\":[{\"rule_id\":\"07734\",\"variable_name\":\"here come\",\"variable_value\":\"dat boi\"},{\"rule_id\":\"5318008\",\"variable_name\":\"o shit\",\"variable_value\":\"whaddup\"}],\"status\":\"success\"}";
+     /**
+      * A request for all rules. Will contain only the
+      * command type "getallrules".
+      *
+      * @var RequestPath
+      */
+     private $rulesRequest;
 
+     /**
+      * FormServer constructor.
+      */
+     public function __construct() {
+         $this->rulesRequest = new RequestPath();
+         $this->rulesRequest->setCommandType("getallrules");
+     }
+
+     /**
+      * Navigates to the requested form and retrieves its html.
+      *
+      * @param RequestPath $requestPath
+      *     Path of the form to find.
+      * @return bool|mixed|string
+      *     The html of the requested form, if successful.
+      *     Navigates to a default form otherwise.
+      */
      public function getForm(RequestPath $requestPath) {
          $targetForm = $requestPath->getTargetForm();
 
@@ -12,20 +46,17 @@
 
          switch ($targetForm)
          {
-             // Send a request to the server for the local cache rules and format it
-             // into a table, then return that...
+             // Get the the rule and variable tables, parse, build, and return.
 
              case "manageconfig":
              default:
              {
                  $formHTML = file_get_contents($this::$MANAGE_CONFIG_FORM);
 
-                 // $htmlTables = $this->buildHTMLTable($this->getTablesAsJSON());
-                 $htmlTables = $this->buildHTMLTable($this->TEMP_JSON_RESULT);
+                 $htmlTables = $this->buildHTMLTable($this->getTablesAsJSON());
 
                  $formHTML = str_replace("{rulesTable}", $htmlTables["rulesTable"], $formHTML);
                  $formHTML = str_replace("{varsTable}", $htmlTables["varsTable"], $formHTML);
-
 
                  return $formHTML;
              }
@@ -33,19 +64,20 @@
      }
 
      /**
-      * Builds two html tables from a json encoded string, one for rules and
-      * the other for match variables. Assumes that the json encoded string is
+      * Builds two html tables from a JSON encoded string: one for rules and
+      * the other for match variables. Assumes that the JSON encoded string is
       * provided in the form:
       *
-      *     {"rules": [{...}, ..., {...}], "match_variables": [{...}, ..., {...}], ...}
+      *     {"rules": [{...}, ..., {...}], "variables": [{...}, ..., {...}], ...}
       *
       * @param $jstr
-      *     json encoded string containing the rules and match_variables tables.
+      *     JSON encoded string containing the rules and variables tables.
       * @return array
       *     Array with two items: the rules table html as "rulesTable" and
       *     the vars table html as "varsTable".
+      * @throws Exception
+      *     On failed request.
       */
-
      private function buildHTMLTable($jstr) {
 
          // Decode the string into an array...
@@ -55,7 +87,11 @@
          // Get the arrays for the rules table and variables table...
 
          $rules     = $json["rules"];
-         $matchvars = $json["match_variables"];
+         $vars      = $json["variables"];
+         $status    = $json["status"];
+
+         if ($status != "success")
+            throw new Exception("Invalid database command: " . $json["errmsg"]);
 
          // Open the tables and create the headers...
 
@@ -64,51 +100,35 @@
 
          // Build the rules table...
 
-         foreach ($rules as $rule)
-         {
-            $rulesTable .= "<tr>";
-            $rulesTable .= "<td>" . $rule["rule_id"] . "</td>";
-            $rulesTable .= "<td>" . $rule["local_ttl"] . "</td>";
-            $rulesTable .= "<td>" . $rule["global_ttl"] . "</td>";
-            $rulesTable .= "</tr>";
-         }
+         if (count($rules) > 0)
+             foreach ($rules as $rule)
+                 $rulesTable .= "<tr><td>".
+                     $rule["RuleId"] . "</td><td>".
+                     $rule["LocalTtl"] ."</td><td>".
+                     $rule["GlobalTtl"] ."</td></tr>";
+         else
+             $rulesTable .= "<tr><td colspan='3'>Looks like this table is empty! Did you try pressing <i>New Cache Rule</i>?</td></tr>";
+
 
          // Build the variables table...
 
-         foreach ($matchvars as $var)
-         {
-             $varsTable .= "<tr>";
-             $varsTable .= "<td>" . $var["rule_id"] . "</td>";
-             $varsTable .= "<td>" . $var["variable_name"] . "</td>";
-             $varsTable .= "<td>" . $var["variable_value"] . "</td>";
-             $varsTable .= "</tr>";
-         }
+         if (count($vars) > 0)
+             foreach ($vars as $var)
+                 $varsTable .= "<tr><td>".
+                     $var["RuleId"] . "</td><td>".
+                     $var["VariableName"] ."</td><td>".
+                     $var["VariableValue"] ."</td></tr>";
+         else
+             $varsTable .= "<tr><td colspan='3'>Looks like this table is empty! Did you try pressing <i>New Cache Rule</i>?</td></tr>";
 
          // Close the tables...
 
          $rulesTable .= "</table>";
          $varsTable .= "</table>";
 
-         // Put the tables into an array and return this.
+         // Put the tables into an array and return...
 
-         $htmlTables = array("rulesTable" => $rulesTable, "varsTable" => $varsTable);
-
-         return $htmlTables;
-     }
-
-     /**
-      * Builds a "getallrules" RequestPath to
-      * retrieve the cache rules.
-      *
-      * @return RequestPath
-      *     A request for all rules. Contains only the command type
-      *     "getallrules".
-      */
-
-     private function buildGetRulesRequestPath() {
-         $getRulesRequestPath = new RequestPath();
-         $getRulesRequestPath->setCommandType("getallrules");
-         return $getRulesRequestPath;
+         return $htmlTables = array("rulesTable" => $rulesTable, "varsTable" => $varsTable);
      }
 
      /**
@@ -116,10 +136,10 @@
       * returns the request result.
       *
       * @return bool|string
-      *     rules and match_variables tables as a json-encoded string,
+      *     Rules and variables tables as a JSON encoded string,
       *     if successful.
       */
      private function getTablesAsJSON() {
-         return (new RESTApiExecutor())->executeFormRequest($this->buildGetRulesRequestPath());
+         return (new RESTApiExecutor())->executeFormRequest($this->rulesRequest);
      }
  }

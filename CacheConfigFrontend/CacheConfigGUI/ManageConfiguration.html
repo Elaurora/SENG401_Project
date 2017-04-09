@@ -39,7 +39,7 @@
         <!-- The main content of this page... -->
 
         <div id="mainContent" style="font-family: Arial; font-weight: normal; width: 50%; text-align: left">
-            <b>Table 1: Local Cache Rules</b>
+            <b>Table 1: Cache Rules</b>
             <br/>
             {rulesTable}
             <br/>
@@ -50,16 +50,18 @@
             <br/>
             <p>
                 <b>Press:</b>
-                <ul>
-                    <li><i>New Cache Rule</i> to add a new rule</li>
-                    <li><i>Delete Cache Rule</i> to delete a rule</li>
-                    <li><i>Clear Cache</i> to clear the current caching history (not displayed)</li>
-                </ul>
             </p>
+            <ul>
+                <li><i>New Cache Rule</i> to add a new rule</li>
+                <li><i>Delete Cache Rule</i> to delete a rule</li>
+                <li><i>Clear Cache</i> to clear the current caching history (not displayed)</li>
+            </ul>
             <br/>
-            <button id="newCacheRuleButton">New Cache Rule</button>
-            <button id="deleteCacheRuleButton">Delete Cache Rule</button>
-            <button id="clearCacheButton">Clear Cache</button>
+            <div id="buttons" style="text-align: center">
+                <button id="newCacheRuleButton">New Cache Rule</button>
+                <button id="deleteCacheRuleButton">Delete Cache Rule</button>
+                <button id="clearCacheButton">Clear Cache</button>
+            </div>
         </div>
         <!-- Form for "New Cache Rule" -->
 

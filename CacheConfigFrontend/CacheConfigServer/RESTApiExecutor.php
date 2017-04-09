@@ -1,22 +1,40 @@
 <?php
 
+/**
+ * Executes a cache configuration command by sending
+ * a REST request through the cache API.
+ *
+ * @authors Patrick and Natalie
+ */
 class RESTApiExecutor {
 
-    //  Command types.
-
-    private static $NEW_CACHE_RULE    = "create_rule";
-    private static $DELETE_CACHE_RULE = "delete_rule";
-    private static $GET_ALL_RULES     = "get_rules";
-    private static $CLEAR_CACHE       = "clear_all";
-
-    // Super special hardcoded IP.
-
-    private static $REST_API_ROOT     = "http://104.198.102.12";
+    /**
+     * Command types.
+     *
+     * @var string
+     */
+    private static
+        $NEW_CACHE_RULE     = "create_rule",
+        $DELETE_CACHE_RULE  = "delete_rule",
+        $GET_ALL_RULES      = "get_rules",
+        $CLEAR_CACHE        = "clear_all";
 
     /**
-     *  Sends a cache config command via REST request.
+     * IP of global cache server.
      *
-     *  @param  RequestPath $requestPath
+     * @var string
+     */
+    private static $REST_API_ROOT = "http://104.198.102.12";
+
+    /**
+     * Sends a cache configuration command via REST request.
+     *
+     * @param  RequestPath $requestPath
+     *      Request to make.
+     * @return string
+     *      Request result.
+     * @throws Exception
+     *      On invalid request.
      */
     public function executeFormRequest(RequestPath $requestPath) {
         return file_get_contents($this->buildFormRequest($requestPath));
@@ -27,13 +45,13 @@ class RESTApiExecutor {
      *  in the API.
      *
      * @param   RequestPath $requestPath
-     *      The request object
+     *      The request object.
      *
      * @return string $restAPIRequest
-     *      The REST request url
+     *      The REST request URL.
      *
      * @throws Exception
-     *      Invalid request.
+     *      On invalid request.
      */
     private function buildFormRequest(RequestPath $requestPath) {
 
@@ -95,13 +113,15 @@ class RESTApiExecutor {
     }
 
     /**
-     * Parses the match_vars input into a json.
+     * Parses the match_vars input into a JSON.
      *
      * @param $matchvars
      *      The string containing the match variables in the form
-     *      [name] [value], ... , [name] [value]
+     *      [name] [value], ..., [name] [value]
      * @return string
-     *      The match variables as a JSON string
+     *      The match variables as a JSON string.
+     * @throws Exception
+     *      On invalid match variables.
      */
     private function parseMatchVars($matchvars) {
         $matchvars = explode(",", $matchvars);
@@ -112,7 +132,7 @@ class RESTApiExecutor {
             $json .= $index == 0 ? "" : ",";
             $parts = explode(" ", trim($pair));
 
-            if (count($parts) != 2)
+            if (count($parts) != 2 && count($parts) != 1)
                 throw new Exception("Invalid match variables: did you"
                 . " enter them in the form [name] [value], ... , [name] [value]?");
 
