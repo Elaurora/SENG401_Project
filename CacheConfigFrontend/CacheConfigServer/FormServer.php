@@ -114,11 +114,14 @@
          // Build the variables table...
 
          if (count($vars) > 0)
+         {
              foreach ($vars as $var)
-                 $varsTable .= "<tr><td>".
-                     $var["RuleId"] . "</td><td>".
-                     $var["VariableName"] ."</td><td>".
-                     $var["VariableValue"] ."</td></tr>";
+                 if (!empty($var["VariableName"]) && !empty($var["VariableValue"]))
+                     $varsTable .= "<tr><td>".
+                         $var["RuleId"] . "</td><td>".
+                         $var["VariableName"] ."</td><td>".
+                         $var["VariableValue"] ."</td></tr>";
+         }
          else
              $varsTable .= "<tr><td colspan='3'>Looks like this table is empty! Did you try pressing <i>New Cache Rule</i>?</td></tr>";
 
