@@ -6,7 +6,7 @@ require_once "vendor/bin/generated-conf/config.php";
 $globalDBIP = '104.198.102.12';
 
 
-$subscribeResults = file_get_contents($globalDBIP . '/?type=subscribe');
+$subscribeResults = file_get_contents('http://' . $globalDBIP . '/?type=subscribe');
 
 echo 'Got rule results: <br><pre>';
 echo $subscribeResults;
