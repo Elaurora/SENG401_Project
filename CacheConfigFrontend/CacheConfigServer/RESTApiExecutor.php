@@ -96,7 +96,7 @@ class RESTApiExecutor {
 
             case "clearcache":
 
-                // ... http://104.198.102.12/?type=clear_cache
+                // ... http://104.198.102.12/?type=clear_all
 
                 $restAPIRequest .= $this::$CLEAR_CACHE;
                 break;
