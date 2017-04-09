@@ -481,45 +481,10 @@ class GlobalCacheController extends CacheController{
 		$subscriber = new \GlobalSubscriberIp();
 		$subscriber->setSubscriberIp($subscriberIP);
 		$subscriber->save();
-		$allRules = $this->getAllRules();
 
-		//need to send all current cache rules to the new subscriber
-		foreach($allRules['rule'] as $ruleID => $rule){
-			$request = new Request();
-			$request->setProtocol('http://');
-			$request->setUrlRoot($subscriberIP.'/SENG401');
-			$request->setApiVersion('v1');
-			$request->addRequestVariable('type', 'create_rule');
-			$request->addRequestVariable('localttl', $rule['localttl']);
-			$request->addRequestVariable('globalttl', $rule['globalttl']);
-			
-			if(isset($rule['match_variables'])){
-				$matches = array();
-				foreach($rule['match_variables'] as $matchVar){
-					$newAdd = array();
-					$newAdd['variable_name'] = $matchVar['variable_name'];
-					$newAdd['variable_value'] = $matchVar['variable_value'];
-					$matches[] = $newAdd;
-				}
-				$request->addRequestVariable('match_variables', $matches);
-			}
-			
-			$request->addRequestVariable('rule_id', $ruleID);
-			
-			$url = $request->__toString();
-			$localCacheResponse = file_get_contents($url);
-			if($localCacheResponse['status'] == 'success'){
-				
-			}else if($localCacheResponse['status'] == 'failure'){
-				
-			}else{
-				
-			}
-		}
-		$response = array();
-		
+
 		//Implemented but not tested
-		
+		$response = $this->getAllRules();
 		$response['status'] = 'success';
 		return $response;
 	}

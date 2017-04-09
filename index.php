@@ -8,6 +8,10 @@ define('__NODE_SERVER__', false);
 
 define('__VERBOSE__', false);
 
+/**
+ * Global DB IP: 104.198.102.12
+ */
+
 
 /**
  * Starting point for the node server
