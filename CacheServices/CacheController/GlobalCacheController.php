@@ -54,7 +54,7 @@ class GlobalCacheController extends CacheController{
 			$cacheRuleQuery = GlobalCacheRuleQuery::create();
 			$cacheRuleQuery = $cacheRuleQuery->filterByRuleId($ruleID);
 			$cacheRuleQuery = $cacheRuleQuery->findOne();
-			$ttl = $cacheRuleQuery->getLocalTtl();
+			$ttl = $cacheRuleQuery->getGlobalTtl();
 		}
 		else{
 			// if none, use the default rule
@@ -63,7 +63,7 @@ class GlobalCacheController extends CacheController{
 			$cacheRuleQuery = $cacheRuleQuery->filterByRuleId(0);
 			$cacheRuleQuery = $cacheRuleQuery->findOne();
 			if(isset($cacheRuleQuery)){
-				$ttl = $cacheRuleQuery->getLocalTtl();
+				$ttl = $cacheRuleQuery->getGlobalTtl();
 			}
 			else{
 				// if no default rule in table, use another default value in this class
