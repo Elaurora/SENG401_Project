@@ -2,6 +2,7 @@
 
 use Propel\Runtime\ActiveQuery\Criteria;
 use Base\GlobalCacheMatchVariableQuery;
+use Base\GlobalCacheRule;
 class GlobalCacheController extends CacheController{
 	
 	/**
@@ -239,14 +240,21 @@ class GlobalCacheController extends CacheController{
 			return $response;
 		}
 		
-		//First see if there is already a rule associated with the given match_variables, so that i replace it if one exists
+		if(!isset($variables['match_variables'])) {
+			$response['status'] = 'failure';
+			$response['errmsg'] = 'Attempted to create a rule in a GlobalCache without specifying the match variables';
+			return $response;
+		}
 		
+		
+		
+		//First see if there is already a rule associated with the given match_variables, so that i replace it if one exists
+		/*
 		$ruleQuery = GlobalCacheRuleQuery::create();
 		$allRuleIDs = $ruleQuery->select('rule_id')->find();
 		$matchQuery = GlobalCacheMatchVariableQuery::create();
-		echo($allRuleIDs);
 		
-
+		
 		$ruleToEdit = null;
 		
 		//The following loop is checking to see if there is already a rule with the same match variables
@@ -254,7 +262,7 @@ class GlobalCacheController extends CacheController{
 			$matchQuery->clear();
 			$matchVarsForRule = $matchQuery->findByRuleId($ruleID);
 			
-			if(!isset($variables['match_variables']) && $matchVarsForRule->isEmpty()){// If no match vars are set, no looping needs to be done
+			if($matchVarsForRule->isEmpty()){// If no match vars are set, no looping needs to be done
 				$ruleToEdit = $ruleID;
 				break;
 			}else{
@@ -289,72 +297,132 @@ class GlobalCacheController extends CacheController{
 					}
 				}
 			}
-		}
+		}*/
+		
+		//parse out the variables we need
+		$matchVariables = $variables['match_variables'];
+		$localttl = $variables['localttl'];
+		$globalttl = $variables['globalttl'];
+		
+		$ruleToEdit = $this->getMatchingRule($matchVariables);
 		
 		//If i did not find a matching rule, i will need to create a new one as well as new CacheMatchVariables
 		if($ruleToEdit === null){
 			$newRule = new \GlobalCacheRule();
-			$newRule->setLocalTtl($variables['localttl']);
-			$newRule->setGlobalTtl($variables['globalttl']);
 			
-			if(isset($variables['match_variables'])){
-				foreach($variables['match_variables'] as $matchVar){
-					$newMatchVar = new \GlobalCacheMatchVariable();
-					$newMatchVar->setVariableName($matchVar['variable_name']);
-					$newMatchVar->setVariableValue($matchVar['variable_value']);
-					$newRule->addGlobalCacheMatchVariable($newMatchVar);
-				}
+			foreach($matchVariables as $matchVar){
+				$newMatchVar = new \GlobalCacheMatchVariable();
+				$newMatchVar->setVariableName($matchVar['variable_name']);
+				$newMatchVar->setVariableValue($matchVar['variable_value']);
+				$newRule->addGlobalCacheMatchVariable($newMatchVar);
 			}
 			
-			$newRule->save();
-			$newRuleID = $newRule->getRuleId();
-		}
-		else{// If i did find a matching rule, i only need to edit the old one
+		} else {// If i did find a matching rule, i only need to edit the old one
 			$ruleQuery->clear();
 			$ruleQuery->filterByRuleId($ruleToEdit, Criteria::EQUAL);
 			$editRule = $ruleQuery->findOne();
-			
-			$editRule->setLocalTtl($variables['localttl']);
-			$editRule->setGlobalTtl($variables['globalttl']);
-			
-			$editRule->save();
-			$newRuleID = $editRule->getRuleId();
 		}
 		
+		$newRule->setLocalTtl($localttl);
+		$newRule->setGlobalTtl($globalttl);
+		$editRule->save();
+		
+		
 		//The global cache now needs to inform all of its subscribers about the new rule
+		$newRuleID = $editRule->getRuleId();
+		$subscribers = \GlobalSubscriberIpQuery::create()->find();
 		
-		$allSubs = \GlobalSubscriberIpQuery::create()->find();
 		
-		foreach($allSubs as $sub){
-			$request = new Request();
-			$request->setProtocol('http://');
-			$request->setUrlRoot($sub->getSubscriberIp().'/SENG401');
-			$request->setApiVersion('v1');
-			$request->addRequestVariable('type', 'create_rule');
-			$request->addRequestVariable('localttl', $variables['localttl']);
-			$request->addRequestVariable('globalttl', $variables['globalttl']);
+		//establish the basic request
+		$request = new Request();
+		$request->setProtocol('http://');
+		$request->setApiVersion('v1');
 			
-			if(isset($variables['match_variables'])){
-				$request->addRequestVariable('match_variables', $variables['match_variables']);
-			}
-			
-			$request->addRequestVariable('rule_id', $newRuleID);
-			$url = $request->__toString();
-			$localCacheResponse = file_get_contents($url);
-			
-			if($localCacheResponse['status'] == 'failure'){
-				
-			}
-			else if($localCacheResponse['status'] == 'success'){
-				
-			}else{
-				
-			}
-			
+		$request->addRequestVariable('type', 'create_rule');
+		$request->addRequestVariable('localttl', $localttl);
+		$request->addRequestVariable('globalttl', $globalttl);
+		$request->addRequestVariable('match_variables', $matchVariables);
+		$request->addRequestVariable('rule_id', $newRuleID);
+		
+		
+		$executor = new RequestExecutor();
+		
+		foreach($subscribers as $subscriber){
+			//point the request at a new subscriber
+			$request->setUrlRoot($subscriber->getSubscriberIp().'/SENG401');//the extra /SENG401 is okay, because the parser only looks at get variables for cache rules
+		
+			$executor->executeRequest($request);
 		}
 		
 		$response['status'] = 'success';
 		return $response;
+	}
+	
+	/**
+	 * Finds and returns a GlobalCacheRule that matches exactly on all match variables
+	 * @param string[] $matchVariables
+	 * 		An associative array of varName => varValue
+	 * @return GlobalCacheRule
+	 * 		The rule that matches the variable exactly, returns null if there is no match
+	 */
+	protected function getMatchingRule($matchVariables) {
+		$rules = \GlobalCacheRuleQuery::create()
+					->joinWithGlobalCacheMatchVariable(Criteria::LEFT_JOIN)
+					->find();
+		
+		//iterate over each rule and check if it matches the $matchVariables exactly
+		foreach($rules as $rule) {	
+			if($this->checkRuleMatchesVariables($rule, $matchVariables)) {
+				return $rule;
+			}	
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Checks to see if $matchVariables exactly matches the match variables on $rule
+	 * @param GlobalCacheRule $rule
+	 * 		The rule that we are checking for matches on
+	 * @param string[] $matchVariables
+	 * 		An associative array of varName => varValue
+	 * @return bool
+	 * 		true if the sets match, false otherwise
+	 */
+	protected function checkRuleMatchesVariables($rule, $matchVariables) {
+		//to be efficient, this computation can be done with a hashmap
+		//each variable in $rule will be inserted to the map
+		//and then each variable in $matchVariables will be removed from the hashmap
+		//if there are any left or if a variable is removed that wasn't there, they don't match
+		$variableMap = array();
+		
+		//insert to the map
+		$ruleVariables = $rule->getGlobalCacheMatchVariables();
+		foreach($ruleVariables as $ruleVariable) {
+			$variableMap[$ruleVariable->getVariableName()] = $ruleVariable->getVariableValue();
+		}
+		
+		//remove from the map
+		foreach($matchVariables as $name => $value) {
+			
+			//if the variable we are trying to remove isn't in the map, the sets don't match, return false
+			if(!isset($variableMap[$name])) {
+				return false;
+			}
+			
+			if($variableMap[$name] != $value) {
+				return false;
+			}
+			
+			unset($variableMap[$name]);	
+		}
+		
+		//if there are any variables left in the map, they don't match
+		if(count($variableMap) > 0) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 	
 	/**
