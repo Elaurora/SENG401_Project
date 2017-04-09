@@ -2,9 +2,9 @@
 require_once "vendor/autoload.php";
 require_once "vendor/bin/generated-conf/config.php";
 
-define('__GLOBAL_DATABASE__', true);
+define('__GLOBAL_DATABASE__', false);
 define('__CONFIG_GUI__', false);
-define('__NODE_SERVER__', false);
+define('__NODE_SERVER__', true);
 
 define('__VERBOSE__', false);
 

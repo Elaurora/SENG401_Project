@@ -37,7 +37,7 @@ class RESTRequestHandler {
 	        }
 	        
         } catch (Exception $e) {
-        	$response = json_encode(array("error" => "{$e->getMessage()}"));
+        	$response = json_encode(array("error" => "{$e->getMessage()}", "trace" => "{$e->getTraceAsString()}"));
         }
         
         return $response;
