@@ -3,8 +3,6 @@
  class FormServer {
      private static $MANAGE_CONFIG_FORM = "CacheConfigFrontend/CacheConfigGUI/ManageConfiguration.html";
 
-     private $TEMP_JSON_RESULT = "{\"rules\":[{\"rule_id\":\"1337\",\"local_ttl\":69,\"global_ttl\":420},{\"rule_id\":\"7734\",\"local_ttl\":420,\"global_ttl\":69}],\"match_variables\":[{\"rule_id\":\"07734\",\"variable_name\":\"here come\",\"variable_value\":\"dat boi\"},{\"rule_id\":\"5318008\",\"variable_name\":\"o shit\",\"variable_value\":\"whaddup\"}],\"status\":\"success\"}";
-
      public function getForm(RequestPath $requestPath) {
          $targetForm = $requestPath->getTargetForm();
 
@@ -20,8 +18,7 @@
              {
                  $formHTML = file_get_contents($this::$MANAGE_CONFIG_FORM);
 
-                 // $htmlTables = $this->buildHTMLTable($this->getTablesAsJSON());
-                 $htmlTables = $this->buildHTMLTable($this->TEMP_JSON_RESULT);
+                 $htmlTables = $this->buildHTMLTable($this->getTablesAsJSON());
 
                  $formHTML = str_replace("{rulesTable}", $htmlTables["rulesTable"], $formHTML);
                  $formHTML = str_replace("{varsTable}", $htmlTables["varsTable"], $formHTML);
@@ -55,7 +52,7 @@
          // Get the arrays for the rules table and variables table...
 
          $rules     = $json["rules"];
-         $matchvars = $json["match_variables"];
+         $matchvars = $json["variables"];
 
          // Open the tables and create the headers...
 
@@ -67,9 +64,9 @@
          foreach ($rules as $rule)
          {
             $rulesTable .= "<tr>";
-            $rulesTable .= "<td>" . $rule["rule_id"] . "</td>";
-            $rulesTable .= "<td>" . $rule["local_ttl"] . "</td>";
-            $rulesTable .= "<td>" . $rule["global_ttl"] . "</td>";
+            $rulesTable .= "<td>" . $rule["RuleId"] . "</td>";
+            $rulesTable .= "<td>" . $rule["LocalTtl"] . "</td>";
+            $rulesTable .= "<td>" . $rule["GlobalTtl"] . "</td>";
             $rulesTable .= "</tr>";
          }
 
@@ -78,9 +75,9 @@
          foreach ($matchvars as $var)
          {
              $varsTable .= "<tr>";
-             $varsTable .= "<td>" . $var["rule_id"] . "</td>";
-             $varsTable .= "<td>" . $var["variable_name"] . "</td>";
-             $varsTable .= "<td>" . $var["variable_value"] . "</td>";
+             $varsTable .= "<td>" . $var["RuleId"] . "</td>";
+             $varsTable .= "<td>" . $var["VariableName"] . "</td>";
+             $varsTable .= "<td>" . $var["VariableValue"] . "</td>";
              $varsTable .= "</tr>";
          }
 
