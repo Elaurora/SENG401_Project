@@ -72,8 +72,8 @@ class RESTApiExecutor {
                 if (!isset($_POST["local_ttl"]) || !isset($_POST["global_ttl"]) || !isset($_POST["match_vars"]))
                     throw new Exception("Invalid request: missing parameters");
 
-                $restAPIRequest .= "&localttl="        . $_POST["local_ttl"];
-                $restAPIRequest .= "&globalttl="       . $_POST["global_ttl"];
+                $restAPIRequest .= "&localttl="         . $_POST["local_ttl"];
+                $restAPIRequest .= "&globalttl="        . $_POST["global_ttl"];
                 $restAPIRequest .= "&match_variables="  . $this->parseMatchVars($_POST["match_vars"]);
                 break;
 
