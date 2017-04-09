@@ -245,45 +245,40 @@ class LocalCacheController extends CacheController{
 			return $response;
 		}
 		
+		if(!isset($variables['match_variables'])) {
+			$response['status'] = 'failure';
+			$response['errmsh'] = "Attempted to create a rule in a LocalCache without specifying the match_variables";
+			return $response;
+		}
+		
 		$theRule = CacheRuleQuery::create()->findOneByRuleId($variables['rule_id']);
 		
 		if($theRule === null){
 			$theRule = new \CacheRule();
 			
 			$theRule->setRuleId($variables['rule_id']);
-			$theRule->setLocalTtl($variables['localttl']);
-			$theRule->setGlobalTtl($variables['globalttl']);
 			
-			if(isset($variables['match_variables'])){
-				foreach($variables['match_variables'] as $matchVar){
-					$newMatchVar = new \GlobalCacheMatchVariable();
-					$newMatchVar->setVariableName($matchVar['variable_name']);
-					$newMatchVar->setVariableValue($matchVar['variable_value']);
-					$theRule->addCacheMatchVariable($newMatchVar);
-				}
+			$matchVariables = json_decode($variables['match_variables'], true);
+			
+			foreach($matchVariables as $name => $value){
+				$newMatchVar = new \GlobalCacheMatchVariable();
+				$newMatchVar->setVariableName($name);
+				$newMatchVar->setVariableValue($value);
+				$theRule->addCacheMatchVariable($newMatchVar);
 			}
 				
-			$theRule->save();
 			
-		}else{
-			$theRule->setLocalTtl($variables['localttl']);
-			$theRule->setGlobalTtl($variables['globalttl']);
-			$theRule->save();
 		}
+		
+		$theRule->setLocalTtl($variables['localttl']);
+		$theRule->setGlobalTtl($variables['globalttl']);
+		$theRule->save();
 		
 		$response['status'] = 'success';
 		return $response;
 	}
 	
-	/**
-	 * Deletes the rule with the given rule_id from the cache. If this is the global cache, it will also delete the rule from all subscribed caches
-	 * @param $variables an array containing the index 'rule_id' which indicates which rule is to be deleted
-	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
-	 */
-	protected function deleteRule($variables){
-		
-	}
-	
+
 	/**
 	 * Sets the hit and miss counters of a cache to 0, and clears all saved requests.
 	 * @param unknown $clearType clear_locals, clear_global, or clear_all. is not used locally.
@@ -313,23 +308,5 @@ class LocalCacheController extends CacheController{
 		$response['status'] = 'failure';
 		$response['errmsg'] = 'Cannot unsubscribe to a local cache';
 		return $response;
-	}
-	
-	/**
-	 * Subscribes this cache to the global cache at the given ip address
-	 * @param unknown $globalCache_ip the ip address of the global cache this cache will be subscribing to
-	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
-	 */
-	public function subscribeToGlobalCache($globalCache_ip){
-		//Not implemented
-	}
-	
-	/**
-	 * unsubscribes this cache from the global cache at the given ip address
-	 * @param unknown $globalCache_ip
-	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
-	 */
-	public function unsubscribeFromGlobalCache($globalCache_ip){
-		//Not implemented
 	}
 }

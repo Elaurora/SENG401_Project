@@ -438,15 +438,18 @@ class GlobalCacheController extends CacheController{
 		}
 		
 		// now do the same for all the little kiddies
-		// THIS IS NOT TESTED.
 		$allSubs = \GlobalSubscriberIpQuery::create()->find();
 		
+		$request = new Request();
+		$request->setProtocol('http://');
+		
+		$request->setApiVersion('v1');
+		$request->addRequestVariable('type', 'delete_rule');
+		$request->addRequestVariable('rule_id', $variables['rule_id']);
+		
 		foreach($allSubs as $sub){
-			$request = new Request();
-			$request->setProtocol('http://');
+			//point at the correct sub
 			$request->setUrlRoot($sub->getSubscriberIp().'/SENG401');
-			$request->setApiVersion('v1');
-			$request->addRequestVariable('type', 'delete_rule');
 			
 			$url = $request->__toString();
 			
@@ -461,8 +464,7 @@ class GlobalCacheController extends CacheController{
 			}
 		}
 		
-		
-		//Implemented but not tested
+
 		$response['status'] = 'success';
 		return $response;
 	}
