@@ -328,10 +328,8 @@ class GlobalCacheController extends CacheController{
 		$ruleToEdit->save();
 		
 		
-		//The global cache now needs to inform all of its subscribers about the new rule
-		$newRuleID = $editRule->getRuleId();
-		$subscribers = \GlobalSubscriberIpQuery::create()->find();
-		
+		//setup the request runner
+		$retriever = new RequestDataRetriever();
 		
 		//establish the basic request
 		$request = new Request();
@@ -342,11 +340,11 @@ class GlobalCacheController extends CacheController{
 		$request->addRequestVariable('localttl', $localttl);
 		$request->addRequestVariable('globalttl', $globalttl);
 		$request->addRequestVariable('match_variables', $matchVariables);
-		$request->addRequestVariable('rule_id', $newRuleID);
+		$request->addRequestVariable('rule_id', $ruleToEdit->getRuleId());
 		
 		
-		$retriever = new RequestDataRetriever();
-		
+		//The global cache now needs to inform all of its subscribers about the new rule
+		$subscribers = \GlobalSubscriberIpQuery::create()->find();
 		foreach($subscribers as $subscriber){
 			//point the request at a new subscriber
 			$request->setUrlRoot($subscriber->getSubscriberIp().'/SENG401');//the extra /SENG401 is okay, because the parser only looks at get variables for cache rules
