@@ -8,6 +8,12 @@ $globalDBIP = '104.198.102.12';
 
 $subscribeResults = file_get_contents($globalDBIP . '/?type=subscribe');
 
+echo 'Got rule results: <br><pre>';
+echo $subscribeResults;
+echo '</pre>';
+
+$subscribeResults = json_decode($subscribeResults);
+
 $rules = $subscribeResults['rules'];
 $variables = $subscribeResults['variables'];
 
@@ -21,7 +27,7 @@ foreach($rules as $rule) {
 	$toSave->setLocalTtl($rule['LocalTtl']);
 	$rulesToSave[$rule['RuleId']] = $toSave;
 }
-
+echo '<br>Rules Parsed...<br>';
 //iterate over each variable and add it to the rule
 foreach($variables as $variable) {
 	$toSave = new CacheMatchVariable();
@@ -30,8 +36,9 @@ foreach($variables as $variable) {
 	
 	$rulesToSave[$variable['RuleId']]->addCacheMatchVariable($toSave);
 }
-
+echo '<br>Variables Parsed...<br>';
 //iterate over each rule and save
 foreach($rulesToSave as $ruleToSave) {
 	$rulesToSave->save();
 }
+echo '<br>Rules Saved...<br>';
