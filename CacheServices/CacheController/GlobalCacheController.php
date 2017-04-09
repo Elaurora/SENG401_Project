@@ -453,6 +453,16 @@ class GlobalCacheController extends CacheController{
 	protected function subscribe(){
 		$subscriberIP = $this->getSenderIp();
 		
+		$toBeAdded = $subQuery = GlobalSubscriberIpQuery::create()
+			->filterBySubscriberIp($unsubscriberIP)
+			->findOne();
+		
+		if($toBeAdded != null){
+			$response['status'] = 'failure';
+			$response['errmsg'] = 'Could not add '.$subscriberIP.' to the database because it is already in the database';
+			return $response;
+		}
+		
 		//Initialize and save the new subscriber into the database
 		$subscriber = new \GlobalSubscriberIp();
 		$subscriber->setSubscriberIp($subscriberIP);
