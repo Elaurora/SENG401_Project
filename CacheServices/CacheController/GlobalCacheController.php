@@ -345,13 +345,13 @@ class GlobalCacheController extends CacheController{
 		$request->addRequestVariable('rule_id', $newRuleID);
 		
 		
-		$executor = new RequestExecutor();
+		$retriever = new RequestDataRetriever();
 		
 		foreach($subscribers as $subscriber){
 			//point the request at a new subscriber
 			$request->setUrlRoot($subscriber->getSubscriberIp().'/SENG401');//the extra /SENG401 is okay, because the parser only looks at get variables for cache rules
 		
-			$executor->executeRequest($request);
+			$retriever->completeRequest($request);
 		}
 		
 		$response['status'] = 'success';
