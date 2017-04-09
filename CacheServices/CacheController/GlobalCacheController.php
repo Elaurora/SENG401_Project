@@ -459,7 +459,7 @@ class GlobalCacheController extends CacheController{
 		
 		if($toBeAdded != null){
 			$response['status'] = 'failure';
-			$response['errmsg'] = 'Could not add '.$subscriberIP.' to the database because it is already in the database';
+			$response['errmsg'] = 'Could not add '.$subscriberIP.' to the database because it is already subscribed';
 			return $response;
 		}
 		

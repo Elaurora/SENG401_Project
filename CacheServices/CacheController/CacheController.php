@@ -203,8 +203,8 @@ abstract class CacheController{
 	
 	
 	/**
-	 * 
-	 * @return string[]|NULL[]
+	 * Returns all rules as well as all cacheMatchVariables. The rules will be in index 'rules' while the MatchVariables will be under 'variables'
+	 * @return An array containing the rules in the format specified above as well as a 'status' index, and in the case of failure an 'errmsg' index containing more information
 	 */
 	protected function getAllRules(){
 		
