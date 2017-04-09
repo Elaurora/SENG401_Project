@@ -14,8 +14,8 @@ echo '</pre>';
 
 $subscribeResults = json_decode($subscribeResults);
 
-$rules = $subscribeResults['rules'];
-$variables = $subscribeResults['variables'];
+$rules = $subscribeResults->rules;
+$variables = $subscribeResults->variables;
 
 $rulesToSave = array();
 
