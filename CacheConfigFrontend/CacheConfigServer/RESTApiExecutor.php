@@ -7,7 +7,7 @@ class RESTApiExecutor {
     private static $NEW_CACHE_RULE    = "create_rule";
     private static $DELETE_CACHE_RULE = "delete_rule";
     private static $GET_ALL_RULES     = "get_rules";
-    private static $CLEAR_CACHE       = "clear_cache";
+    private static $CLEAR_CACHE       = "clear_all";
 
     // Super special hardcoded IP.
 
@@ -113,7 +113,7 @@ class RESTApiExecutor {
             $parts = explode(" ", trim($pair));
 
             if (count($parts) != 2)
-                throw new Exception("Invalid match values: did you"
+                throw new Exception("Invalid match variables: did you"
                 . " enter them in the form [name] [value], ... , [name] [value]?");
 
             $json .= "\"" . $parts[0] . "\": " . "\"" . $parts[1] . "\"";

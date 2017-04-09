@@ -52,6 +52,40 @@ Returns:
 
 ]
 
+***     STRONG SUGGESTION (for nice table building):
+
+{
+	"rules":
+	[
+	    {
+        	"rule_id" : 1337,
+        	"localttl" : 69,
+        	"globalttl" : 420,
+        },
+        {
+             "rule_id" : 7734,
+             "localttl" : 420,
+             "globalttl" : 69,
+        }
+	],
+	"match_variables":
+	[
+		{
+            "rule_id" : 07734,
+            "variable_name" : "here come",
+            "variable_value" : "dat boi",
+        },
+        {
+            "rule_id" : 5318008,
+            "variable_name" : "o shit",
+            "variable_value" : "whaddup",
+        }
+	],
+	"status":"success"
+}
+
+/***
+
 
 Function: Delete Rule
 This function deletes an existing rule

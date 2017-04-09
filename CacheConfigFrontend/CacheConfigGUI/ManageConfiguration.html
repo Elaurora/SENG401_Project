@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Auroras.live | Manage Configuration</title>
+    <title>Auroras.live | Manage Cache Configuration</title>
 </head>
 <style>
     html {
@@ -22,46 +22,45 @@
         text-align: justify;
         font-family: Arial;
     }
-    table {
+    table, th, td, tr {
         width: 50%;
         font-family: Arial;
+        border: 1px solid black;
         border-collapse: collapse;
-    }
-    th {
         text-align: left;
     }
 </style>
 <body>
-<h1>Auroras.live | Manage Configuration</h1>
-<div style="background: white; width: 60%; margin-left: 20%; margin-right: 20%; align-content: center; border-radius: 10px">
+<h1>Auroras.live | Manage Cache Configuration</h1>
+<div style="background: white; width: 65%; margin-left: 17.5%; margin-right: 17.5%; align-content: center; border-radius: 10px">
     <br/>
     <div align="center" style="margin: 5%">
 
         <!-- The main content of this page... -->
 
-        <div id="mainContentParent" style="font-family: Arial; font-weight: bold">
-            Local Cache Rules
+        <div id="mainContent" style="font-family: Arial; font-weight: normal; width: 50%; text-align: left">
+            <b>Table 1: Local Cache Rules</b>
             <br/>
-            <div id="mainContent" style="font-family: Arial; font-weight: normal">
-
-                <!-- The super special string to replace with the rule table request result... -->
-
-                {ruleTable}
-
-                <br/>
-                <button id="newCacheRuleButton">New Cache Rule</button>
-                <button id="deleteCacheRuleButton">Delete Cache Rule</button>
-                <button id="clearCacheButton">Clear Cache</button>
-                <br/>
-                <p style="font-weight: normal">
-                    Above are all the current caching rules for this node server! Press <i>New ___ Rule</i>
-                    to add a new rule to a table, press <i>Delete ___ Rule</i> to delete a rule, or press
-                    <i>Back</i> to go back to the main page.
-                </p>
-                <button id="backButton">Back</button>
-            </div>
+            {rulesTable}
+            <br/>
+            <br/>
+            <b>Table 2: Match Variables</b>
+            <br/>
+            {varsTable}
+            <br/>
+            <p>
+                <b>Press:</b>
+                <ul>
+                    <li><i>New Cache Rule</i> to add a new rule</li>
+                    <li><i>Delete Cache Rule</i> to delete a rule</li>
+                    <li><i>Clear Cache</i> to clear the current caching history (not displayed)</li>
+                </ul>
+            </p>
+            <br/>
+            <button id="newCacheRuleButton">New Cache Rule</button>
+            <button id="deleteCacheRuleButton">Delete Cache Rule</button>
+            <button id="clearCacheButton">Clear Cache</button>
         </div>
-
         <!-- Form for "New Cache Rule" -->
 
         <div id="newCacheRuleFormParent" style="display: none; position: fixed; width: 100%; height: 100%; top: 0; left: 0; background-color: rgba(0, 0, 0, 0.5)">
@@ -77,8 +76,8 @@
                         global_ttl:<br/>
                         <input name="global_ttl" type="text">
                         <br/>
-                        match variables:<br/>
-                        <input name="match_vars" type="text" style="overflow: scroll">
+                        match_variables:<br/>
+                        <input name="match_vars" type="text" placeholder="name value, ...">
                         <br/>
                         <br/>
                         <br/>
@@ -155,11 +154,5 @@
         document.body.appendChild(postRequest);
 
         postRequest.submit();
-    };
-
-    //  For "Back"...
-
-    document.getElementById("backButton").onclick = function () {
-        location.href = "/SENG401/config";
     };
 </script>
