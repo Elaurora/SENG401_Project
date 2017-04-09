@@ -129,17 +129,18 @@ class RESTApiExecutor {
         $matchvars = explode(",", $matchvars);
         $json = "{";
 
-        foreach ($matchvars as $index => $pair)
-        {
-            $json .= $index == 0 ? "" : ",";
-            $parts = explode(" ", trim($pair));
+        if (!empty($matchvars))
+            foreach ($matchvars as $index => $pair)
+            {
+                $json .= $index == 0 ? "" : ",";
+                $parts = explode(" ", trim($pair));
 
-            if (count($parts) != 2 && count($parts) != 1)
-                throw new Exception("Invalid match variables: did you"
-                . " enter them in the form [name] [value], ... , [name] [value]?");
+                if (count($parts) != 2)
+                    throw new Exception("Invalid match variables: did you"
+                        . " enter them in the form [name] [value], ... , [name] [value]?");
 
-            $json .= "\"" . $parts[0] . "\":" . "\"" . $parts[1] . "\"";
-        }
+                $json .= "\"" . $parts[0] . "\":" . "\"" . $parts[1] . "\"";
+            }
 
         $json .= "}";
         return $json;
