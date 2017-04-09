@@ -129,7 +129,7 @@ class RESTApiExecutor {
         $matchvars = explode(",", $matchvars);
         $json = "{";
 
-        if (!empty($matchvars))
+        if (!isset($matchvars))
             foreach ($matchvars as $index => $pair)
             {
                 $json .= $index == 0 ? "" : ",";
