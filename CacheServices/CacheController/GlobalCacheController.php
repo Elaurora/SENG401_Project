@@ -300,7 +300,7 @@ class GlobalCacheController extends CacheController{
 		}*/
 		
 		//parse out the variables we need
-		$matchVariables = $variables['match_variables'];
+		$matchVariables = json_decode($variables['match_variables']);
 		$localttl = $variables['localttl'];
 		$globalttl = $variables['globalttl'];
 		
@@ -310,10 +310,10 @@ class GlobalCacheController extends CacheController{
 		if($ruleToEdit === null){
 			$newRule = new \GlobalCacheRule();
 			
-			foreach($matchVariables as $matchVar){
+			foreach($matchVariables as $name => $value){
 				$newMatchVar = new \GlobalCacheMatchVariable();
-				$newMatchVar->setVariableName($matchVar['variable_name']);
-				$newMatchVar->setVariableValue($matchVar['variable_value']);
+				$newMatchVar->setVariableName($name);
+				$newMatchVar->setVariableValue($value);
 				$newRule->addGlobalCacheMatchVariable($newMatchVar);
 			}
 			
