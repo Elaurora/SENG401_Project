@@ -107,7 +107,7 @@
                      $rule["LocalTtl"] ."</td><td>".
                      $rule["GlobalTtl"] ."</td></tr>";
          else
-             $rulesTable .= "<tr><td>Looks like this table is empty! Did you try pressing <i>Create New Rule</i>?</td></tr>";
+             $rulesTable .= "<tr><td colspan='3'>Looks like this table is empty! Did you try pressing <i>Create New Rule</i>?</td></tr>";
 
 
          // Build the variables table...
@@ -119,7 +119,7 @@
                      $var["VariableName"] ."</td><td>".
                      $var["VariableValue"] ."</td></tr>";
          else
-             $varsTable .= "<tr><td>Looks like this table is empty! Did you try pressing <i>Create New Rule</i>?</td></tr>";
+             $varsTable .= "<tr><td colspan='3'>Looks like this table is empty! Did you try pressing <i>Create New Rule</i>?</td></tr>";
 
          // Close the tables...
 
