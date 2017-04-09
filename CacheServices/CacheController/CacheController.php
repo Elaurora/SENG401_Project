@@ -203,9 +203,8 @@ abstract class CacheController{
 	
 	
 	/**
-	 * Gets all rules currently in the cache and returns them
-	 * @return An array containing the 'rule_id' , 'localttl' , 'globalttl' and 'match_variables' which is an array containing a variable_value for each 'variable_name'
-	 * @return 
+	 * 
+	 * @return string[]|NULL[]
 	 */
 	protected function getAllRules(){
 		

@@ -2,9 +2,9 @@
 require_once "vendor/autoload.php";
 require_once "vendor/bin/generated-conf/config.php";
 
-define('__GLOBAL_DATABASE__', false);
+define('__GLOBAL_DATABASE__', true);
 define('__CONFIG_GUI__', false);
-define('__NODE_SERVER__', true);
+define('__NODE_SERVER__', false);
 
 define('__VERBOSE__', false);
 
@@ -66,6 +66,11 @@ function global_db() {
 	 */
 	
 }
+
+/*
+ * http://localhost/SENG401/v1?type=create_rule&localttl=80&globalttl=180&match_variables%5B0%5D%5Bvariable_name%5D=type&match_variables%5B0%5D%5Bvariable_value%5D=locations&match_variables%5B1%5D%5Bvariable_name%5D=fish&match_variables%5B1%5D%5Bvariable_value%5D=salmon
+ * http://localhost/SENG401/v1?type=create_rule&localttl=200&globalttl=180&match_variables%5B0%5D%5Bvariable_name%5D=type&match_variables%5B0%5D%5Bvariable_value%5D=locations&match_variables%5B1%5D%5Bvariable_name%5D=fish&match_variables%5B1%5D%5Bvariable_value%5D=salmon
+ */
 
 
 if(__GLOBAL_DATABASE__) {
