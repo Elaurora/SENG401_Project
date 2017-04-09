@@ -1,6 +1,7 @@
 <?php
 
 use Propel\Runtime\ActiveQuery\Criteria;
+use Base\GlobalCacheMatchVariableQuery;
 class GlobalCacheController extends CacheController{
 	
 	/**
@@ -234,57 +235,58 @@ class GlobalCacheController extends CacheController{
 		
 		if(isset($variables['rule_id'])){
 			$response['status'] = 'failure';
-			$response['errmsh'] = 'Attempted to create a rule in a GlobalCache by specifying the rule_id. The global cache will auto-increment rule_ids';
+			$response['errmsg'] = 'Attempted to create a rule in a GlobalCache by specifying the rule_id. The global cache will auto-increment rule_ids';
 			return $response;
 		}
 		
 		//First see if there is already a rule associated with the given match_variables, so that i replace it if one exists
-		$allRules = $this->getAllRules();
+		
+		$allRuleIDs = GlobalCacheRuleQuery::create()->select('rule_id')->find();
+		$matchQuery = GlobalCacheMatchVariableQuery::create();
+		echo($allRuleIDs);
+		
+
 		$ruleToEdit = null;
-		foreach($allRules['rules'] as $ruleID => $rule){
-			if(isset($rule['match_variables']) && isset($variables['match_variables'])){
-				foreach($rule['match_variables'] as $matchVars){
-					$ruleToEdit = $ruleID;
-					foreach($variables['match_variables'] as $newMatchVars){
-						if($newMatchVars['variable_name'] == $matchVars['variable_name']
-								&& $newMatchVars['variable_value'] == $matchVars['variable_value']){
-							$ruleToEdit = null;
+		
+		//The following loop is checking to see if there is already a rule with the same match variables
+		foreach($allRuleIDs as $ruleID){
+			$matchQuery->clear();
+			$matchVarsForRule = $matchQuery->findByRuleId($ruleID);
+			
+			if(!isset($variables['match_variables']) && $matchVarsForRule->isEmpty()){// If no match vars are set, no looping needs to be done
+				$ruleToEdit = $ruleID;
+				break;
+			}else{
+				$foundFlags = array();
+				foreach($variables['match_variables'] as $index => $matchVar){//Set the found flag to false for them all
+					$foundFlags[$index] = false;
+				}
+				foreach($matchVarsForRule as $oldMatchVar){
+					$foundAMatch = false;//Every single oldMatchVar must find a match, if one does not, this $ruleID is not a match for the given $variables['match_variables']
+					foreach($variables['match_variables'] as $index => $matchVar){
+						if($oldMatchVar->getVariableName() == $matchVar['variable_name']
+								&& $oldMatchVar->getVariableValue() == $matchVar['variable_value']){
+							$foundFlags[$index] = true;
+							$foundAMatch = true;
 							break;
 						}
 					}
-					if($ruleToEdit === null){
-						$ruleToEdit = $ruleID;
-					}else{
-						$ruleToEdit = null;
+					if($foundAMatch == false){
 						break;
 					}
 				}
-				if($ruleToEdit !== null){
-					foreach($variables['match_variables'] as $newMatchVars){
-						$ruleToEdit = $ruleID;
-						foreach($rule['match_variables'] as $matchVars){
-							if($newMatchVars['variable_name'] == $matchVars['variable_name']
-									&& $newMatchVars['variable_value'] == $matchVars['variable_value']){
-										$ruleToEdit = null;
-										break;
-							}
-						}
-						if($ruleToEdit === null){
-							$ruleToEdit = $ruleID;
-						}else{
+				if($foundAMatch == true){
+					$ruleToEdit = $ruleID;
+					foreach($variables['match_variables'] as $index => $matchVar){
+						if($foundFlags[$index] == false){//same as oldVars, every single new one must also have its flag set to true
 							$ruleToEdit = null;
 							break;
 						}
 					}
 					if($ruleToEdit !== null){
-						$ruleToEdit = $ruleID;
-						break;
+						break;//If i make it here, i have found a match and a rule to edit.
 					}
 				}
-			}
-			else if(!isset($rule['match_variables']) && !isset($variables['match_variables'])){
-				$ruleToEdit = $ruleID;
-				break;
 			}
 		}
 		
@@ -344,12 +346,12 @@ class GlobalCacheController extends CacheController{
 			$localCacheResponse = file_get_contents($url);
 			
 			if($localCacheResponse['status'] == 'failure'){
-
+				
 			}
 			else if($localCacheResponse['status'] == 'success'){
 				
 			}else{
-
+				
 			}
 			
 		}

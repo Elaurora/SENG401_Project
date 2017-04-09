@@ -72,6 +72,11 @@ function global_db() {
 	
 }
 
+/*
+ * http://localhost/SENG401/v1?type=create_rule&localttl=80&globalttl=180&match_variables%5B0%5D%5Bvariable_name%5D=type&match_variables%5B0%5D%5Bvariable_value%5D=locations&match_variables%5B1%5D%5Bvariable_name%5D=fish&match_variables%5B1%5D%5Bvariable_value%5D=salmon
+ * http://localhost/SENG401/v1?type=create_rule&localttl=200&globalttl=180&match_variables%5B0%5D%5Bvariable_name%5D=type&match_variables%5B0%5D%5Bvariable_value%5D=locations&match_variables%5B1%5D%5Bvariable_name%5D=fish&match_variables%5B1%5D%5Bvariable_value%5D=salmon
+ */
+
 
 if(__GLOBAL_DATABASE__) {
 	global_db();
