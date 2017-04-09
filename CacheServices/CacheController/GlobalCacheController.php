@@ -21,10 +21,8 @@ class GlobalCacheController extends CacheController{
 	 */
 	public function getCachedRequest(Request $request){
 		//see if the request url matches an existing query_url in the table
-		$query = GlobalCachedRequestQuery::create();
-		$query = $query->filterByQueryUrlRoot($request->__toString());
-		$query = $query->findOne();
-		
+		$query = \GlobalCachedRequestQuery::create()->findOneByQueryUrlRoot($request->__toString());
+	
 		if(!isset($query)){
 			// if nothing matches, return false
 			$this->incrementCacheMissCounter();
@@ -33,13 +31,13 @@ class GlobalCacheController extends CacheController{
 		}
 		
 		//load all the rules and their variables
-		$cacheRuleQuery = GlobalCacheRuleQuery::create()->find();
+		$cacheRuleQuery = \GlobalCacheRuleQuery::create()->find();
 		
 		//the array for saving rules that match
 		$matchedRules = array();
 		
 		//iterate over each rule and see how much it matches
-		foreach($cacheRuleQuery as $ruleID => $cacheRule) {
+		foreach($cacheRuleQuery as $cacheRule) {
 			$overlap = $this->computeVariableSetOverlap($query->getGlobalGetVariables(), $cacheRule->getGlobalCacheMatchVariables());
 			
 			if($overlap >= 0) {
@@ -48,27 +46,14 @@ class GlobalCacheController extends CacheController{
 		}
 		
 		//we found at least one relevant rule #
-		if(count($matchedRules) > 0){
+		if(count($matchedRules) > 0) {
+			//find the rule that matched best
 			$ruleID = array_search(max($matchedRules), $matchedRules);
 			
-			$cacheRuleQuery = GlobalCacheRuleQuery::create();
-			$cacheRuleQuery = $cacheRuleQuery->filterByRuleId($ruleID);
-			$cacheRuleQuery = $cacheRuleQuery->findOne();
-			$ttl = $cacheRuleQuery->getGlobalTtl();
-		}
-		else{
-			// if none, use the default rule
-			// FIND A DEFAULT TTL? IS IT THE RULE AT INDEX 0?
-			$cacheRuleQuery = GlobalCacheRuleQuery::create();
-			$cacheRuleQuery = $cacheRuleQuery->filterByRuleId(0);
-			$cacheRuleQuery = $cacheRuleQuery->findOne();
-			if(isset($cacheRuleQuery)){
-				$ttl = $cacheRuleQuery->getGlobalTtl();
-			}
-			else{
-				// if no default rule in table, use another default value in this class
-				$ttl = GlobalCacheController::$defaultTtl;
-			}
+			$ttl = \GlobalCacheRuleQuery::create()->findOneByRuleId($ruleID)->getGlobalTtl();
+		} else {
+			// if no rule in table, use another default value in this class
+			$ttl = GlobalCacheController::$defaultTtl;
 		}
 		
 		

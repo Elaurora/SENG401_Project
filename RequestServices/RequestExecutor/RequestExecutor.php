@@ -59,11 +59,11 @@ class RequestExecutor {
 			//If this is the global database
 			if(__GLOBAL_DATABASE__){			
 				$requestResultJson = $this->globalCacheController->executeRule($variables);		
-				$requestResult = json_encode($requestResultJson, JSON_UNESCAPED_UNICODE);
+				$requestResult = json_encode($requestResultJson);
 			}
 			else if(__NODE_SERVER__){			
 				$requestResultJson = $this->localCacheController->executeRule($variables);
-				$requestResult = json_encode($requestResultJson, JSON_UNESCAPED_UNICODE);
+				$requestResult = json_encode($requestResultJson);
 			}
 		} else if(!$noCaching){
 			
