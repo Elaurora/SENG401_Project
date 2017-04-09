@@ -324,7 +324,6 @@ class GlobalCacheController extends CacheController{
 		$ruleToEdit->setLocalTtl($localttl);
 		$ruleToEdit->setGlobalTtl($globalttl);
 		
-		print_r($ruleToEdit->toJSON());
 		
 		$ruleToEdit->save();
 		
@@ -355,7 +354,9 @@ class GlobalCacheController extends CacheController{
 			$retriever->completeRequest($request);
 		}
 		
-		$response['status'] = 'success';
+		$response = array(
+			'status' => 'success',
+		);
 		return $response;
 	}
 	
