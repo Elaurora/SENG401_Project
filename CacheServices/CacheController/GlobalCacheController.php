@@ -246,59 +246,6 @@ class GlobalCacheController extends CacheController{
 			return $response;
 		}
 		
-		
-		
-		//First see if there is already a rule associated with the given match_variables, so that i replace it if one exists
-		/*
-		$ruleQuery = GlobalCacheRuleQuery::create();
-		$allRuleIDs = $ruleQuery->select('rule_id')->find();
-		$matchQuery = GlobalCacheMatchVariableQuery::create();
-		
-		
-		$ruleToEdit = null;
-		
-		//The following loop is checking to see if there is already a rule with the same match variables
-		foreach($allRuleIDs as $ruleID){
-			$matchQuery->clear();
-			$matchVarsForRule = $matchQuery->findByRuleId($ruleID);
-			
-			if($matchVarsForRule->isEmpty()){// If no match vars are set, no looping needs to be done
-				$ruleToEdit = $ruleID;
-				break;
-			}else{
-				$foundFlags = array();
-				foreach($variables['match_variables'] as $index => $matchVar){//Set the found flag to false for them all
-					$foundFlags[$index] = false;
-				}
-				foreach($matchVarsForRule as $oldMatchVar){
-					$foundAMatch = false;//Every single oldMatchVar must find a match, if one does not, this $ruleID is not a match for the given $variables['match_variables']
-					foreach($variables['match_variables'] as $index => $matchVar){
-						if($oldMatchVar->getVariableName() == $matchVar['variable_name']
-								&& $oldMatchVar->getVariableValue() == $matchVar['variable_value']){
-							$foundFlags[$index] = true;
-							$foundAMatch = true;
-							break;
-						}
-					}
-					if($foundAMatch == false){
-						break;
-					}
-				}
-				if($foundAMatch == true){
-					$ruleToEdit = $ruleID;
-					foreach($variables['match_variables'] as $index => $matchVar){
-						if($foundFlags[$index] == false){//same as oldVars, every single new one must also have its flag set to true
-							$ruleToEdit = null;
-							break;
-						}
-					}
-					if($ruleToEdit !== null){
-						break;//If i make it here, i have found a match and a rule to edit.
-					}
-				}
-			}
-		}*/
-		
 		//parse out the variables we need
 		$matchVariables = json_decode($variables['match_variables'], true);
 		$localttl = $variables['localttl'];
@@ -339,7 +286,7 @@ class GlobalCacheController extends CacheController{
 		$request->addRequestVariable('type', 'create_rule');
 		$request->addRequestVariable('localttl', $localttl);
 		$request->addRequestVariable('globalttl', $globalttl);
-		$request->addRequestVariable('match_variables', $variables['match_variables']);
+		$request->addRequestVariable('match_variables', '{"a":"b"}');
 		$request->addRequestVariable('rule_id', $ruleToEdit->getRuleId());
 		
 		
