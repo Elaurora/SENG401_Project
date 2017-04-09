@@ -37,7 +37,9 @@ class RESTApiExecutor {
      *      On invalid request.
      */
     public function executeFormRequest(RequestPath $requestPath) {
-        return file_get_contents($this->buildFormRequest($requestPath));
+    	$url = $this->buildFormRequest($requestPath);
+        $result = file_get_contents($url);
+        return $result;
     }
 
     /**
@@ -63,16 +65,17 @@ class RESTApiExecutor {
         {
             case "newcacherule":
 
-                // ... http://104.198.102.12/?type=create_rule&local_ttl=420&global_ttl=69
+                // ... http://104.198.102.12/?type=create_rule&localttl=420&globalttl=69
 
                 $restAPIRequest .= $this::$NEW_CACHE_RULE;
 
                 if (!isset($_POST["local_ttl"]) || !isset($_POST["global_ttl"]) || !isset($_POST["match_vars"]))
                     throw new Exception("Invalid request: missing parameters");
 
-                $restAPIRequest .= "&local_ttl="        . $_POST["local_ttl"];
-                $restAPIRequest .= "&global_ttl="       . $_POST["global_ttl"];
-                $restAPIRequest .= "&match_variables="  . $this->parseMatchVars($_POST["match_vars"]);
+                $restAPIRequest .= "&localttl="        . $_POST["local_ttl"];
+                $restAPIRequest .= "&globalttl="       . $_POST["global_ttl"];
+                $restAPIRequest .= "&match_variables="  . $this->parseMatchVars($_POST["match_vars"]); 
+                file_put_contents('creatruleRequest.txt', $restAPIRequest);
                 break;
 
             case "deletecacherule":
@@ -108,7 +111,7 @@ class RESTApiExecutor {
                 throw new Exception("Invalid request: config command unknown.");
                 break;
         }
-
+		
         return $restAPIRequest;
     }
 
@@ -136,7 +139,7 @@ class RESTApiExecutor {
                 throw new Exception("Invalid match variables: did you"
                 . " enter them in the form [name] [value], ... , [name] [value]?");
 
-            $json .= "\"" . $parts[0] . "\": " . "\"" . $parts[1] . "\"";
+            $json .= "\"" . $parts[0] . "\":" . "\"" . $parts[1] . "\"";
         }
 
         $json .= "}";
