@@ -29,63 +29,35 @@ Parameters:
 type=get_rules		//defines the request type
 
 Returns:
-
-[
-	{
-		"rule_id" : 7,
-		"localttl" : 60,
-		"globalttl" : 120,
-		"match_variables" : {
-			"type" : "locations",
-			"fish" : "salmon"
-		}
-	},
-	{
-		"rule_id" : 9,
-		"localttl" : 10,
-		"globalttl" : 130,
-		"match_variables" : {
-			"type" : "image",
-			"fish" : "trout"
-		}
-	}
-
-]
-
-***     STRONG SUGGESTION (for nice table building):
-
 {
 	"rules":
 	[
 	    {
-        	"rule_id" : 1337,
-        	"localttl" : 69,
-        	"globalttl" : 420,
+        	"RuleId" : 1337,
+        	"LocalTtl" : 69,
+        	"GlobalTtl" : 420,
         },
         {
-             "rule_id" : 7734,
-             "localttl" : 420,
-             "globalttl" : 69,
+             "RuleId" : 7734,
+             "LocalTtl" : 420,
+             "GlobalTtl" : 69,
         }
 	],
-	"match_variables":
+	"variables":
 	[
 		{
-            "rule_id" : 07734,
-            "variable_name" : "here come",
-            "variable_value" : "dat boi",
+            "RuleId" : 07734,
+            "VariableName" : "here come",
+            "VariableValue" : "dat boi",
         },
         {
-            "rule_id" : 5318008,
-            "variable_name" : "o shit",
-            "variable_value" : "whaddup",
+            "RuleId" : 5318008,
+            "VariableName" : "o shit",
+            "VariableValue" : "whaddup",
         }
 	],
 	"status":"success"
 }
-
-/***
-
 
 Function: Delete Rule
 This function deletes an existing rule
