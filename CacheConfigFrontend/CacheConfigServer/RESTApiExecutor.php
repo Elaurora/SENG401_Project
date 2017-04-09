@@ -72,8 +72,8 @@ class RESTApiExecutor {
                 if (!isset($_POST["local_ttl"]) || !isset($_POST["global_ttl"]) || !isset($_POST["match_vars"]))
                     throw new Exception("Invalid request: missing parameters");
 
-                $restAPIRequest .= "&localttl="        . $_POST["local_ttl"];
-                $restAPIRequest .= "&globalttl="       . $_POST["global_ttl"];
+                $restAPIRequest .= "&localttl="         . $_POST["local_ttl"];
+                $restAPIRequest .= "&globalttl="        . $_POST["global_ttl"];
                 $restAPIRequest .= "&match_variables="  . $this->parseMatchVars($_POST["match_vars"]);
                 break;
 
@@ -129,17 +129,18 @@ class RESTApiExecutor {
         $matchvars = explode(",", $matchvars);
         $json = "{";
 
-        foreach ($matchvars as $index => $pair)
-        {
-            $json .= $index == 0 ? "" : ",";
-            $parts = explode(" ", trim($pair));
+        if (!empty($matchvars))
+            foreach ($matchvars as $index => $pair)
+            {
+                $json .= $index == 0 ? "" : ",";
+                $parts = explode(" ", trim($pair));
 
-            if (count($parts) != 2 && count($parts) != 1)
-                throw new Exception("Invalid match variables: did you"
-                . " enter them in the form [name] [value], ... , [name] [value]?");
+                if (count($parts) != 2)
+                    throw new Exception("Invalid match variables: did you"
+                        . " enter them in the form [name] [value], ... , [name] [value]?");
 
-            $json .= "\"" . $parts[0] . "\":" . "\"" . $parts[1] . "\"";
-        }
+                $json .= "\"" . $parts[0] . "\":" . "\"" . $parts[1] . "\"";
+            }
 
         $json .= "}";
         return $json;
