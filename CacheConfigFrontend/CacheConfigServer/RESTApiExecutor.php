@@ -126,21 +126,28 @@ class RESTApiExecutor {
      *      On invalid match variables.
      */
     private function parseMatchVars($matchvars) {
+
+        //  If there was no input, return empty JSON
+
+        if (empty($matchvars))
+            return "{}";
+
+        //  Otherwise, parse and build...
+
         $matchvars = explode(",", $matchvars);
         $json = "{";
 
-        if (!isset($matchvars))
-            foreach ($matchvars as $index => $pair)
-            {
-                $json .= $index == 0 ? "" : ",";
-                $parts = explode(" ", trim($pair));
+        foreach ($matchvars as $index => $pair)
+        {
+            $json .= $index == 0 ? "" : ",";
+            $parts = explode(" ", trim($pair));
 
-                if (count($parts) != 2)
-                    throw new Exception("Invalid match variables: did you"
-                        . " enter them in the form [name] [value], ... , [name] [value]?");
+            if (count($parts) != 2)
+                throw new Exception("Invalid match variables: did you"
+                    . " enter them in the form [name] [value], ... , [name] [value]?");
 
-                $json .= "\"" . $parts[0] . "\":" . "\"" . $parts[1] . "\"";
-            }
+            $json .= "\"" . $parts[0] . "\":" . "\"" . $parts[1] . "\"";
+        }
 
         $json .= "}";
         return $json;
