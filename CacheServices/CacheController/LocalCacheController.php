@@ -261,7 +261,7 @@ class LocalCacheController extends CacheController{
 			$matchVariables = json_decode($variables['match_variables'], true);
 			
 			foreach($matchVariables as $name => $value){
-				$newMatchVar = new \GlobalCacheMatchVariable();
+				$newMatchVar = new \CacheMatchVariable();
 				$newMatchVar->setVariableName($name);
 				$newMatchVar->setVariableValue($value);
 				$theRule->addCacheMatchVariable($newMatchVar);

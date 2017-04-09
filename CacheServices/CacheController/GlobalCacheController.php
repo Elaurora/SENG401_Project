@@ -286,7 +286,7 @@ class GlobalCacheController extends CacheController{
 		$request->addRequestVariable('type', 'create_rule');
 		$request->addRequestVariable('localttl', $localttl);
 		$request->addRequestVariable('globalttl', $globalttl);
-		$request->addRequestVariable('match_variables', '{"a":"b"}');
+		$request->addRequestVariable('match_variables', $variables['match_variables']);
 		$request->addRequestVariable('rule_id', $ruleToEdit->getRuleId());
 		
 		
