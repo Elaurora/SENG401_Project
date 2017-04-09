@@ -241,7 +241,8 @@ class GlobalCacheController extends CacheController{
 		
 		//First see if there is already a rule associated with the given match_variables, so that i replace it if one exists
 		
-		$allRuleIDs = GlobalCacheRuleQuery::create()->select('rule_id')->find();
+		$ruleQuery = GlobalCacheRuleQuery::create();
+		$allRuleIDs = $ruleQuery->select('rule_id')->find();
 		$matchQuery = GlobalCacheMatchVariableQuery::create();
 		echo($allRuleIDs);
 		
@@ -309,7 +310,7 @@ class GlobalCacheController extends CacheController{
 			$newRuleID = $newRule->getRuleId();
 		}
 		else{// If i did find a matching rule, i only need to edit the old one
-			$ruleQuery = \GlobalCacheRuleQuery::create();
+			$ruleQuery->clear();
 			$ruleQuery->filterByRuleId($ruleToEdit, Criteria::EQUAL);
 			$editRule = $ruleQuery->findOne();
 			
@@ -334,11 +335,7 @@ class GlobalCacheController extends CacheController{
 			$request->addRequestVariable('globalttl', $variables['globalttl']);
 			
 			if(isset($variables['match_variables'])){
-				$matchVars = array();
-				foreach($variables['match_variables'] as $matchVar){
-					$matchVars[$matchVar['variable_name']] = $matchVar['variable_value'];
-				}
-				$request->addRequestVariable('match_variables', $matchVars);
+				$request->addRequestVariable('match_variables', $variables['match_variables']);
 			}
 			
 			$request->addRequestVariable('rule_id', $newRuleID);
@@ -366,34 +363,11 @@ class GlobalCacheController extends CacheController{
 	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
 	 */
 	protected function deleteRule($variables){
-		$response = array();
-		if(!isset($variables['rule_id'])){
-			$response['status'] = 'failure';
-			$response['errmsg'] = 'Attempted to delete a rule without specifying a rule_id';
+		$response = parent::deleteRule($variables);
+		
+		if($response['status'] != 'success'){
 			return $response;
 		}
-		
-		$cacheRuleQuery = $this->getCacheRuleQuery();
-		
-		//got rid of Criteria::EQUAL
-		$cacheRuleQuery->filterByRuleId(intval($variables['rule_id']));
-		
-		$findOneResult = $cacheRuleQuery->findOne();
-		
-		if($findOneResult === null){
-			$response['status'] = 'failure';
-			$response['errmsg'] = 'Attempted to delete a rule that did not exist in the database';
-			return $response;
-		}
-		
-		$cacheMatchVarsQuery = $this->getCacheMatchVariablesQuery();
-		
-		//First, delete all match variables with that rule id
-		//got rid of Criteria::EQUAL
-		$cacheMatchVarsQuery->filterByRuleId(intval($variables['rule_id']));
-		$cacheMatchVarsQuery->delete();
-		
-		$cacheRuleQuery->delete();
 		
 		// now do the same for all the little kiddies
 		// THIS IS NOT TESTED.
@@ -421,7 +395,7 @@ class GlobalCacheController extends CacheController{
 		
 		
 		//Implemented but not tested
-		
+		$response['status'] = 'success';
 		return $response;
 	}
 	

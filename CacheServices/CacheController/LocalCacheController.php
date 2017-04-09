@@ -245,9 +245,43 @@ class LocalCacheController extends CacheController{
 			return $response;
 		}
 		
+		$theRule = CacheRuleQuery::create()->findOneByRuleId($variables['rule_id']);
 		
+		if($theRule === null){
+			$theRule = new \CacheRule();
+			
+			$theRule->setRuleId($variables['rule_id']);
+			$theRule->setLocalTtl($variables['localttl']);
+			$theRule->setGlobalTtl($variables['globalttl']);
+			
+			if(isset($variables['match_variables'])){
+				foreach($variables['match_variables'] as $matchVar){
+					$newMatchVar = new \GlobalCacheMatchVariable();
+					$newMatchVar->setVariableName($matchVar['variable_name']);
+					$newMatchVar->setVariableValue($matchVar['variable_value']);
+					$theRule->addCacheMatchVariable($newMatchVar);
+				}
+			}
+				
+			$theRule->save();
+			
+		}else{
+			$theRule->setLocalTtl($variables['localttl']);
+			$theRule->setGlobalTtl($variables['globalttl']);
+			$theRule->save();
+		}
 		
-		//Not implemented
+		$response['status'] = 'success';
+		return $response;
+	}
+	
+	/**
+	 * Deletes the rule with the given rule_id from the cache. If this is the global cache, it will also delete the rule from all subscribed caches
+	 * @param $variables an array containing the index 'rule_id' which indicates which rule is to be deleted
+	 * @return An array with a 'status' index of either 'success' or 'failure'. In the case of failure, the 'errmes' index will have more information
+	 */
+	protected function deleteRule($variables){
+		
 	}
 	
 	/**
