@@ -21,6 +21,12 @@
       * @var RequestPath
       */
      private $rulesRequest;
+     
+     /**
+      * A request for the cache hits and misses.
+      * @var RequestPath
+      */
+     private $hitsRequest;
 
      /**
       * FormServer constructor.
@@ -28,6 +34,8 @@
      public function __construct() {
          $this->rulesRequest = new RequestPath();
          $this->rulesRequest->setCommandType("getallrules");
+         
+         //TODO: probably gonna need to make a thing for hits request
      }
 
      /**
@@ -98,6 +106,7 @@
 
          $rulesTable = "<table style=\"width: 100%\"><tr><th>rule_id</th><th>local_ttl</th><th>global_ttl</th></tr>";
          $varsTable = "<table style=\"width: 100%\"><tr><th>rule_id</th><th>variable_name</th><th>variable_value</th></tr>";
+         $hitsTable = "<table style=\"width: 100%\"><tr><th>cache</th><th>hits</th><th>misses</th></tr>";
 
          // Build the rules table...
 
