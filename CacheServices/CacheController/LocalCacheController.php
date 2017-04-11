@@ -49,27 +49,14 @@ class LocalCacheController extends CacheController{
 		
 		
 		//we found at least one relevant rule #
-		if(count($matchedRules) > 0){
+	if(count($matchedRules) > 0) {
+			//find the rule that matched best
 			$ruleID = array_search(max($matchedRules), $matchedRules);
 			
-			$cacheRuleQuery = CacheRuleQuery::create();
-			$cacheRuleQuery = $cacheRuleQuery->filterByRuleId($ruleID);
-			$cacheRuleQuery = $cacheRuleQuery->findOne();
-			$ttl = $cacheRuleQuery->getLocalTtl();
-		}
-		else{
-			// if none, use the default rule
-			// FIND A DEFAULT TTL? IS IT THE RULE AT INDEX 0?
-			$cacheRuleQuery = CacheRuleQuery::create();
-			$cacheRuleQuery = $cacheRuleQuery->filterByRuleId(0);	
-			$cacheRuleQuery = $cacheRuleQuery->findOne();
-			if(isset($cacheRuleQuery)){
-				$ttl = $cacheRuleQuery->getLocalTtl();
-			}
-			else{
-				// if no default rule in table, use another default value in this class
-				$ttl = LocalCacheController::$defaultTtl;
-			}
+			$ttl = \CacheRuleQuery::create()->findOneByRuleId($ruleID)->getLocalTtl();
+		} else {
+			// if no rule in table, use another default value in this class
+			$ttl = CacheController::$defaultTtl;
 		}
 		
 		
