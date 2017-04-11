@@ -21,9 +21,7 @@ class LocalCacheController extends CacheController{
 	 */
 	public function getCachedRequest(Request $request){
 		//see if the request url matches an existing query_url in the table
-		$query = CachedRequestQuery::create();
-		$query = $query->filterByQueryUrlRoot($request->__toString());
-		$query = $query->findOne();
+		$query = CachedRequestQuery::create()->findOneByQueryUrlRoot($request->__toString());
 		
 		if(!isset($query)){
 			// if nothing matches, return false
@@ -56,7 +54,7 @@ class LocalCacheController extends CacheController{
 			$ttl = \CacheRuleQuery::create()->findOneByRuleId($ruleID)->getLocalTtl();
 		} else {
 			// if no rule in table, use another default value in this class
-			$ttl = CacheController::$defaultTtl;
+			$ttl = LocalCacheController::$defaultTtl;
 		}
 		
 		
