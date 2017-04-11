@@ -103,6 +103,13 @@ class RESTApiExecutor {
 
                 $restAPIRequest .= $this::$CLEAR_CACHE;
                 break;
+                
+            case "gethits":
+            	
+            	// ... http://104.198.102.12/?type=clear_all
+            	
+            	$restAPIRequest .= $this::$GET_HITS;
+            	break;
 
             default:
 

@@ -36,6 +36,8 @@
          $this->rulesRequest->setCommandType("getallrules");
          
          //TODO: probably gonna need to make a thing for hits request
+         $this->hitsRequest = new RequestPath();
+         $this->hitsRequest->setCommandType("gethits");
      }
 
      /**
@@ -62,10 +64,11 @@
              {
                  $formHTML = file_get_contents($this::$MANAGE_CONFIG_FORM);
 
-                 $htmlTables = $this->buildHTMLTables($this->getTablesAsJSON());
+                 $htmlTables = $this->buildHTMLTables($this->getTablesAsJSON(), $this->getHitTableAsJSON());
 
                  $formHTML = str_replace("{rulesTable}", $htmlTables["rulesTable"], $formHTML);
                  $formHTML = str_replace("{varsTable}", $htmlTables["varsTable"], $formHTML);
+                 $formHTML = str_replace("{hitsTable}", $htmlTables["hitsTable"], $formHTML);
 
                  return $formHTML;
              }
@@ -81,17 +84,20 @@
       *
       * @param $jstr
       *     JSON encoded string containing the rules and variables tables.
+      * @param $hitsJstr
+      *     JSON encoded string containing the hits table.
       * @return array
-      *     Array with two items: the rules table html as "rulesTable" and
-      *     the vars table html as "varsTable".
+      *     Array with three items: the rules table html as "rulesTable",
+      *     the vars table html as "varsTable", and the hits table as "hitsTable"
       * @throws Exception
       *     On failed request.
       */
-     private function buildHTMLTables($jstr) {
+     private function buildHTMLTables($jstr, $hitsJstr) {
 
          // Decode the string into an array...
 
          $json = json_decode($jstr, true);
+         $hitsJson = json_decode($hitsJstr, true);
 
          // Get the arrays for the rules table and variables table...
 
@@ -133,15 +139,29 @@
          }
          else
              $varsTable .= "<tr><td colspan='3'>Looks like this table is empty! Did you try pressing <i>New Cache Rule</i>?</td></tr>";
-
+		
+		
+		if (count($hitsJson) > 0) {
+			foreach ($hitsJson as $ip => $hitRecord)
+				if($ip != 'status')
+					$hitsTable .= "<tr><td>".
+						$ip . "</td><td>".
+						$hitRecord["HitCount"] ."</td><td>".
+						$hitRecord["MissCount"] ."</td></tr>";
+		}
+		else
+			$hitsTable .= "<tr><td colspan='3'>Looks like this table is empty! Try making a request!</td></tr>";
+						
+             
+         
          // Close the tables...
 
          $rulesTable .= "</table>";
          $varsTable .= "</table>";
-
+         $hitsTable .= "</table>";
          // Put the tables into an array and return...
 
-         return $htmlTables = array("rulesTable" => $rulesTable, "varsTable" => $varsTable);
+         return $htmlTables = array("rulesTable" => $rulesTable, "varsTable" => $varsTable, "hitsTable" => $hitsTable);
      }
 
      /**
@@ -154,5 +174,17 @@
       */
      private function getTablesAsJSON() {
          return (new RESTApiExecutor())->executeFormRequest($this->rulesRequest);
+     }
+     
+     /**
+      * Sends a request for the hits table and
+      * returns the request result.
+      *
+      * @return bool|string
+      *     Hits table as a JSON encoded string,
+      *     if successful.
+      */
+     private function getHitTableAsJSON(){
+     	return (new RESTApiExecutor())->executeFormRequest($this->hitsRequest);
      }
  }
