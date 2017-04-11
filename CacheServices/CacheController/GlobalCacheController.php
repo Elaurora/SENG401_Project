@@ -446,6 +446,58 @@ class GlobalCacheController extends CacheController{
 		}
 	}
 	
+	/**
+	 * Returns the number of cache hits and misses.
+	 * Locally, just return the number of hits and misses.
+	 * Globally, return a list the hits and misses of a node together with the IP of that node.
+	 */
+	protected function getHits(){
+		xdebug_break();
+		// Create a lil Results thingy
+		$result = array();
+		
+		//First, get number of hits for all the nodes.
+		$allSubs = \GlobalSubscriberIpQuery::create()->find();
+		
+		foreach($allSubs as $sub){
+			$request = new Request();
+			$request->setProtocol('http://');
+			$request->setUrlRoot($sub->getSubscriberIp().'/SENG401');
+			$request->setApiVersion('v1');
+			$request->addRequestVariable('type', 'get_hits');
+			
+			$url = $request->__toString();
+			
+			$localCacheResponse = file_get_contents($url);
+			if (isset($localCacheResponse)) {
+				$localCacheResponse = json_decode($localCacheResponse, true);
+				if (isset($localCacheResponse['HitCount']) && isset($localCacheResponse['RecordId'])) {
+					//dont u judge me i'm just bein practical.
+					$result[$sub->getSubscriberIp()] = $localCacheResponse;
+				}
+			}
+			
+		}
+		
+		// Next, get the hits for this thing.
+		$record = GlobalCacheHitRecordQuery::create();
+		$record = $record->filterByRecordId(CacheController::$recordKey);
+		$record = $record->findOne();
+		if(!isset($record)){
+			// create dat new entry
+			$newRecord = new \GloablCacheHitRecord();
+			$newRecord->setPrimaryKey(CacheController::$recordKey);
+			$newRecord->setMissCount(0);
+			$newRecord->setHitCount(0);
+			$newRecord->save();
+			$result['Global'] = $newRecord->toArray();
+		}
+		else {
+			$result['Global'] = $record->toArray();
+		}
+		$result['status'] = 'success';
+		return $result;
+	}
 	
 	/**
 	 * Adds the senders ip to the list of subscibers to the GlobalCache
