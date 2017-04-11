@@ -452,7 +452,6 @@ class GlobalCacheController extends CacheController{
 	 * Globally, return a list the hits and misses of a node together with the IP of that node.
 	 */
 	protected function getHits(){
-		xdebug_break();
 		// Create a lil Results thingy
 		$result = array();
 		
