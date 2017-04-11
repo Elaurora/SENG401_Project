@@ -452,6 +452,7 @@ class GlobalCacheController extends CacheController{
 	 * Globally, return a list the hits and misses of a node together with the IP of that node.
 	 */
 	protected function getHits(){
+		xdebug_break();
 		// Create a lil Results thingy
 		$result = array();
 		
@@ -469,6 +470,7 @@ class GlobalCacheController extends CacheController{
 			
 			$localCacheResponse = file_get_contents($url);
 			if (isset($localCacheResponse)) {
+				$localCacheResponse = json_decode($localCacheResponse, true);
 				if (isset($localCacheResponse['HitCount']) && isset($localCacheResponse['RecordId'])) {
 					//dont u judge me i'm just bein practical.
 					$result[$sub->getSubscriberIp()] = $localCacheResponse;
