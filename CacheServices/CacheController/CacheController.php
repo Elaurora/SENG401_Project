@@ -9,7 +9,7 @@ abstract class CacheController{
 	 */
 	public static $ruleTypes = array (
 			'create_rule', 'get_rules', 'delete_rule', 'subscribe', 'unsubscribe',
-			'clear_locals', 'clear_global', 'clear_all'
+			'clear_locals', 'clear_global', 'clear_all', 'get_hits'
 	);
 	
 	/**
@@ -18,6 +18,7 @@ abstract class CacheController{
 	 */
 	protected static $recordKey = 1;
 	
+	protected static $defaultTtl = 600;
 	
 	
 	
@@ -104,7 +105,7 @@ abstract class CacheController{
 	 * @param string $response the response of the given request to be cached.
 	 */
 	public function handleNoCacheRequest(Request $request, $response) {
-		$this->incrementCacheHitCounter();
+		$this->incrementCacheMissCounter();
 		$this->cacheRequest($request, $response);
 	}
 	
@@ -321,6 +322,13 @@ abstract class CacheController{
 	protected abstract function unsubscribe();
 	
 	/**
+	 * Returns the number of cache hits and misses.
+	 * Locally, just return the number of hits and misses.
+	 * Globally, return a list the hits and misses of a node together with the IP of that node.
+	 */
+	protected abstract function getHits();
+	
+	/**
 	 * Executes the rule given in the 'type' index in the 
 	 * @param unknown $variables An array containing the relevant variables for the rule
 	 * @return The result of the rule execution in an array
@@ -358,6 +366,10 @@ abstract class CacheController{
 				case('clear_global'):
 				case('clear_all'):
 					$response = $this->clearCache($variables['type']);
+					break;
+					
+				case('get_hits'):
+					$response = $this->getHits();
 					break;
 					
 				default:

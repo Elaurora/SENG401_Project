@@ -265,6 +265,29 @@ class LocalCacheController extends CacheController{
 		return $response;
 	}
 	
+	/**
+	 * Returns the number of cache hits and misses.
+	 * Locally, just return the number of hits and misses.
+	 * Globally, return a list the hits and misses of a node together with the IP of that node.
+	 */
+	protected function getHits(){
+		
+		$record = CacheHitRecordQuery::create();
+		$record = $record->filterByRecordId(CacheController::$recordKey);
+		$record = $record->findOne();
+		if(!isset($record)){
+			// create dat new entry
+			$newRecord = new \CacheHitRecord();
+			$newRecord->setPrimaryKey(CacheController::$recordKey);
+			$newRecord->setMissCount(0);
+			$newRecord->setHitCount(0);
+			$newRecord->save();
+			return $newRecord->toArray();
+		}
+		return $record->toArray();
+		
+		
+	}
 
 	/**
 	 * Sets the hit and miss counters of a cache to 0, and clears all saved requests.

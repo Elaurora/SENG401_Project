@@ -17,7 +17,8 @@ class RESTApiExecutor {
         $NEW_CACHE_RULE     = "create_rule",
         $DELETE_CACHE_RULE  = "delete_rule",
         $GET_ALL_RULES      = "get_rules",
-        $CLEAR_CACHE        = "clear_all";
+        $CLEAR_CACHE        = "clear_all",
+    	$GET_HITS			= "get_hits";
 
     /**
      * IP of global cache server.
