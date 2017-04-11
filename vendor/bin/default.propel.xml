@@ -14,7 +14,7 @@
                 </connection>
                 <connection id="remote">
                     <adapter>mysql</adapter>
-                    <dsn>mysql:host=127.0.0.1;port=3306;dbname=seng401globalcachedb</dsn>
+                    <dsn>mysql:host=104.198.102.12;port=3306;dbname=seng401globalcachedb</dsn>
                     <user>root</user>
                     <password>abc123</password>
                     <settings>
